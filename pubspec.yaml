@@ -18,6 +18,7 @@ dependencies:
   get: ^4.6.6
   liquid_swipe: ^3.1.0
   smooth_page_indicator: ^1.1.0
+  flutter_otp_text_field: ^1.1.1
 
 
 dev_dependencies:
@@ -44,3 +45,4 @@ flutter:
     - assets/images/welcome_images/
     - assets/images/login_signup_images/
     - assets/images/logo/
+    - assets/images/forget_password_images/

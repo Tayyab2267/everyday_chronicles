@@ -19,3 +19,6 @@ const String myGoogleLogoImage = "assets/images/logo/google-logo.png";
 // Signup screen images
 const String mySignupImage = "assets/images/login_signup_images/signup-image.png";
 
+// Forget Password screen images
+const String myForgetPasswordImage = "assets/images/forget_password_images/forget-password-image.png";
+

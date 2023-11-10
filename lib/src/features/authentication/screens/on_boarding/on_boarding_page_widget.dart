@@ -11,7 +11,6 @@ class OnBoardingPageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     final size = MediaQuery.of(context).size;
 
     return Container(
@@ -26,12 +25,14 @@ class OnBoardingPageWidget extends StatelessWidget {
           Column(
             children: [
               Text(boardingModel.title,
-                  style: MyTextTheme.lightTextTheme.headline3),
-              Text(boardingModel.subtitle, textAlign: TextAlign.center),
+                  style: Theme.of(context).textTheme.headlineMedium),
+              Text(boardingModel.subtitle,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  textAlign: TextAlign.center),
             ],
           ),
           Text(boardingModel.counterText,
-              style: MyTextTheme.lightTextTheme.headline6),
+              style: Theme.of(context).textTheme.bodyMedium),
           const SizedBox(height: 50.0),
         ],
       ),

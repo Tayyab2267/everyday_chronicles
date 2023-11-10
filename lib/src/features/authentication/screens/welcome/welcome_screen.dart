@@ -2,6 +2,7 @@ import 'package:everyday_chronicles/src/constants/colors.dart';
 import 'package:everyday_chronicles/src/constants/image_strings.dart';
 import 'package:everyday_chronicles/src/constants/sizes.dart';
 import 'package:everyday_chronicles/src/features/authentication/screens/login/login_screen.dart';
+import 'package:everyday_chronicles/src/features/authentication/screens/signup/signup_screen.dart';
 import 'package:everyday_chronicles/src/utils/theme/widget_themes/elevated_button_theme.dart';
 import 'package:everyday_chronicles/src/utils/theme/widget_themes/outlined_button_theme.dart';
 import 'package:flutter/material.dart';
@@ -36,15 +37,11 @@ class WelcomeScreen extends StatelessWidget {
               children: [
                 Text(
                   myWelcomeTitle,
-                  style: isDarkMode
-                      ? MyTextTheme.darkTextTheme.headline3
-                      : MyTextTheme.lightTextTheme.headline3,
+                  style: Theme.of(context).textTheme.headlineMedium,
                 ),
                 Text(
                   myWelcomeSubTitle,
-                  style: isDarkMode
-                      ? MyTextTheme.darkTextTheme.bodyText2
-                      : MyTextTheme.lightTextTheme.bodyText2,
+                  style: Theme.of(context).textTheme.bodyMedium,
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -52,27 +49,24 @@ class WelcomeScreen extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                  child: OutlinedButtonTheme(
-                    data: isDarkMode
-                        ? MyOutlinedButtonTheme.darkOutlinedButtonTheme
-                        : MyOutlinedButtonTheme.lightOutlinedButtonTheme,
-                    child: OutlinedButton(
-                      onPressed: () {
-                        Get.to(() => const LoginScreen());
-                      },
-                      child: Text(myLogin.toUpperCase()),
+                  child: OutlinedButton(
+                    onPressed: () {
+                      Get.to(() => const LoginScreen());
+                    },
+                    child: Text(
+                      myLogin.toUpperCase(),
+                      style: Theme.of(context).textTheme.titleLarge,
                     ),
                   ),
                 ),
                 SizedBox(width: 10.0),
                 Expanded(
-                  child: ElevatedButtonTheme(
-                    data: isDarkMode
-                        ? MyElevatedButtonTheme.darkElevatedButtonTheme
-                        : MyElevatedButtonTheme.lightElevatedButtonTheme,
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      child: Text(mySignup.toUpperCase()),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Get.to(() => const SignupScreen());
+                    },
+                    child: Text(
+                      mySignup.toUpperCase(),
                     ),
                   ),
                 ),
