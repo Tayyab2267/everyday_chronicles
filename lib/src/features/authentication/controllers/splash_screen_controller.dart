@@ -1,6 +1,4 @@
-import 'package:everyday_chronicles/src/features/authentication/screens/on_boarding/on_boarding_screen.dart';
 import 'package:everyday_chronicles/src/features/authentication/screens/welcome/welcome_screen.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class SplashScreenController extends GetxController{

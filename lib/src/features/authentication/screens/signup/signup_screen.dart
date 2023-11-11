@@ -1,12 +1,10 @@
 import 'package:everyday_chronicles/src/common_widgets/form/form_header_widget.dart';
-import 'package:everyday_chronicles/src/constants/colors.dart';
 import 'package:everyday_chronicles/src/constants/image_strings.dart';
 import 'package:everyday_chronicles/src/constants/sizes.dart';
 import 'package:everyday_chronicles/src/constants/text_strings.dart';
+import 'package:everyday_chronicles/src/features/authentication/screens/signup/signup_form_footer_widget.dart';
 import 'package:everyday_chronicles/src/features/authentication/screens/signup/signup_form_widget.dart';
 import 'package:flutter/material.dart';
-
-import '../../../../common_widgets/form/form_footer_widget.dart';
 
 class SignupScreen extends StatelessWidget {
   const SignupScreen({super.key});
@@ -26,7 +24,7 @@ class SignupScreen extends StatelessWidget {
                   subtitle: mySignupSubTitle,
                 ),
                 SignupFormWidget(),
-                FormFooterWidget(
+                SignupFormFooterWidget(
                   haveAnAccount: myAlreadyHaveAnAccount,
                   logOrSign: myLogin,
                 ),

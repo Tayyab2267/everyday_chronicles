@@ -14,13 +14,18 @@ class ForgetPasswordBtnWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    var mediaQuery = MediaQuery.of(context);
+    var brightness = mediaQuery.platformBrightness;
+    final isDarkMode = brightness == Brightness.dark;
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(20.0),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10.0),
-          color: Colors.grey.shade200,
+          color: isDarkMode ? Colors.black38 : Colors.grey.shade200,
         ),
         child: Row(
           children: [

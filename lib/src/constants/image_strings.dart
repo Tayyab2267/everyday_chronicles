@@ -2,6 +2,7 @@
 /* App Image Strings */
 
 const String splashImage = "assets/images/icon.png";
+const String splashImageDark = "assets/images/icon-dark.png";
 
 // on boarding screen Images
 const String myOnBoardingImage1 = "assets/images/on_boarding_images/on-boarding-image-1.png";

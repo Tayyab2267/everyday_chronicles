@@ -3,9 +3,8 @@ import 'package:everyday_chronicles/src/constants/image_strings.dart';
 import 'package:everyday_chronicles/src/constants/sizes.dart';
 import 'package:everyday_chronicles/src/constants/text_strings.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import '../../../../common_widgets/form/form_footer_widget.dart';
 import '../../../../constants/colors.dart';
+import 'login_form_footer_widget.dart';
 import 'login_form_widget.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -33,7 +32,7 @@ class LoginScreen extends StatelessWidget {
                   subtitle: myLoginSubTitle,
                 ),
                 LoginForm(),
-                FormFooterWidget(
+                LoginFormFooterWidget(
                   haveAnAccount: myDontHaveAnAccount,
                   logOrSign: mySignup,
                 ),

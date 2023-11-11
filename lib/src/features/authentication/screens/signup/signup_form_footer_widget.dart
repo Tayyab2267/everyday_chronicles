@@ -1,11 +1,13 @@
+import 'package:everyday_chronicles/src/features/authentication/screens/login/login_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-import '../../constants/image_strings.dart';
-import '../../constants/sizes.dart';
-import '../../constants/text_strings.dart';
+import '../../../../constants/image_strings.dart';
+import '../../../../constants/sizes.dart';
+import '../../../../constants/text_strings.dart';
 
-class FormFooterWidget extends StatelessWidget {
-  const FormFooterWidget({super.key,
+class SignupFormFooterWidget extends StatelessWidget {
+  const SignupFormFooterWidget({super.key,
     required this.haveAnAccount,
     required this.logOrSign,
   });
@@ -32,7 +34,10 @@ class FormFooterWidget extends StatelessWidget {
         ),
         const SizedBox(height: myFormHeight - 20),
         TextButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pop(context);
+            Get.to( () => const LoginScreen());
+          },
           child: Text.rich(
             TextSpan(
               text: haveAnAccount,

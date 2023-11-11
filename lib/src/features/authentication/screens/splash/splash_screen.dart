@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:everyday_chronicles/src/constants/image_strings.dart';
 import 'package:everyday_chronicles/src/constants/text_strings.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-
 import '../../../../utils/theme/widget_themes/text_theme.dart';
 
 class SplashScreen extends StatelessWidget {
@@ -18,10 +16,13 @@ class SplashScreen extends StatelessWidget {
     splashController.startAnimation();
 
     var mediaQuery = MediaQuery.of(context);
+    var brightness = mediaQuery.platformBrightness;
+    final isDarkMode = brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: myBackgroundLightColor,
+      //backgroundColor: myWhiteColor,
       body: Stack(
+        alignment: Alignment.center,
         children: [
           Obx(
             () => AnimatedPositioned(
@@ -30,9 +31,13 @@ class SplashScreen extends StatelessWidget {
               left: mediaQuery.size.width * 0.1,
               right: mediaQuery.size.width * 0.1,
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(appTagLine, style: MyTextTheme.lightTextTheme.headline3, textAlign: TextAlign.center,),
+                  Text(
+                    appTagLine.toUpperCase(),
+                    style: Theme.of(context).textTheme.headlineSmall,
+                    textAlign: TextAlign.center,
+                  ),
                 ],
               ),
             ),
@@ -42,7 +47,11 @@ class SplashScreen extends StatelessWidget {
               duration: const Duration(milliseconds: 1600),
               top: splashController.animate.value ? 120 : 80,
               left: 50,
-              child: const Image(image: AssetImage(splashImage)),
+              child: isDarkMode
+                  ? const Image(image: AssetImage(splashImageDark))
+                  : const Image(
+                      image: AssetImage(splashImage),
+                    ),
             ),
           ),
         ],

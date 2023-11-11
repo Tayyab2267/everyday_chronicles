@@ -40,6 +40,7 @@ flutter:
 
   assets:
     - assets/images/app-icon.png
+    - assets/images/icon-dark.png
     - assets/images/
     - assets/images/on_boarding_images/
     - assets/images/welcome_images/

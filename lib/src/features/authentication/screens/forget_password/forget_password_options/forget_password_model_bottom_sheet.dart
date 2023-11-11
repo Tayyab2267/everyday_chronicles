@@ -10,7 +10,7 @@ class ForgetPasswordScreen{
   static Future<dynamic> buildShowModalBottomSheet(BuildContext context) {
     return showModalBottomSheet(
       context: context,
-      shape: const RoundedRectangleBorder(),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25.0)),
       builder: (context) => Container(
         padding: const EdgeInsets.all(myDefaultSize),
         child: Column(
