@@ -18,8 +18,13 @@ const myButtonBackgroundColor = Color(0xff112034);
 // Background Colors
 const myBackgroundLightColor = Color(0xffa5ceff);
 const myBackgroundDarkColor = Color(0xff112034);
+const myBackgroundDark2Color = Color(0xff38415e);
 
 // On Boarding Screens Colors
 const myOnBoardingPage1Color = Colors.white;
 const myOnBoardingPage2Color = Color(0xfffddcdf);
 const myOnBoardingPage3Color = Color(0xffffdcbd);
+
+const myOnBoardingPage1DarkColor = Color(0xFF4D4D4D);
+const myOnBoardingPage2DarkColor = Color(0xFF2A2A2A);
+const myOnBoardingPage3DarkColor = Color(0xFF1A1A1A);

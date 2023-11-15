@@ -3,6 +3,7 @@ import 'package:everyday_chronicles/src/constants/image_strings.dart';
 import 'package:everyday_chronicles/src/constants/sizes.dart';
 import 'package:everyday_chronicles/src/constants/text_strings.dart';
 import 'package:flutter/material.dart';
+import '../../../../common_widgets/button/back_button_widget.dart';
 import '../../../../constants/colors.dart';
 import 'login_form_footer_widget.dart';
 import 'login_form_widget.dart';
@@ -26,6 +27,7 @@ class LoginScreen extends StatelessWidget {
             child: const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                BackButtonWidget(),
                 FormHeaderWidget(
                   image: myLoginImage,
                   title: myLoginTitle,
@@ -44,3 +46,4 @@ class LoginScreen extends StatelessWidget {
     );
   }
 }
+

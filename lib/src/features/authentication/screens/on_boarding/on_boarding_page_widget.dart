@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-
 import '../../../../constants/sizes.dart';
-import '../../../../utils/theme/widget_themes/text_theme.dart';
 import '../../models/model_on_boarding.dart';
 
 class OnBoardingPageWidget extends StatelessWidget {

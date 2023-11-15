@@ -1,10 +1,8 @@
-import 'package:everyday_chronicles/src/constants/colors.dart';
 import 'package:everyday_chronicles/src/features/authentication/controllers/splash_screen_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:everyday_chronicles/src/constants/image_strings.dart';
 import 'package:everyday_chronicles/src/constants/text_strings.dart';
 import 'package:get/get.dart';
-import '../../../../utils/theme/widget_themes/text_theme.dart';
 
 class SplashScreen extends StatelessWidget {
   SplashScreen({super.key});
@@ -26,7 +24,7 @@ class SplashScreen extends StatelessWidget {
         children: [
           Obx(
             () => AnimatedPositioned(
-              duration: const Duration(milliseconds: 1600),
+              duration: const Duration(milliseconds: 2000),
               bottom: splashController.animate.value ? 300 : 200,
               left: mediaQuery.size.width * 0.1,
               right: mediaQuery.size.width * 0.1,
@@ -44,7 +42,7 @@ class SplashScreen extends StatelessWidget {
           ),
           Obx(
             () => AnimatedPositioned(
-              duration: const Duration(milliseconds: 1600),
+              duration: const Duration(milliseconds: 2000),
               top: splashController.animate.value ? 120 : 80,
               left: 50,
               child: isDarkMode

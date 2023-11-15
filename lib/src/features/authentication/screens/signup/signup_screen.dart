@@ -6,6 +6,8 @@ import 'package:everyday_chronicles/src/features/authentication/screens/signup/s
 import 'package:everyday_chronicles/src/features/authentication/screens/signup/signup_form_widget.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../common_widgets/button/back_button_widget.dart';
+
 class SignupScreen extends StatelessWidget {
   const SignupScreen({super.key});
 
@@ -18,6 +20,7 @@ class SignupScreen extends StatelessWidget {
             padding: const EdgeInsets.all(myDefaultSize),
             child: const Column(
               children: [
+                BackButtonWidget(),
                 FormHeaderWidget(
                   image: mySignupImage,
                   title: mySignupTitle,

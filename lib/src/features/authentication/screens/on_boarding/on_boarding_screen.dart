@@ -1,7 +1,7 @@
 import 'package:everyday_chronicles/src/constants/colors.dart';
 import 'package:everyday_chronicles/src/features/authentication/controllers/on_boarding_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
+import 'package:get/get.dart';
 import 'package:liquid_swipe/liquid_swipe.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -25,25 +25,32 @@ class OnBoardingScreen extends StatelessWidget {
             slideIconWidget: const Icon(Icons.arrow_back_ios),
             enableSideReveal: true,
           ),
-          Positioned(
-            bottom: 60.0,
-            child: OutlinedButton(
-              onPressed: () {
-                obcontroller.animateToNextSlide();
-              },
-              style: ElevatedButton.styleFrom(
-                side: const BorderSide(color: Colors.black26),
-                shape: const CircleBorder(),
-                padding: const EdgeInsets.all(20),
-                onPrimary: Colors.white,
-              ),
-              child: Container(
-                padding: const EdgeInsets.all(20),
-                decoration: const BoxDecoration(
-                  color: myDarkColor,
-                  shape: BoxShape.circle,
+          Obx(
+            () => Visibility(
+              visible: obcontroller.currentPage.value == 2 ? true : false,
+              child: Positioned(
+                bottom: 60.0,
+                child: OutlinedButton(
+                  onPressed: () {
+                    //obcontroller.animateToNextSlide();
+                    obcontroller.openWelcomeScreen();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    side: BorderSide(color: Get.isDarkMode ? Colors.white24 : Colors.black26),
+                    shape: const CircleBorder(),
+                    padding: const EdgeInsets.all(20),
+                    //onPrimary: Colors.white,
+                    backgroundColor: Get.isDarkMode ? Colors.white24 : Colors.black26,
+                  ),
+                  child: Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: const BoxDecoration(
+                      color: myDarkColor,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(Icons.arrow_forward_ios),
+                  ),
                 ),
-                child: const Icon(Icons.arrow_forward_ios),
               ),
             ),
           ),
@@ -63,8 +70,9 @@ class OnBoardingScreen extends StatelessWidget {
               child: AnimatedSmoothIndicator(
                 activeIndex: obcontroller.currentPage.value,
                 count: 3,
-                effect: const ExpandingDotsEffect(
-                  activeDotColor: Color(0xff272727),
+                effect: ExpandingDotsEffect(
+                  activeDotColor: Get.isDarkMode? Colors.white : const Color(0xff272727),
+                  dotColor: Get.isDarkMode? Colors.white38 : Colors.black38,
                   dotHeight: 8.0,
                 ),
               ),

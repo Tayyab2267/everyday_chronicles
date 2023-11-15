@@ -1,4 +1,6 @@
+import 'package:everyday_chronicles/src/features/core/screens/home/bottom_navigation_bar_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../../../constants/sizes.dart';
 import '../../../../constants/text_strings.dart';
@@ -57,7 +59,9 @@ class LoginForm extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  Get.off( () => const BottomNavigationBarWidget());
+                },
                 child: Text(myLogin.toUpperCase()),
               ),
             ),

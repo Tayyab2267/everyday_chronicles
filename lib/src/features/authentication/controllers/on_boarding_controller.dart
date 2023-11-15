@@ -1,3 +1,7 @@
+import 'dart:ui';
+
+import 'package:everyday_chronicles/src/features/authentication/controllers/splash_screen_controller.dart';
+import 'package:everyday_chronicles/src/features/authentication/screens/welcome/welcome_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:liquid_swipe/PageHelpers/LiquidController.dart';
@@ -20,7 +24,7 @@ class OnBoardingController extends GetxController{
         title: myOnBoardingTitle1,
         subtitle: myOnBoardingSubTitle1,
         counterText: myOnBoardingCounter1,
-        bgColor: myOnBoardingPage1Color,
+        bgColor: Get.isDarkMode ? myOnBoardingPage1DarkColor : myOnBoardingPage1Color,
       ),
     ),
     OnBoardingPageWidget(
@@ -29,7 +33,7 @@ class OnBoardingController extends GetxController{
         title: myOnBoardingTitle2,
         subtitle: myOnBoardingSubTitle2,
         counterText: myOnBoardingCounter2,
-        bgColor: myOnBoardingPage2Color,
+        bgColor: Get.isDarkMode ? myOnBoardingPage2DarkColor : myOnBoardingPage2Color,
       ),
     ),
     OnBoardingPageWidget(
@@ -38,17 +42,26 @@ class OnBoardingController extends GetxController{
         title: myOnBoardingTitle3,
         subtitle: myOnBoardingSubTitle3,
         counterText: myOnBoardingCounter3,
-        bgColor: myOnBoardingPage3Color,
+        bgColor: Get.isDarkMode ? myOnBoardingPage3DarkColor : myOnBoardingPage3Color,
       ),
     ),
   ];
 
-  onPageChangedCallBack(int activePageIndex) => currentPage.value = activePageIndex;
-  skip() => controller.jumpToPage(page: 2);
-  animateToNextSlide(){
-    int nextPage = controller.currentPage+1;
-    controller.animateToPage(page: nextPage);
+  onPageChangedCallBack(int activePageIndex) {
+    currentPage.value = activePageIndex;
   }
 
+  skip() => controller.jumpToPage(page: pages.length - 1);
+
+
+  // animateToNextSlide(){
+  //   int nextPage = controller.currentPage+1;
+  //   controller.animateToPage(page: nextPage);
+  // }
+
+  openWelcomeScreen(){
+   SplashScreenController.find.setOnboardingCompleted();
+   Get.off( () => const WelcomeScreen());
+  }
 
 }

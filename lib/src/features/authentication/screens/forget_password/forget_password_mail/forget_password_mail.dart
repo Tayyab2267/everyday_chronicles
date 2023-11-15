@@ -6,6 +6,8 @@ import 'package:everyday_chronicles/src/features/authentication/screens/forget_p
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../../common_widgets/button/back_button_widget.dart';
+
 class ForgetPasswordMailScreen extends StatelessWidget {
   const ForgetPasswordMailScreen({super.key});
 
@@ -18,7 +20,8 @@ class ForgetPasswordMailScreen extends StatelessWidget {
             padding: const EdgeInsets.all(myDefaultSize),
             child: Column(
               children: [
-                const SizedBox(height: myDefaultSize * 4),
+                const BackButtonWidget(),
+                const SizedBox(height: myDefaultSize * 3),
                 const FormHeaderWidget(
                   image: myForgetPasswordImage,
                   title: myForgetPassword,
