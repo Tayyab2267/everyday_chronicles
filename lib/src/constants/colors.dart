@@ -28,3 +28,9 @@ const myOnBoardingPage3Color = Color(0xffffdcbd);
 const myOnBoardingPage1DarkColor = Color(0xFF4D4D4D);
 const myOnBoardingPage2DarkColor = Color(0xFF2A2A2A);
 const myOnBoardingPage3DarkColor = Color(0xFF1A1A1A);
+
+// Home screens colors
+const myHomeScreenBackgroundColor  = Color(0xffefefef);
+const myHomeScreenBackgroundDarkColor  = Color(0xff282828);
+const myCardBackgroundLightColor  = Colors.white;
+const myCardBackgroundDarkColor  = Color(0xFF4D4D4D);

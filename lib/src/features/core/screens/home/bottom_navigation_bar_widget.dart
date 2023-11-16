@@ -2,6 +2,8 @@ import 'package:everyday_chronicles/src/constants/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'home.dart';
+import 'home_add_screen.dart';
+import 'home_add_screen.dart';
 
 class BottomNavigationBarWidget extends StatefulWidget {
   const BottomNavigationBarWidget({super.key});
@@ -16,10 +18,9 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
   List<Widget> _buildScreen() {
     return [
       const Home(),
-      //here Replace Text with widget and then save that widget to screens folder
-      //Text("Home", style: Theme.of(context).textTheme.headlineLarge),
       Text("Chart", style: Theme.of(context).textTheme.headlineLarge),
-      Text("Add", style: Theme.of(context).textTheme.headlineLarge),
+      const HomeAddScreen(),
+      //Text("Add", style: Theme.of(context).textTheme.headlineLarge),
       Text("Insight", style: Theme.of(context).textTheme.headlineLarge),
       Text("Setting", style: Theme.of(context).textTheme.headlineLarge)
     ];
@@ -84,6 +85,7 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         //body is not home screen it is bottom navigation bar
         body: PersistentTabView(
           context,

@@ -24,6 +24,8 @@ dependencies:
   firebase_auth: ^4.14.0
   persistent_bottom_nav_bar_v2: ^4.2.8
   persistent_bottom_nav_bar: ^5.0.2
+  font_awesome_flutter: ^10.6.0
+  image_picker: ^1.0.4
 
 
 dev_dependencies:

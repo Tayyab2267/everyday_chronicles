@@ -1,5 +1,6 @@
 import 'package:everyday_chronicles/src/constants/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../../../common_widgets/cards/daily_record_card.dart';
 
@@ -9,32 +10,30 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //backgroundColor: Colors.black,
+      backgroundColor: Get.isDarkMode ? myHomeScreenBackgroundDarkColor : myHomeScreenBackgroundColor, // home screen Dark background color
+      // --- app bar start
       appBar: AppBar(
-        title: const Text("Home Screen"),
+        foregroundColor: Colors.black,
+        elevation: 2,
+        title: Text("Home Screen", style: Theme.of(context).textTheme.headlineSmall!.copyWith(color: Colors.black),),
         centerTitle: true,
         actions: <Widget>[
           IconButton(
             onPressed: () {},
-            icon: const Icon(Icons.search),
+            icon: const Icon(Icons.search, size: 20),
           ),
           IconButton(
             onPressed: () {},
-            icon: const Icon(Icons.filter_list_alt),
+            icon: const Icon(Icons.filter_list_alt, size: 20),
           ),
         ],
         backgroundColor: myBackgroundLightColor,
         leading: IconButton(
           onPressed: () {},
-          icon: const Icon(Icons.person),
-        ),
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-              //bottomLeft: Radius.circular(25),
-              //bottomRight: Radius.circular(25),
-              ),
+          icon: const Icon(Icons.person, size: 20),
         ),
       ),
+      // ----- App bar end
       body: Container(
         margin: const EdgeInsets.all(20),
         child: ListView(
