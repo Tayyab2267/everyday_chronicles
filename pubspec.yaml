@@ -26,6 +26,7 @@ dependencies:
   persistent_bottom_nav_bar: ^5.0.2
   font_awesome_flutter: ^10.6.0
   image_picker: ^1.0.4
+  line_awesome_flutter: ^2.0.0
 
 
 dev_dependencies:
@@ -49,6 +50,7 @@ flutter:
     - assets/images/app-icon.png
     - assets/images/icon-dark.png
     - assets/images/
+    - assets/images/profile/
     - assets/images/on_boarding_images/
     - assets/images/welcome_images/
     - assets/images/login_signup_images/

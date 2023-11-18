@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -56,11 +58,16 @@ class DailyRecordCard extends StatelessWidget {
                             style: Theme
                                 .of(context)
                                 .textTheme
-                                .titleLarge,
+                                .bodyLarge,
                           ),
                         ],
                       ),
-                      const SizedBox(width: 12),
+                      VerticalDivider(
+                        color: Get.isDarkMode ? Colors.white24 : Colors.grey.shade300,
+                        thickness: 2,
+                        width: 20.0,
+                      ),
+                      const SizedBox(width: 8),
                       Expanded(
                         // Wrap the Column with Expanded
                         child: Column(
@@ -72,7 +79,7 @@ class DailyRecordCard extends StatelessWidget {
                               style: Theme
                                   .of(context)
                                   .textTheme
-                                  .headlineMedium,
+                                  .headlineSmall,
                               maxLines: 1,
                             ),
                             const SizedBox(height: 5),

@@ -59,3 +59,7 @@ const String myNextText = "Next";
 const String myOtpTitle = "CO\nDE";
 const String myOtpSubTitle = "Verification";
 const String myOtpMessage = "Enter the verification code sent at ";
+
+// Filter screen texts
+const String filterTitle = "Filter & Sort";
+
