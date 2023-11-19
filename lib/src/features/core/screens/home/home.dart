@@ -87,15 +87,15 @@ class Home extends StatelessWidget {
             const SizedBox(height: 10),
             const DailyRecordCard(
               cardIcon: Icons.tag_faces,
-              cardDate: "Nov 16,\n2023",
+              cardDate: "Nov 19,\n2023",
               cardTitle: "Happy Day",
               cardSubTitle:
-                  "Just The dummy text to check the app working perfectly or not.",
+                  "Just The dummy text to check the app working perfectly or not Just The dummy text to",
               color: Colors.greenAccent,
             ),
             const DailyRecordCard(
               cardIcon: Icons.run_circle_outlined,
-              cardDate: "Nov 15,\n2023",
+              cardDate: "Nov 18,\n2023",
               cardTitle: "Walked 4km",
               cardSubTitle:
                   "Just The dummy text to check the app working perfectly or not.",
@@ -103,7 +103,7 @@ class Home extends StatelessWidget {
             ),
             const DailyRecordCard(
               cardIcon: Icons.star,
-              cardDate: "Nov 14,\n2023",
+              cardDate: "Nov 17,\n2023",
               cardTitle: "trip to Swat",
               cardSubTitle:
                   "Just The dummy text to check the app working perfectly or not.",

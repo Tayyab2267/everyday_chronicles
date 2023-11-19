@@ -60,7 +60,7 @@ class LoginForm extends StatelessWidget {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  Get.off( () => const BottomNavigationBarWidget());
+                  Get.offAll( () => const BottomNavigationBarWidget());
                 },
                 child: Text(myLogin.toUpperCase()),
               ),

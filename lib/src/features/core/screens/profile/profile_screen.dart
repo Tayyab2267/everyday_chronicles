@@ -1,6 +1,7 @@
 import 'package:everyday_chronicles/src/constants/image_strings.dart';
 import 'package:everyday_chronicles/src/constants/sizes.dart';
-import 'package:everyday_chronicles/src/features/core/screens/profile/profile_menu_widget.dart';
+import 'package:everyday_chronicles/src/constants/text_strings.dart';
+import 'package:everyday_chronicles/src/features/core/screens/setting/setting_menu_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
@@ -14,13 +15,9 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        //foregroundColor: Colors.black,
-        //elevation: 2,
         title: Text(
-          "Profile Page",
-          style: Theme.of(context)
-              .textTheme
-              .headlineSmall,
+          "Profile",
+          style: Theme.of(context).textTheme.headlineSmall,
         ),
         centerTitle: true,
         actions: [
@@ -47,66 +44,116 @@ class ProfileScreen extends StatelessWidget {
           padding: const EdgeInsets.all(20),
           child: Column(
             children: [
-              SizedBox(
-                width: 140,
-                height: 140,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(100),
-                  child: const Image(
-                    image: AssetImage(profileImage),
+              Stack(
+                children: [
+                  SizedBox(
+                    width: 120,
+                    height: 120,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(100),
+                      child: const Image(
+                        image: AssetImage(profileImage),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              const SizedBox(height: 10),
-              Text("M Awais Shafi".toUpperCase(),
-                  style: Theme.of(context).textTheme.headlineMedium),
-              Text("awaisshafi.pk@gmail.com",
-                  style: Theme.of(context).textTheme.bodyMedium),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: 200,
-                child: ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Get.isDarkMode ? Colors.white : myButtonBackgroundColor,
-                    side: BorderSide.none,
-                    shape: const StadiumBorder(),
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: Container(
+                      width: 35,
+                      height: 35,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(100),
+                        color: Colors.greenAccent,
+                      ),
+                      child: const Icon(
+                        LineAwesomeIcons.pen,
+                        color: Colors.black,
+                        size: 20,
+                      ),
+                    ),
                   ),
-                  child: const Text("Edit Profile"),
+                ],
+              ),
+              const SizedBox(height: 50),
+              Form(
+                child: Column(
+                  children: [
+                    TextFormField(
+                      //enabled: false,
+                      decoration: const InputDecoration(
+                        label: Text(myFullName),
+                        prefixIcon: Icon(LineAwesomeIcons.user),
+                      ),
+                    ),
+                    const SizedBox(height: myFormHeight - 20),
+                    TextFormField(
+                      decoration: const InputDecoration(
+                        label: Text(myEmail),
+                        prefixIcon: Icon(LineAwesomeIcons.envelope),
+                      ),
+                    ),
+                    const SizedBox(height: myFormHeight - 20),
+                    TextFormField(
+                      decoration: const InputDecoration(
+                        label: Text(myPhone),
+                        prefixIcon: Icon(LineAwesomeIcons.phone),
+                      ),
+                    ),
+                    const SizedBox(height: myFormHeight - 20),
+                    TextFormField(
+                      decoration: const InputDecoration(
+                        label: Text(myPassword),
+                        prefixIcon: Icon(LineAwesomeIcons.lock),
+                      ),
+                    ),
+                    const SizedBox(height: myFormHeight),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.greenAccent,
+                          side: BorderSide.none,
+                          shape: const StadiumBorder(),
+                        ),
+                        child: const Text(
+                          "Update Profile",
+                          style: TextStyle(color: myDarkColor),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: myFormHeight),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text.rich(
+                          TextSpan(
+                            text: "Joined Since ",
+                            style: Theme.of(context).textTheme.bodySmall,
+                            children: [
+                              TextSpan(
+                                text: "November 05, 2023",
+                                style: Theme.of(context).textTheme.titleLarge,
+                              ),
+                            ],
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {},
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.redAccent.withOpacity(0.1),
+                            elevation: 0,
+                            foregroundColor: Colors.red,
+                            shape: const StadiumBorder(),
+                            side: BorderSide.none,
+                          ),
+                          child: const Text("Delete"),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-              ),
-              const SizedBox(height: 20),
-              Divider(thickness: 2, color: Get.isDarkMode ? Colors.white24 : Colors.grey.shade200),
-              const SizedBox(height: 10),
-              // Menu
-              ProfileMenuWidget(
-                title: "Settings",
-                icon: LineAwesomeIcons.cog,
-                onPress: () {},
-              ),
-              ProfileMenuWidget(
-                title: "Language",
-                icon: LineAwesomeIcons.language,
-                onPress: () {},
-              ),
-              Divider(thickness: 2, color: Get.isDarkMode ? Colors.white24 : Colors.grey.shade200),
-              const SizedBox(height: 10),
-              ProfileMenuWidget(
-                title: "Information",
-                icon: FontAwesomeIcons.info,
-                onPress: () {},
-              ),
-              ProfileMenuWidget(
-                title: "Help & Support",
-                icon: FontAwesomeIcons.question,
-                onPress: () {},
-              ),
-              ProfileMenuWidget(
-                title: "Logout".toUpperCase(),
-                icon: FontAwesomeIcons.arrowRightFromBracket,
-                endIcon: false,
-                textColor: Colors.redAccent,
-                onPress: () {},
               ),
             ],
           ),

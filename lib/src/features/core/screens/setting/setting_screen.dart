@@ -1,11 +1,11 @@
-import 'package:everyday_chronicles/src/features/core/screens/home/home.dart';
+import 'package:everyday_chronicles/src/features/core/screens/profile/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import '../../../../constants/colors.dart';
 import '../../../../constants/image_strings.dart';
-import '../profile/profile_menu_widget.dart';
+import 'setting_menu_widget.dart';
 
 class SettingScreen extends StatelessWidget {
   const SettingScreen({super.key});
@@ -38,6 +38,7 @@ class SettingScreen extends StatelessWidget {
           child: Column(
             children: [
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   SizedBox(
                     width: 100,
@@ -55,24 +56,28 @@ class SettingScreen extends StatelessWidget {
                       Text("M Awais Shafi".toUpperCase(),
                           style: Theme.of(context).textTheme.headlineMedium),
                       Text("awaisshafi.pk@gmail.com",
-                          style: Theme.of(context).textTheme.bodyMedium),
+                          style: Theme.of(context).textTheme.bodySmall),
                     ],
                   ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              SizedBox(
-                width: 150,
-                child: ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        Get.isDarkMode ? Colors.white : myButtonBackgroundColor,
-                    side: BorderSide.none,
-                    shape: const StadiumBorder(),
+                  Container(
+                    width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(100),
+                      color: Colors.grey.withOpacity(0.1),
+                    ),
+                    child: IconButton(
+                      onPressed: () {
+                        Get.to(() => const ProfileScreen());
+                      },
+                      icon: const Icon(
+                        LineAwesomeIcons.user_edit,
+                        size: 25,
+                        color: Colors.tealAccent,
+                      ),
+                    ),
                   ),
-                  child: const Text("Edit Profile"),
-                ),
+                ],
               ),
               const SizedBox(height: 10),
               Divider(

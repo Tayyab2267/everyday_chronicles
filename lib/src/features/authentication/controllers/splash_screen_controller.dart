@@ -17,11 +17,13 @@ class SplashScreenController extends GetxController {
     bool onboardingCompleted = await _checkOnboardingStatus();
 
     // Navigate accordingly
-    if (onboardingCompleted) {
-      Get.off(() => const WelcomeScreen());
-    } else {
-      Get.off(() => const OnBoardingScreen());
-    }
+    // if (onboardingCompleted) {
+    //   Get.off(() => const WelcomeScreen());
+    // } else {
+    //   Get.off(() => const OnBoardingScreen());
+    // }
+
+    Get.off(() => const OnBoardingScreen());// delete this code after un commenting above code
   }
 
   Future<bool> _checkOnboardingStatus() async {
