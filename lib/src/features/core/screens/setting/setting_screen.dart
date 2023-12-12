@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
-import '../../../../constants/colors.dart';
 import '../../../../constants/image_strings.dart';
 import 'setting_menu_widget.dart';
 
@@ -70,10 +69,10 @@ class SettingScreen extends StatelessWidget {
                       onPressed: () {
                         Get.to(() => const ProfileScreen());
                       },
-                      icon: const Icon(
+                      icon: Icon(
                         LineAwesomeIcons.user_edit,
                         size: 25,
-                        color: Colors.tealAccent,
+                        color: Get.isDarkMode ? Colors.tealAccent : Colors.blue,
                       ),
                     ),
                   ),
@@ -98,11 +97,6 @@ class SettingScreen extends StatelessWidget {
               ProfileMenuWidget(
                 title: "Reminder",
                 icon: LineAwesomeIcons.bell,
-                onPress: () {},
-              ),
-              ProfileMenuWidget(
-                title: "Language",
-                icon: LineAwesomeIcons.language,
                 onPress: () {},
               ),
               ProfileMenuWidget(

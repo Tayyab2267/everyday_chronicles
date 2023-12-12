@@ -1,7 +1,4 @@
-import 'package:everyday_chronicles/firebase_options.dart';
-import 'package:everyday_chronicles/src/repository/authentication_repository/authentication_repository.dart';
 import 'package:everyday_chronicles/src/utils/theme/theme.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'src/features/authentication/screens/splash/splash_screen.dart';

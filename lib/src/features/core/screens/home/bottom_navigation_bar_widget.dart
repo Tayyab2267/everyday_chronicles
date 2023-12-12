@@ -1,9 +1,10 @@
 import 'package:everyday_chronicles/src/constants/colors.dart';
+import 'package:everyday_chronicles/src/features/core/screens/insight/insight_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
+import '../calender/calender_screen.dart';
 import '../setting/setting_screen.dart';
 import 'home.dart';
-import 'home_add_screen.dart';
 import 'home_add_screen.dart';
 
 class BottomNavigationBarWidget extends StatefulWidget {
@@ -19,10 +20,10 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
   List<Widget> _buildScreen() {
     return [
       Home(),
-      Text("Chart", style: Theme.of(context).textTheme.headlineLarge),
+      const CalenderScreen(),
       const HomeAddScreen(),
-      Text("Insight", style: Theme.of(context).textTheme.headlineLarge),
-      const SettingScreen()
+      InsightScreen(),
+      const SettingScreen(),
     ];
   }
 
@@ -65,14 +66,13 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
           Icons.add_chart,
           //color: myWhiteColor,
         ),
-        title: 'Insight',
+        title: 'Insights',
         inactiveColorPrimary: Colors.white,
         activeColorPrimary: Colors.greenAccent,
       ),
       PersistentBottomNavBarItem(
         icon: const Icon(
           Icons.settings,
-          //color: myWhiteColor,
         ),
         title: 'Setting',
         inactiveColorPrimary: Colors.white,
@@ -85,9 +85,8 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        //body is the bottom navigation bar
         body: PersistentTabView(
+          resizeToAvoidBottomInset: true,
           context,
           screens: _buildScreen(),
           items: _navBarItems(),

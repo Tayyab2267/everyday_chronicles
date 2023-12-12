@@ -11,6 +11,8 @@ const myCardBgColor = Color(0xfff7f6f1);
 
 // Some extra Fav colors
 const color1 = Color(0xff447055);
+const color2 = Color(0xffd0d0d0);
+const color3 = Color(0xff5d5d5d);
 
 // button colors
 const myButtonBackgroundColor = Color(0xff112034);

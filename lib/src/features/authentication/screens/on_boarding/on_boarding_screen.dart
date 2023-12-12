@@ -48,7 +48,7 @@ class OnBoardingScreen extends StatelessWidget {
                       color: myDarkColor,
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(Icons.arrow_forward_ios),
+                    child: const Icon(Icons.arrow_forward_ios, color: Colors.white),
                   ),
                 ),
               ),

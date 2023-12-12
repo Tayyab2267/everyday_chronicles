@@ -1,3 +1,4 @@
+import 'package:everyday_chronicles/src/features/core/screens/card/card_screen.dart';
 import 'package:everyday_chronicles/src/features/core/screens/profile/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -22,7 +23,7 @@ class Home extends StatelessWidget {
         foregroundColor: Colors.black,
         elevation: 2,
         title: Text(
-          "Home Screen",
+          "Home",
           style: Theme.of(context)
               .textTheme
               .headlineSmall!
@@ -57,7 +58,6 @@ class Home extends StatelessWidget {
         margin: const EdgeInsets.all(20),
         child: ListView(
           children: [
-            // Add Obx Here
             Obx(
               () => SizedBox(
                 //if(_selectedTagsController.selectedTags.length)
@@ -83,9 +83,22 @@ class Home extends StatelessWidget {
                   },
                 ),
               ),
-            ), // Empty container if selectedTags is null
+            ),
             const SizedBox(height: 10),
-            const DailyRecordCard(
+            DailyRecordCard(
+              onTap: () {
+                print("Card Clicked");
+                Get.to(
+                  () => const CardScreen(
+                    cardIcon: Icons.tag_faces,
+                    color: Colors.greenAccent,
+                    cardDate: "Nov 19, 2023",
+                    cardTitle: "Happy Day",
+                    cardSubTitle:
+                    "Just The dummy text to check the app working perfectly or not Just The dummy text to",
+                  ),
+                );
+              },
               cardIcon: Icons.tag_faces,
               cardDate: "Nov 19,\n2023",
               cardTitle: "Happy Day",

@@ -26,3 +26,13 @@ const String myForgetPasswordImage = "assets/images/forget_password_images/forge
 // Profile Screen
 const String profileImage = "assets/images/profile/awais-profile.JPG";
 
+// Card Icons Images
+const String cameraIcon = "assets/images/card_images/camera.png";
+const String clockIcon = "assets/images/card_images/clock.png";
+const String locationIcon = "assets/images/card_images/location.png";
+const String mosqueIcon = "assets/images/card_images/mosque.png";
+const String phoneIcon = "assets/images/card_images/phone.png";
+const String runningIcon = "assets/images/card_images/running.png";
+const String sleepIcon = "assets/images/card_images/sleep.png";
+const String weatherIcon = "assets/images/card_images/weather.png";
+
