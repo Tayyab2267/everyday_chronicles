@@ -234,7 +234,7 @@ class _MuslimWidgetState extends State<MuslimWidget> {
       padding: const EdgeInsets.only(left: 20, right: 20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //
+
         children: [
           Row(
             //mainAxisAlignment: MainAxisAlignment.spaceBetween,
