@@ -360,16 +360,16 @@ class CardScreen extends StatelessWidget {
               child: const FaIcon(FontAwesomeIcons.bookOpen, color: Colors.white),
             ),
           ),
-          FloatingActionButton(
-            onPressed: () {
-              if (kDebugMode) {
-                print('Floating button pressed!');
-              }
-            },
-            backgroundColor: color1,
-            tooltip: "Opens Add page",
-            child: const Icon(Icons.add, color: Colors.white),
-          ),
+          // FloatingActionButton(
+          //   onPressed: () {
+          //     if (kDebugMode) {
+          //       print('Floating button pressed!');
+          //     }
+          //   },
+          //   backgroundColor: color1,
+          //   tooltip: "Opens Add page",
+          //   child: const Icon(Icons.add, color: Colors.white),
+          // ),
         ],
       ),
     );
