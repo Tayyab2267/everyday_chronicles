@@ -1,4 +1,5 @@
 import 'package:everyday_chronicles/src/features/authentication/screens/welcome/welcome_screen.dart';
+import 'package:everyday_chronicles/src/features/core/screens/home/bottom_navigation_bar_widget.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../screens/on_boarding/on_boarding_screen.dart';
@@ -15,15 +16,14 @@ class SplashScreenController extends GetxController {
 
     // Check if onboarding has been completed
     bool onboardingCompleted = await _checkOnboardingStatus();
+    //Navigate accordingly
+    if (onboardingCompleted) {
+      Get.offAll(() => const WelcomeScreen());
+    } else {
+      Get.off(() => const OnBoardingScreen());
+    }
 
-    // Navigate accordingly
-    // if (onboardingCompleted) {
-    //   Get.off(() => const WelcomeScreen());
-    // } else {
-    //   Get.off(() => const OnBoardingScreen());
-    // }
-
-    Get.off(() => const OnBoardingScreen());// delete this code after un commenting above code
+    //Get.off(() => const OnBoardingScreen());// delete this code after un commenting above code
   }
 
   Future<bool> _checkOnboardingStatus() async {

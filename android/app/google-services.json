@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "913530079853",
+    "project_id": "everyday-chronicles",
+    "storage_bucket": "everyday-chronicles.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:913530079853:android:f9ca9b01c8ffdfed87cd64",
+        "android_client_info": {
+          "package_name": "com.example.everyday_chronicles"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtw8LSXbxBkpb1KO3tNDay8qTgsRPtT-k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

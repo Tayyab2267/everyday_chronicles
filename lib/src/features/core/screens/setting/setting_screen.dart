@@ -2,8 +2,8 @@ import 'package:everyday_chronicles/src/features/authentication/screens/login/lo
 import 'package:everyday_chronicles/src/features/core/screens/profile/profile_screen.dart';
 import 'package:everyday_chronicles/src/features/core/screens/setting/privacy_policy_screen.dart';
 import 'package:everyday_chronicles/src/features/core/screens/setting/terms_screen.dart';
+import 'package:everyday_chronicles/src/repository/authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
@@ -195,9 +195,7 @@ class _SettingScreenState extends State<SettingScreen> {
                     colorText: Colors.white,
                     mainButton: TextButton(
                       onPressed: () {
-                        Get.offAll(
-                            () => const LoginScreen()); // Close the snackbar
-                        // Add your logout logic here
+                        AuthenticationRepository.instance.logout();
                       },
                       child: Text(
                         "Confirm".toUpperCase(),

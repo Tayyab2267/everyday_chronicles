@@ -3,19 +3,16 @@ import 'package:everyday_chronicles/src/repository/authentication_repository/aut
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
-class SignUpController extends GetxController{
-  static SignUpController get instance => Get.find();
+class LogInController extends GetxController{
+  static LogInController get instance => Get.find();
 
   //TextField Controllers to get data from TextFields
-  final fullName = TextEditingController();
   final email = TextEditingController();
-  final phoneNo = TextEditingController();
   final password = TextEditingController();
-  final confirmPassword = TextEditingController();
-  
+
   // call this function from design and it will do the rest
-  void registerUser(String email, String password){
-    AuthenticationRepository.instance.createUserWithEmailAndPassword(email, password);
+  void loginUser(String email, String password){
+    AuthenticationRepository.instance.loginWithEmailAndPassword(email, password);
   }
 
 }

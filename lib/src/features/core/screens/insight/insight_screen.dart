@@ -6,7 +6,7 @@ import '../../model/mood_Line_graph_data.dart';
 import '../../model/mood_circular_graph_chart.dart';
 
 class InsightScreen extends StatefulWidget {
-  InsightScreen({super.key});
+  const InsightScreen({super.key});
 
   @override
   State<InsightScreen> createState() => _InsightScreenState();
@@ -75,7 +75,7 @@ class _InsightScreenState extends State<InsightScreen> {
                         series: <ChartSeries>[
                           LineSeries<MoodLineGraphData, int>(
                             dataLabelSettings:
-                                DataLabelSettings(isVisible: true),
+                                const DataLabelSettings(isVisible: true),
                             width: 3,
                             dataSource: _lineChartData,
                             xValueMapper: (MoodLineGraphData mood, _) =>
@@ -92,7 +92,7 @@ class _InsightScreenState extends State<InsightScreen> {
                           edgeLabelPlacement: EdgeLabelPlacement.shift,
                           maximum: 31,
                           minimum: 1,
-                          majorGridLines: MajorGridLines(width: 1),
+                          majorGridLines: const MajorGridLines(width: 1),
                         ),
                         primaryYAxis: NumericAxis(
                           title: AxisTitle(
