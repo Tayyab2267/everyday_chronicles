@@ -1,4 +1,3 @@
-import 'package:everyday_chronicles/src/features/authentication/screens/login/login_screen.dart';
 import 'package:everyday_chronicles/src/features/authentication/screens/mail_verification/mail_verification.dart';
 import 'package:everyday_chronicles/src/features/authentication/screens/welcome/welcome_screen.dart';
 import 'package:everyday_chronicles/src/features/core/screens/home/bottom_navigation_bar_widget.dart';
@@ -26,7 +25,9 @@ class AuthenticationRepository extends GetxController {
   setInitialScreen(User? user) {
     user == null
         ? Get.offAll(() => const WelcomeScreen())
-        : user.emailVerified ? Get.offAll(() => const BottomNavigationBarWidget()) : Get.offAll(() => const MailVerificationScreen() );
+        : user.emailVerified
+            ? Get.offAll(() => const BottomNavigationBarWidget())
+            : Get.offAll(() => const MailVerificationScreen());
   }
 
   // Future<void> phoneAuth(String phoneNo) async {
@@ -99,7 +100,9 @@ class AuthenticationRepository extends GetxController {
     try {
       await _auth.signInWithEmailAndPassword(email: email, password: password);
       firebaseUser.value != null
-          ? firebaseUser.value!.emailVerified ? Get.off(() => const BottomNavigationBarWidget()) : Get.off(() => const MailVerificationScreen())
+          ? firebaseUser.value!.emailVerified
+              ? Get.off(() => const BottomNavigationBarWidget())
+              : Get.off(() => const MailVerificationScreen())
           : Get.to(() => const WelcomeScreen());
 
       Get.snackbar(
@@ -130,6 +133,22 @@ class AuthenticationRepository extends GetxController {
       throw "Exception Occurs";
     }
   }
+
+  // Future<UserCredential?> signInWithGoogle() async {
+  //   try {
+  //     final GoogleSignInAccount? userAccount = await GoogleSignIn().signIn();
+  //     final GoogleSignInAuthentication? googleAuth =
+  //         await userAccount?.authentication;
+  //     final credentials = GoogleAuthProvider.credential(
+  //         accessToken: googleAuth?.accessToken, idToken: googleAuth?.idToken);
+  //     return await _auth.signInWithCredential(credentials);
+  //   } catch (e) {
+  //     if (kDebugMode) {
+  //       print("Something went wrong: $e");
+  //       return null;
+  //     }
+  //   }
+  // }
 
   Future<void> logout() async => await _auth.signOut();
 }

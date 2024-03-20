@@ -18,4 +18,15 @@ class LogInController extends GetxController{
     auth.setInitialScreen(auth.firebaseUser as User?);
   }
 
+  // Future<void> googleSignIn() async{
+  //   try{
+  //     final auth = AuthenticationRepository.instance;
+  //     await auth.signInWithGoogle();
+  //     auth.setInitialScreen(auth.firebaseUser as User?);
+  //   }catch(e){
+  //     //errror snackbar message here
+  //     print("Exception Occurs ehrerr");
+  //   }
+  // }
+
 }

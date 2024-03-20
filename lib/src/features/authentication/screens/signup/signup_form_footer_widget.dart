@@ -19,20 +19,20 @@ class SignupFormFooterWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        const Text("OR"),
-        const SizedBox(height: myFormHeight - 20),
-        SizedBox(
-          width: double.infinity,
-          child: OutlinedButton.icon(
-            icon: const Image(
-              image: AssetImage(myGoogleLogoImage),
-              width: 20.0,
-            ),
-            onPressed: () {},
-            label: const Text(mySignInWithGoogle),
-          ),
-        ),
-        const SizedBox(height: myFormHeight - 20),
+        // const Text("OR"),
+        // const SizedBox(height: myFormHeight - 20),
+        // SizedBox(
+        //   width: double.infinity,
+        //   child: OutlinedButton.icon(
+        //     icon: const Image(
+        //       image: AssetImage(myGoogleLogoImage),
+        //       width: 20.0,
+        //     ),
+        //     onPressed: () {},
+        //     label: const Text(mySignInWithGoogle),
+        //   ),
+        // ),
+        // const SizedBox(height: myFormHeight - 20),
         TextButton(
           onPressed: () {
             Navigator.pop(context);
