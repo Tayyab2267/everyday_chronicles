@@ -1,4 +1,5 @@
 import 'package:everyday_chronicles/src/features/authentication/controllers/signup_controller.dart';
+import 'package:everyday_chronicles/src/features/authentication/screens/forget_password/forget_password_otp/otp_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../constants/sizes.dart';
@@ -109,22 +110,22 @@ class _SignupFormWidgetState extends State<SignupFormWidget> {
               },
             ),
             const SizedBox(height: myFormHeight - 20),
-            TextFormField(
-              controller: signupController.phoneNo,
-              keyboardType: TextInputType.phone,
-              decoration: const InputDecoration(
-                  label: Text(myPhone),
-                  hintText: myHintPhone,
-                  prefixIcon: Icon(Icons.phone_outlined)
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter your phone number';
-                }
-                return null; // Return null if the validation is successful
-              },
-            ),
-            const SizedBox(height: myFormHeight - 20),
+            // TextFormField(
+            //   controller: signupController.phoneNo,
+            //   keyboardType: TextInputType.phone,
+            //   decoration: const InputDecoration(
+            //       label: Text(myPhone),
+            //       hintText: myHintPhone,
+            //       prefixIcon: Icon(Icons.phone_outlined)
+            //   ),
+            //   validator: (value) {
+            //     if (value == null || value.isEmpty) {
+            //       return 'Please enter your phone number';
+            //     }
+            //     return null; // Return null if the validation is successful
+            //   },
+            // ),
+            // const SizedBox(height: myFormHeight - 20),
             TextFormField(
               controller: signupController.password,
               keyboardType: TextInputType.visiblePassword,
@@ -183,6 +184,8 @@ class _SignupFormWidgetState extends State<SignupFormWidget> {
                 onPressed: () {
                   if(_formKey.currentState!.validate()){
                     SignUpController.instance.registerUser(signupController.email.text.trim(), signupController.password.text.trim());
+                    //SignUpController.instance.phoneAuthentication(signupController.phoneNo.text.trim());
+                    //Get.to(() => const OTPScreen());
                   }
                 },
                 child: Text(mySignup.toUpperCase()),

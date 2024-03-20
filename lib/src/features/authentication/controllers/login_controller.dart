@@ -1,5 +1,6 @@
 
 import 'package:everyday_chronicles/src/repository/authentication_repository/authentication_repository.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
@@ -11,8 +12,10 @@ class LogInController extends GetxController{
   final password = TextEditingController();
 
   // call this function from design and it will do the rest
-  void loginUser(String email, String password){
-    AuthenticationRepository.instance.loginWithEmailAndPassword(email, password);
+  Future<void> loginUser(String email, String password) async {
+    final auth = AuthenticationRepository.instance;
+    await auth.loginWithEmailAndPassword(email, password);
+    auth.setInitialScreen(auth.firebaseUser as User?);
   }
 
 }

@@ -63,3 +63,5 @@ const String myOtpMessage = "Enter the verification code sent at ";
 // Filter screen texts
 const String filterTitle = "Filter & Sort";
 
+const String emailVerifSubtitle = "We have just send email verification link on your email. Please check email and click on that link to verify your email address.\nIf not auto redirected after verification, click on the Continue button.";
+

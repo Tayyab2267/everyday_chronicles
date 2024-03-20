@@ -1,4 +1,5 @@
 import 'package:everyday_chronicles/src/features/authentication/screens/login/login_screen.dart';
+import 'package:everyday_chronicles/src/features/authentication/screens/mail_verification/mail_verification.dart';
 import 'package:everyday_chronicles/src/features/authentication/screens/welcome/welcome_screen.dart';
 import 'package:everyday_chronicles/src/features/core/screens/home/bottom_navigation_bar_widget.dart';
 import 'package:everyday_chronicles/src/repository/authentication_repository/exceptions/signup_email_password_failure.dart';
@@ -12,19 +13,49 @@ class AuthenticationRepository extends GetxController {
   //variables
   final _auth = FirebaseAuth.instance;
   late final Rx<User?> firebaseUser;
+  var verificationId = ''.obs;
 
   @override
   void onReady() {
     firebaseUser = Rx<User?>(_auth.currentUser);
     firebaseUser.bindStream(_auth.userChanges());
-    ever(firebaseUser, _setInitialScreen);
+    setInitialScreen(firebaseUser.value);
+    //ever(firebaseUser, _setInitialScreen);
   }
 
-  _setInitialScreen(User? user) {
+  setInitialScreen(User? user) {
     user == null
         ? Get.offAll(() => const WelcomeScreen())
-        : Get.offAll(() => const BottomNavigationBarWidget());
+        : user.emailVerified ? Get.offAll(() => const BottomNavigationBarWidget()) : Get.offAll(() => const MailVerificationScreen() );
   }
+
+  // Future<void> phoneAuth(String phoneNo) async {
+  //   await _auth.verifyPhoneNumber(
+  //       phoneNumber: phoneNo,
+  //       verificationCompleted: (credential) async {
+  //         await _auth.signInWithCredential(credential);
+  //       },
+  //       codeSent: (verificationId, resendToken) {
+  //         this.verificationId.value = verificationId;
+  //       },
+  //       codeAutoRetrievalTimeout: (verificationId) {
+  //         this.verificationId.value = verificationId;
+  //       },
+  //       verificationFailed: (e) {
+  //         if (e.code == 'invalid-phone-number') {
+  //           Get.snackbar('Error', 'The provided phone number is not valid.');
+  //         } else {
+  //           Get.snackbar('Error', 'Something went wrong. Try again.');
+  //         }
+  //       });
+  // }
+
+  // Future<bool> verifyOTP(String otp) async {
+  //   var credentials = await _auth.signInWithCredential(PhoneAuthProvider.credential(
+  //       verificationId: verificationId.value, smsCode: otp));
+  //
+  //   return credentials.user != null ? true : false;
+  // }
 
   Future<void> createUserWithEmailAndPassword(
       String email, String password) async {
@@ -32,17 +63,19 @@ class AuthenticationRepository extends GetxController {
       await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
       //firebaseUser.value != null ? Get.offAll(() => const BottomNavigationBarWidget()) : Get.to(() => const WelcomeScreen());
-      firebaseUser.value != null ? Get.offAll(() => const LoginScreen()) : Get.to(() => const WelcomeScreen());
+      //sendEmailVerification();
+      firebaseUser.value != null
+          ? Get.offAll(() => const MailVerificationScreen())
+          : Get.to(() => const WelcomeScreen());
 
       Get.snackbar(
         "Successfully",
-        "You have successfully create an account.",
+        "Verify your Email to Login. Thanks",
         snackPosition: SnackPosition.BOTTOM,
         duration: const Duration(seconds: 4),
         backgroundColor: Colors.green,
         colorText: Colors.white,
       );
-
     } on FirebaseAuthException catch (e) {
       final ex = SignUpWithEmailAndPasswordFailure.code(e.code);
       print('Firebase Auth Exception - ${ex.message}');
@@ -65,7 +98,9 @@ class AuthenticationRepository extends GetxController {
   Future<void> loginWithEmailAndPassword(String email, String password) async {
     try {
       await _auth.signInWithEmailAndPassword(email: email, password: password);
-      firebaseUser.value != null ? Get.off( () => const BottomNavigationBarWidget()) : Get.to( () => const WelcomeScreen());
+      firebaseUser.value != null
+          ? firebaseUser.value!.emailVerified ? Get.off(() => const BottomNavigationBarWidget()) : Get.off(() => const MailVerificationScreen())
+          : Get.to(() => const WelcomeScreen());
 
       Get.snackbar(
         "Successfully",
@@ -75,7 +110,6 @@ class AuthenticationRepository extends GetxController {
         backgroundColor: Colors.green,
         colorText: Colors.white,
       );
-
     } on FirebaseAuthException catch (e) {
       final ex = SignUpWithEmailAndPasswordFailure.code(e.code);
       print("FIREBASE AUTH EXCEPTION -${ex.message}");
@@ -84,6 +118,16 @@ class AuthenticationRepository extends GetxController {
       var ex = SignUpWithEmailAndPasswordFailure();
       print("EXCEPTION - ${ex.message}");
       throw ex;
+    }
+  }
+
+  Future<void> sendEmailVerification() async {
+    try {
+      await _auth.currentUser?.sendEmailVerification();
+    } on FirebaseAuthException catch (e) {
+      throw e.message.toString();
+    } catch (_) {
+      throw "Exception Occurs";
     }
   }
 

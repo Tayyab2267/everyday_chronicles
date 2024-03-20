@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
       transitionDuration: const Duration(milliseconds: 400),
       debugShowCheckedModeBanner: false,
       //home: SplashScreen(),
-      home: const CircularProgressIndicator(),
+      home: const Scaffold(body: Center(child: CircularProgressIndicator())),
     );
   }
 }
