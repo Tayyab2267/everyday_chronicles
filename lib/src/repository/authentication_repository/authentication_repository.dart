@@ -3,6 +3,7 @@ import 'package:everyday_chronicles/src/features/authentication/screens/welcome/
 import 'package:everyday_chronicles/src/features/core/screens/home/bottom_navigation_bar_widget.dart';
 import 'package:everyday_chronicles/src/repository/authentication_repository/exceptions/signup_email_password_failure.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -131,6 +132,16 @@ class AuthenticationRepository extends GetxController {
       throw e.message.toString();
     } catch (_) {
       throw "Exception Occurs";
+    }
+  }
+
+  Future<void> sendPasswordResetLink(String email) async {
+    try{
+      await _auth.sendPasswordResetEmail(email: email);
+    }catch(e){
+      if (kDebugMode) {
+        print("Error: $e");
+      }
     }
   }
 

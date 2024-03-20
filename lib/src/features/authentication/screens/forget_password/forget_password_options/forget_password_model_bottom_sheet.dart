@@ -10,8 +10,10 @@ class ForgetPasswordScreen{
   static Future<dynamic> buildShowModalBottomSheet(BuildContext context) {
     return showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25.0)),
       builder: (context) => Container(
+        height: MediaQuery.of(context).size.height * 0.4,
         padding: const EdgeInsets.all(myDefaultSize),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -31,7 +33,7 @@ class ForgetPasswordScreen{
               subTitle: myResetViaEmail,
               onTap: () {
                 Navigator.pop(context);
-                Get.to(() => const ForgetPasswordMailScreen());
+                Get.to(() => ForgetPasswordMailScreen());
               },
             ),
             const SizedBox(height: 20.0),

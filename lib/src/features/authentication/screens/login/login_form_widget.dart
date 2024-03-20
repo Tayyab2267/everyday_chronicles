@@ -125,7 +125,6 @@ class _LoginFormState extends State<LoginForm> {
                 onPressed: () {
                   //Get.offAll( () => const BottomNavigationBarWidget());
                   if(_formKey.currentState!.validate()){
-                    //SignUpController.instance.registerUser(signupController.email.text.trim(), signupController.password.text.trim());
                     LogInController.instance.loginUser(loginController.email.text.trim(), loginController.password.text.trim());
                   }
                 },
