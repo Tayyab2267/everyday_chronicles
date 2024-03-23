@@ -1,14 +1,11 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import '../../../../constants/colors.dart';
-import '../../../../constants/image_strings.dart';
 import 'circle_painter_end.dart';
-import 'card_traditional_screen.dart';
 import 'circle_painter_start.dart';
 
-class CardScreen extends StatelessWidget {
+class CardScreen extends StatefulWidget {
   const CardScreen({
     super.key,
     required this.cardIcon,
@@ -23,25 +20,37 @@ class CardScreen extends StatelessWidget {
   final Color color;
 
   @override
-  Widget build(BuildContext context) {
+  State<CardScreen> createState() => _CardScreenState();
+}
 
-    final Color timeBackgroundColor;
-    timeBackgroundColor = Get.isDarkMode? color3 : Colors.grey;
+class _CardScreenState extends State<CardScreen> {
+  // Define list of data for rows
+  final List<Map<String, dynamic>> rowData = [];
+
+  void addNewData(IconData iconData, String time, Function onPressed) {
+    setState(() {
+      rowData.add({'icon': iconData, 'time': time, 'onPressed': onPressed});
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final Color timeBackgroundColor = Get.isDarkMode ? color3 : Colors.grey;
 
     return Scaffold(
       backgroundColor: Get.isDarkMode
           ? myHomeScreenBackgroundDarkColor
           : myHomeScreenBackgroundColor,
       appBar: AppBar(
-        title: Text(cardDate),
+        title: Text(widget.cardDate),
         centerTitle: true,
         leading: Container(
           margin: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: color,
+            color: widget.color,
             borderRadius: BorderRadius.circular(50),
           ),
-          child: Icon(cardIcon, color: Colors.black),
+          child: Icon(widget.cardIcon, color: Colors.black),
         ),
       ),
       body: SafeArea(
@@ -50,11 +59,8 @@ class CardScreen extends StatelessWidget {
             width: double.infinity,
             child: Container(
               padding: const EdgeInsets.all(20),
-              decoration: const BoxDecoration(
-                //color: Colors.greenAccent,
-              ),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
                     padding: const EdgeInsets.only(top: 20),
@@ -71,260 +77,10 @@ class CardScreen extends StatelessWidget {
                       painter: CirclePainterStart(),
                     ),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const SizedBox(width: 35),
-                      const SizedBox(width: 35),
-                      const SizedBox(width: 35),
-                      Container(
-                        margin: const EdgeInsets.only(right: 10, left: 10),
-                        height: 70,
-                        width: 70,
-                        color: timeBackgroundColor,
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            const VerticalDivider(
-                              color: Colors.black,
-                              thickness: 2,
-                            ),
-                            Container(
-                              color: timeBackgroundColor,
-                              child: Text("07:00", style: Theme.of(context).textTheme.bodyMedium),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const Image(image: AssetImage(clockIcon), width: 35),
-                      const Image(image: AssetImage(phoneIcon), width: 35),
-                      const Image(image: AssetImage(weatherIcon), width: 35),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Image(image: AssetImage(cameraIcon), width: 35),
-                      const Image(image: AssetImage(phoneIcon), width: 35),
-                      const Image(image: AssetImage(runningIcon), width: 35),
-                      Container(
-                        margin: const EdgeInsets.only(right: 10, left: 10),
-                        height: 70,
-                        width: 70,
-                        color: timeBackgroundColor,
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            const VerticalDivider(
-                              color: Colors.black,
-                              thickness: 2,
-                            ),
-                            Container(
-                              color: timeBackgroundColor,
-                              child: Text("07:00", style: Theme.of(context).textTheme.bodyMedium),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 35),
-                      const SizedBox(width: 35),
-                      const SizedBox(width: 35),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const SizedBox(width: 35),
-                      const SizedBox(width: 35),
-                      Container(
-                        margin: const EdgeInsets.only(right: 10, left: 10),
-                        height: 70,
-                        width: 70,
-                        color: timeBackgroundColor,
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            const VerticalDivider(
-                              color: Colors.black,
-                              thickness: 2,
-                            ),
-                            Container(
-                              color: timeBackgroundColor,
-                              child: Text("10:00", style: Theme.of(context).textTheme.bodyMedium),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const Image(image: AssetImage(locationIcon), width: 35),
-                      const Image(image: AssetImage(phoneIcon), width: 35),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Image(image: AssetImage(runningIcon), width: 35),
-                      Container(
-                        margin: const EdgeInsets.only(right: 10, left: 10),
-                        height: 70,
-                        width: 70,
-                        color: timeBackgroundColor,
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            const VerticalDivider(
-                              color: Colors.black,
-                              thickness: 2,
-                            ),
-                            Container(
-                              color: timeBackgroundColor,
-                              child: Text("11:00", style: Theme.of(context).textTheme.bodyMedium),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 35),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const SizedBox(width: 35),
-                      Container(
-                        margin: const EdgeInsets.only(right: 10, left: 10),
-                        height: 70,
-                        width: 70,
-                        color: timeBackgroundColor,
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            const VerticalDivider(
-                              color: Colors.black,
-                              thickness: 2,
-                            ),
-                            Container(
-                              color: timeBackgroundColor,
-                              child: Text("12:30", style: Theme.of(context).textTheme.bodyMedium),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const Image(image: AssetImage(cameraIcon), width: 35),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Image(image: AssetImage(weatherIcon), width: 35),
-                      const Image(image: AssetImage(phoneIcon), width: 35),
-                      const Image(image: AssetImage(mosqueIcon), width: 35),
-                      Container(
-                        margin: const EdgeInsets.only(right: 10, left: 10),
-                        height: 70,
-                        width: 70,
-                        color: timeBackgroundColor,
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            const VerticalDivider(
-                              color: Colors.black,
-                              thickness: 2,
-                            ),
-                            Container(
-                              color: timeBackgroundColor,
-                              child: Text("02:25", style: Theme.of(context).textTheme.bodyMedium),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 35),
-                      const SizedBox(width: 35),
-                      const SizedBox(width: 35),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const SizedBox(width: 35),
-                      const SizedBox(width: 35),
-                      Container(
-                        margin: const EdgeInsets.only(right: 10, left: 10),
-                        height: 70,
-                        width: 70,
-                        color: timeBackgroundColor,
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            const VerticalDivider(
-                              color: Colors.black,
-                              thickness: 2,
-                            ),
-                            Container(
-                              color: timeBackgroundColor,
-                              child: Text("03:00", style: Theme.of(context).textTheme.bodyMedium),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const Image(image: AssetImage(locationIcon), width: 35),
-                      const Image(image: AssetImage(cameraIcon), width: 35),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Image(image: AssetImage(mosqueIcon), width: 35),
-                      const Image(image: AssetImage(phoneIcon), width: 35),
-                      Container(
-                        margin: const EdgeInsets.only(right: 10, left: 10),
-                        height: 70,
-                        width: 70,
-                        color: timeBackgroundColor,
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            const VerticalDivider(
-                              color: Colors.black,
-                              thickness: 2,
-                            ),
-                            Container(
-                              color: timeBackgroundColor,
-                              child: Text("09:00", style: Theme.of(context).textTheme.bodyMedium),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 35),
-                      const SizedBox(width: 35),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const SizedBox(width: 35),
-                      const SizedBox(width: 35),
-                      Container(
-                        margin: const EdgeInsets.only(right: 10, left: 10),
-                        height: 70,
-                        width: 70,
-                        color: timeBackgroundColor,
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            const VerticalDivider(
-                              color: Colors.black,
-                              thickness: 2,
-                            ),
-                            Container(
-                              color: timeBackgroundColor,
-                              child: Text("11:00", style: Theme.of(context).textTheme.bodyMedium),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const Image(image: AssetImage(sleepIcon), width: 35),
-                      const Image(image: AssetImage(weatherIcon), width: 35),
-                    ],
-                  ),
+                  // Dynamically generate rows using rowData list
+                  for (var data in rowData)
+                    _buildRow(data['icon'], data['time'], timeBackgroundColor,
+                        data['onPressed']),
                   Container(
                     padding: const EdgeInsets.only(bottom: 20),
                     decoration: BoxDecoration(
@@ -353,25 +109,65 @@ class CardScreen extends StatelessWidget {
             padding: const EdgeInsets.only(left: 30),
             child: FloatingActionButton(
               onPressed: () {
-                Get.to( () => const CardTraditionalScreen());
+                // Example usage when receiving a new message
+                addNewData(Icons.message, '09:00', () {
+                  //button clicked functionality here.
+                  print('Message Clicked');
+                });
+
+                // Example usage when receiving a new call
+                addNewData(Icons.call, '08:00', () {
+                  //button clicked functionality here.
+                  print('Phone Clicked');
+                });
               },
               backgroundColor: color1,
               tooltip: "Opens Traditional Page",
-              child: const FaIcon(FontAwesomeIcons.bookOpen, color: Colors.white),
+              child:
+                  const FaIcon(FontAwesomeIcons.bookOpen, color: Colors.white),
             ),
           ),
-          // FloatingActionButton(
-          //   onPressed: () {
-          //     if (kDebugMode) {
-          //       print('Floating button pressed!');
-          //     }
-          //   },
-          //   backgroundColor: color1,
-          //   tooltip: "Opens Add page",
-          //   child: const Icon(Icons.add, color: Colors.white),
-          // ),
         ],
       ),
+    );
+  }
+
+  Widget _buildRow(IconData iconData, String time, Color backgroundColor,
+      Function onPressed) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Container(
+          margin: const EdgeInsets.only(right: 10, left: 0),
+          height: 70,
+          width: 70,
+          color: backgroundColor,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              const VerticalDivider(
+                color: Colors.black,
+                thickness: 2,
+              ),
+              Container(
+                color: backgroundColor,
+                child: Text(
+                  time,
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.normal),
+                ),
+              ),
+            ],
+          ),
+        ),
+        IconButton(
+          icon: Icon(iconData),
+          onPressed: () {
+            onPressed(); // Call the provided onPressed function
+          },
+          iconSize: 30,
+        ),
+      ],
     );
   }
 }

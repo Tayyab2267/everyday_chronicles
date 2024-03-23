@@ -1,10 +1,11 @@
-import 'package:everyday_chronicles/src/features/core/screens/card/card_screen.dart';
+import 'package:everyday_chronicles/src/features/core/screens/card/card_screen_ex.dart';
 import 'package:everyday_chronicles/src/features/core/screens/profile/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../common_widgets/cards/daily_record_card.dart';
 import '../../../../constants/colors.dart';
 import '../../controllers/selected_tags_controller.dart';
+import '../card/card_screen.dart';
 import 'filter_screen.dart';
 
 class Home extends StatelessWidget {
@@ -89,7 +90,7 @@ class Home extends StatelessWidget {
               onTap: () {
                 print("Card Clicked");
                 Get.to(
-                  () => const CardScreen(
+                  () => CardScreen(
                     cardIcon: Icons.tag_faces,
                     color: Colors.greenAccent,
                     cardDate: "Nov 19, 2023",
