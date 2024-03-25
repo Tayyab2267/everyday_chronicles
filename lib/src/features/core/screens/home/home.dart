@@ -90,10 +90,10 @@ class Home extends StatelessWidget {
               onTap: () {
                 print("Card Clicked");
                 Get.to(
-                  () => CardScreen(
+                  () => const CardScreen(
                     cardIcon: Icons.tag_faces,
                     color: Colors.greenAccent,
-                    cardDate: "Nov 19, 2023",
+                    cardDate: "March 25, 2024",
                     cardTitle: "Happy Day",
                     cardSubTitle:
                     "Just The dummy text to check the app working perfectly or not Just The dummy text to",
@@ -101,7 +101,7 @@ class Home extends StatelessWidget {
                 );
               },
               cardIcon: Icons.tag_faces,
-              cardDate: "Nov 19,\n2023",
+              cardDate: "Mar 25,\n2024",
               cardTitle: "Happy Day",
               cardSubTitle:
                   "Just The dummy text to check the app working perfectly or not Just The dummy text to",

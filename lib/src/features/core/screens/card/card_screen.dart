@@ -1,6 +1,10 @@
+import 'package:everyday_chronicles/src/features/core/screens/card/card_traditional_screen.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:telephony/telephony.dart';
 import '../../../../constants/colors.dart';
 import 'circle_painter_end.dart';
 import 'circle_painter_start.dart';
@@ -27,16 +31,76 @@ class _CardScreenState extends State<CardScreen> {
   // Define list of data for rows
   final List<Map<String, dynamic>> rowData = [];
 
-  void addNewData(IconData iconData, String time, Function onPressed) {
+  void addNewData(IconData iconData, String time, String address, String body,
+      Function onPressed) {
     setState(() {
-      rowData.add({'icon': iconData, 'time': time, 'onPressed': onPressed});
+      rowData.add({
+        'icon': iconData,
+        'time': time,
+        'address': address,
+        'body': body,
+        'onPressed': onPressed
+      });
     });
   }
+
+  // message code start
+  final Telephony telephony = Telephony.instance;
+  List<SmsMessage> inboxMessages = [];
+
+  Future<void> fetchInboxMessages() async {
+    // Hardcoded date: March 25, 2024
+    DateTime date = DateTime(2024, 3, 25);
+    // Calculate the start and end of the day for the provided date
+    DateTime startDate = DateTime(date.year, date.month, date.day);
+    DateTime endDate = startDate.add(const Duration(days: 1));
+
+    List<SmsMessage> messages = await telephony.getInboxSms(
+      columns: [SmsColumn.ADDRESS, SmsColumn.BODY, SmsColumn.DATE],
+      filter: SmsFilter.where(SmsColumn.DATE)
+          .greaterThan(startDate.millisecondsSinceEpoch.toString())
+          .and(SmsColumn.DATE)
+          .lessThan(endDate.millisecondsSinceEpoch.toString()),
+      sortOrder: [
+        OrderBy(SmsColumn.DATE, sort: Sort.ASC),
+        OrderBy(SmsColumn.BODY)
+      ],
+    );
+
+    setState(() {
+      inboxMessages = messages;
+    });
+
+    for (var message in inboxMessages) {
+      String messageTime = DateFormat('HH:mm').format(
+          DateTime.fromMillisecondsSinceEpoch(
+              int.parse(message.date.toString())));
+      String messageAddress = message.address!;
+      String messageBody = message.body!;
+      addNewData(
+          Icons.message, // Icon for SMS message
+          messageTime,
+          messageAddress, // Format the date to display only time (HH:mm)
+          messageBody, // Format the date to display only time (HH:mm)
+          () {
+        // Functionality when the message row is clicked
+        if (kDebugMode) {
+          print("$messageBody: MSG Icon Clicked");
+        }
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    fetchInboxMessages();
+    super.initState();
+  }
+  // message code ends
 
   @override
   Widget build(BuildContext context) {
     final Color timeBackgroundColor = Get.isDarkMode ? color3 : Colors.grey;
-
     return Scaffold(
       backgroundColor: Get.isDarkMode
           ? myHomeScreenBackgroundDarkColor
@@ -79,8 +143,8 @@ class _CardScreenState extends State<CardScreen> {
                   ),
                   // Dynamically generate rows using rowData list
                   for (var data in rowData)
-                    _buildRow(data['icon'], data['time'], timeBackgroundColor,
-                        data['onPressed']),
+                    _buildRow(data['icon'], data['time'], data['address'],
+                        data['body'], timeBackgroundColor, data['onPressed']),
                   Container(
                     padding: const EdgeInsets.only(bottom: 20),
                     decoration: BoxDecoration(
@@ -109,17 +173,7 @@ class _CardScreenState extends State<CardScreen> {
             padding: const EdgeInsets.only(left: 30),
             child: FloatingActionButton(
               onPressed: () {
-                // Example usage when receiving a new message
-                addNewData(Icons.message, '09:00', () {
-                  //button clicked functionality here.
-                  print('Message Clicked');
-                });
-
-                // Example usage when receiving a new call
-                addNewData(Icons.call, '08:00', () {
-                  //button clicked functionality here.
-                  print('Phone Clicked');
-                });
+                Get.to(() => const CardTraditionalScreen());
               },
               backgroundColor: color1,
               tooltip: "Opens Traditional Page",
@@ -132,8 +186,8 @@ class _CardScreenState extends State<CardScreen> {
     );
   }
 
-  Widget _buildRow(IconData iconData, String time, Color backgroundColor,
-      Function onPressed) {
+  Widget _buildRow(IconData iconData, String time, String address, String body,
+      Color backgroundColor, Function onPressed) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
@@ -163,6 +217,25 @@ class _CardScreenState extends State<CardScreen> {
         IconButton(
           icon: Icon(iconData),
           onPressed: () {
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text("Close"),
+                  ),
+                ],
+                title: Text("Sender: $address\nTime: $time"),
+                contentPadding: const EdgeInsets.all(20.0),
+                content: Text(
+                  "Message: $body",
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ),
+            );
             onPressed(); // Call the provided onPressed function
           },
           iconSize: 30,
