@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:telephony/telephony.dart';
 import '../../../../constants/colors.dart';
+import 'WeatherPage.dart';
 import 'circle_painter_end.dart';
 import 'circle_painter_start.dart';
 
@@ -173,7 +174,8 @@ class _CardScreenState extends State<CardScreen> {
             padding: const EdgeInsets.only(left: 30),
             child: FloatingActionButton(
               onPressed: () {
-                Get.to(() => const CardTraditionalScreen());
+                //Get.to(() => const CardTraditionalScreen());
+                Get.to(() => const WeatherPage());
               },
               backgroundColor: color1,
               tooltip: "Opens Traditional Page",

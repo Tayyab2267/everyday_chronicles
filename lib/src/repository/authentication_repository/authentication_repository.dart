@@ -1,3 +1,4 @@
+import 'package:everyday_chronicles/src/features/authentication/screens/login/login_screen.dart';
 import 'package:everyday_chronicles/src/features/authentication/screens/mail_verification/mail_verification.dart';
 import 'package:everyday_chronicles/src/features/authentication/screens/welcome/welcome_screen.dart';
 import 'package:everyday_chronicles/src/features/core/screens/home/bottom_navigation_bar_widget.dart';
@@ -72,7 +73,7 @@ class AuthenticationRepository extends GetxController {
 
       Get.snackbar(
         "Successfully",
-        "Verify your Email to Login. Thanks",
+        "Verification email link has been sent to your email. Verify it to login.",
         snackPosition: SnackPosition.BOTTOM,
         duration: const Duration(seconds: 4),
         backgroundColor: Colors.green,
@@ -161,5 +162,8 @@ class AuthenticationRepository extends GetxController {
   //   }
   // }
 
-  Future<void> logout() async => await _auth.signOut();
+  Future<void> logout() async{
+    await _auth.signOut();
+    Get.offAll(() => const LoginScreen());
+  }
 }

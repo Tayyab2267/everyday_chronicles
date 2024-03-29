@@ -1,4 +1,3 @@
-import 'package:everyday_chronicles/src/features/authentication/screens/login/login_screen.dart';
 import 'package:everyday_chronicles/src/features/core/screens/profile/profile_screen.dart';
 import 'package:everyday_chronicles/src/features/core/screens/setting/privacy_policy_screen.dart';
 import 'package:everyday_chronicles/src/features/core/screens/setting/terms_screen.dart';
@@ -8,6 +7,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import '../../../../constants/image_strings.dart';
+import '../../../authentication/models/user_model.dart';
+import '../../controllers/profile_controller.dart';
 import 'setting_menu_widget.dart';
 
 class SettingScreen extends StatefulWidget {
@@ -18,11 +19,12 @@ class SettingScreen extends StatefulWidget {
 }
 
 class _SettingScreenState extends State<SettingScreen> {
-
   bool isMuslimVisible = false;
 
   @override
   Widget build(BuildContext context) {
+    final profileController = Get.put(ProfileController());
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -49,7 +51,7 @@ class _SettingScreenState extends State<SettingScreen> {
           child: Column(
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   SizedBox(
                     width: 100,
@@ -62,13 +64,39 @@ class _SettingScreenState extends State<SettingScreen> {
                     ),
                   ),
                   const SizedBox(width: 10),
-                  Column(
-                    children: [
-                      Text("M Awais Shafi".toUpperCase(),
-                          style: Theme.of(context).textTheme.headlineMedium),
-                      Text("awaisshafi.pk@gmail.com",
-                          style: Theme.of(context).textTheme.bodySmall),
-                    ],
+                  FutureBuilder(
+                    future: profileController.getUserData(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        String fullName = "";
+                        String email = "";
+                        if (snapshot.hasData) {
+                          UserModel user = snapshot.data as UserModel;
+                          fullName = user.fullName!;
+                          email = user.email!;
+                        }
+
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              fullName.toUpperCase(),
+                              style: Theme.of(context).textTheme.headlineSmall,
+                            ),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.4,
+                              // Set width to maximum available width
+                              child: Text(
+                                email,
+                                style: Theme.of(context).textTheme.bodySmall,
+                              ),
+                            ),
+                          ],
+                        );
+                      } else {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                    },
                   ),
                   Container(
                     width: 50,
@@ -113,8 +141,7 @@ class _SettingScreenState extends State<SettingScreen> {
               ProfileMenuWidget(
                 title: "Change theme",
                 icon: LineAwesomeIcons.image,
-                onPress: () {
-                },
+                onPress: () {},
               ),
               ProfileMenuWidget(
                 title: "Muslim",
@@ -133,6 +160,7 @@ class _SettingScreenState extends State<SettingScreen> {
                   thickness: 2,
                   color:
                       Get.isDarkMode ? Colors.white24 : Colors.grey.shade200),
+
               /// Document section below
               ///
               const SizedBox(height: 10),
@@ -216,14 +244,15 @@ class _SettingScreenState extends State<SettingScreen> {
 }
 
 class MuslimWidget extends StatefulWidget {
-  const MuslimWidget({super.key, });
+  const MuslimWidget({
+    super.key,
+  });
 
   @override
   State<MuslimWidget> createState() => _MuslimWidgetState();
 }
 
 class _MuslimWidgetState extends State<MuslimWidget> {
-
   bool isMuslim = false;
 
   @override
@@ -232,6 +261,7 @@ class _MuslimWidgetState extends State<MuslimWidget> {
       padding: const EdgeInsets.only(left: 20, right: 20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
         ///check internet
         children: [
           Row(
@@ -239,12 +269,15 @@ class _MuslimWidgetState extends State<MuslimWidget> {
             children: [
               const Icon(Icons.mosque_outlined),
               const SizedBox(width: 20),
-              Text("Are you Muslim?", style: Theme.of(context).textTheme.titleMedium,),
+              Text(
+                "Are you Muslim?",
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
             ],
           ),
           Switch(
             value: isMuslim,
-            onChanged: (value){
+            onChanged: (value) {
               setState(() {
                 isMuslim = value;
               });
@@ -257,7 +290,4 @@ class _MuslimWidgetState extends State<MuslimWidget> {
       ),
     );
   }
-
 }
-
-

@@ -1,4 +1,5 @@
 import 'package:everyday_chronicles/src/features/authentication/controllers/signup_controller.dart';
+import 'package:everyday_chronicles/src/features/authentication/models/user_model.dart';
 import 'package:everyday_chronicles/src/features/authentication/screens/forget_password/forget_password_otp/otp_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -13,8 +14,8 @@ class SignupFormWidget extends StatefulWidget {
   @override
   State<SignupFormWidget> createState() => _SignupFormWidgetState();
 }
-class _SignupFormWidgetState extends State<SignupFormWidget> {
 
+class _SignupFormWidgetState extends State<SignupFormWidget> {
   final signupController = Get.put(SignUpController());
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -80,8 +81,7 @@ class _SignupFormWidgetState extends State<SignupFormWidget> {
               decoration: const InputDecoration(
                   label: Text(myFullName),
                   hintText: myHintFullName,
-                  prefixIcon: Icon(Icons.person_outline_rounded)
-              ),
+                  prefixIcon: Icon(Icons.person_outline_rounded)),
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Please enter your full name';
@@ -96,14 +96,14 @@ class _SignupFormWidgetState extends State<SignupFormWidget> {
               decoration: const InputDecoration(
                   label: Text(myEmail),
                   hintText: myHintEmail,
-                  prefixIcon: Icon(Icons.email_outlined)
-              ),
+                  prefixIcon: Icon(Icons.email_outlined)),
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Please enter your email address';
                 }
                 // Use a regular expression to check if the entered text is a valid email address
-                if (!RegExp(r'^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$').hasMatch(value)) {
+                if (!RegExp(r'^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$')
+                    .hasMatch(value)) {
                   return 'Please enter a valid email address';
                 }
                 return null; // Return null if the validation is successful
@@ -129,7 +129,8 @@ class _SignupFormWidgetState extends State<SignupFormWidget> {
             TextFormField(
               controller: signupController.password,
               keyboardType: TextInputType.visiblePassword,
-              obscureText: !passwordVisible, // Hide the password if _passwordVisible is false
+              obscureText: !passwordVisible,
+              // Hide the password if _passwordVisible is false
               decoration: buildPasswordInputDecoration(),
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -165,7 +166,7 @@ class _SignupFormWidgetState extends State<SignupFormWidget> {
               obscureText: !confirmPasswordVisible,
               // Hide the confirm password if _confirmPasswordVisible is false
               decoration:
-              buildConfirmPasswordInputDecoration(confirmPasswordVisible),
+                  buildConfirmPasswordInputDecoration(confirmPasswordVisible),
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Please enter the confirm password';
@@ -182,10 +183,17 @@ class _SignupFormWidgetState extends State<SignupFormWidget> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  if(_formKey.currentState!.validate()){
-                    SignUpController.instance.registerUser(signupController.email.text.trim(), signupController.password.text.trim());
+                  if (_formKey.currentState!.validate()) {
+                    //SignUpController.instance.registerUser(signupController.email.text.trim(), signupController.password.text.trim());
                     //SignUpController.instance.phoneAuthentication(signupController.phoneNo.text.trim());
                     //Get.to(() => const OTPScreen());
+
+                    final user = UserModel(
+                      fullName: signupController.fullName.text.trim(),
+                      email: signupController.email.text.trim(),
+                      password: signupController.password.text.trim(),
+                    );
+                    SignUpController.instance.createUser(user);
                   }
                 },
                 child: Text(mySignup.toUpperCase()),
