@@ -127,6 +127,7 @@ class _CardScreenState extends State<CardScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // shows circle pointer start
                   Container(
                     padding: const EdgeInsets.only(top: 20),
                     decoration: BoxDecoration(
@@ -144,8 +145,15 @@ class _CardScreenState extends State<CardScreen> {
                   ),
                   // Dynamically generate rows using rowData list
                   for (var data in rowData)
-                    _buildRow(data['icon'], data['time'], data['address'],
-                        data['body'], timeBackgroundColor, data['onPressed']),
+                    _buildRow(
+                      data['icon'],
+                      data['time'],
+                      data['address'],
+                      data['body'],
+                      timeBackgroundColor,
+                      data['onPressed'],
+                    ),
+                  // shows circle end pointer
                   Container(
                     padding: const EdgeInsets.only(bottom: 20),
                     decoration: BoxDecoration(

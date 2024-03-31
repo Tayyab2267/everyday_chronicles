@@ -1,6 +1,7 @@
 import 'package:everyday_chronicles/src/repository/authentication_repository/authentication_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:workmanager/workmanager.dart';
 import '../../../repository/user_repository/user_repository.dart';
 import '../../authentication/models/user_model.dart';
 

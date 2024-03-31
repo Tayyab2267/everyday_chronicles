@@ -7,6 +7,50 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:workmanager/workmanager.dart';
+
+// String getCurrentDate() {
+//   DateTime now = DateTime.now();
+//   String formattedDate = '${now.day} ${now.month} ${now.year} ${now.hour}:${now.minute}';
+//   return formattedDate;
+// }
+
+// callbackDispatcher function used to execute task.
+// void callbackDispatcher() {
+//   Workmanager().executeTask((taskName, inputData) async {
+//     // here I used switch statement because we have multiple tasks to run in background.
+//     String emailBox = inputData?['string'];
+//     switch (taskName) {
+//       case 'task_one_create_dummy_day_data':
+//         print("\n\n\t ........................................\n\n");
+//         print("\n\n\t ............. Task no 01 ................\n\n");
+//         print("\n\n\t ............. $emailBox ................\n\n");
+//         print("\n\n\t ........................................\n\n");
+//
+//         // create dummy list for Hive Day Data
+//         List<dynamic> dummyList = [
+//           Icons.sentiment_satisfied,
+//           "Title Of Day",
+//           "Subtitle which is dummy text of the day. it will change later when a user will complete its day."
+//         ];
+//
+//         //open existing user HiveBox
+//         var currentUserHiveBox = await Hive.openBox(emailBox);
+//         print("Box  created");
+//         final myBox = Hive.box(emailBox);
+//         print("Box opened");
+//         myBox.put(getCurrentDate, dummyList);
+//         print("Box put");
+//         print(myBox.get(getCurrentDate));
+//         print("Box get");
+//         break;
+//
+//       default:
+//     }
+//     return Future.value(true);
+//   });
+// }
 
 class AuthenticationRepository extends GetxController {
   static AuthenticationRepository get instance => Get.find();
@@ -24,12 +68,22 @@ class AuthenticationRepository extends GetxController {
     //ever(firebaseUser, _setInitialScreen);
   }
 
-  setInitialScreen(User? user) {
-    user == null
-        ? Get.offAll(() => const WelcomeScreen())
-        : user.emailVerified
-            ? Get.offAll(() => const BottomNavigationBarWidget())
-            : Get.offAll(() => const MailVerificationScreen());
+  setInitialScreen(User? user) async {
+    if(user == null){
+      Get.offAll(() => const WelcomeScreen());
+    } else {
+      if(user.emailVerified){
+        Get.offAll(() => const BottomNavigationBarWidget());
+      } else {
+        Get.offAll(() => const MailVerificationScreen());
+      }
+    }
+
+    // user == null
+    //     ? Get.offAll(() => const WelcomeScreen())
+    //     : user.emailVerified
+    //         ? Get.offAll(() => const BottomNavigationBarWidget())
+    //         : Get.offAll(() => const MailVerificationScreen());
   }
 
   // Future<void> phoneAuth(String phoneNo) async {
@@ -101,20 +155,58 @@ class AuthenticationRepository extends GetxController {
   Future<void> loginWithEmailAndPassword(String email, String password) async {
     try {
       await _auth.signInWithEmailAndPassword(email: email, password: password);
-      firebaseUser.value != null
-          ? firebaseUser.value!.emailVerified
-              ? Get.off(() => const BottomNavigationBarWidget())
-              : Get.off(() => const MailVerificationScreen())
-          : Get.to(() => const WelcomeScreen());
+      if (firebaseUser.value != null) {
+        if (firebaseUser.value!.emailVerified) {
 
-      Get.snackbar(
-        "Successfully",
-        "Log In Successfully",
-        snackPosition: SnackPosition.BOTTOM,
-        duration: const Duration(seconds: 4),
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
+          // Hive.openBox(email) creates a new HiveBox
+          var currentUserHiveBox = await Hive.openBox(email);
+          print("Hive Box is created\nName: $email");
+
+          //WorkManager background service initialization to run callbackDispatcher function
+          // await Workmanager().initialize(
+          //   callbackDispatcher,
+          //   // isInDebugMode true means it will shows Notification on mobile
+          //   // to confirm that functions work properly
+          //   isInDebugMode: true,
+          // );
+
+          // Background service to create and store dummy day data
+          // in the Hive database everyday
+          // await Workmanager().registerPeriodicTask(
+          //   'task_one_create_dummy_day_data',
+          //   'task_one_create_dummy_day_data',
+          //   frequency: const Duration(minutes: 16),
+          //   inputData: {
+          //     'string': email,
+          //   },
+          // );
+
+
+          // Workmanager().cancelAll();
+
+          // await Workmanager().registerOneOffTask(
+          //   uniqueId,
+          //   task,
+          //   initialDelay: const Duration(seconds: 10),
+          // );
+
+          // Open home Screen
+          Get.off(() => const BottomNavigationBarWidget());
+          // Print message to screen
+          Get.snackbar(
+            "Successfully",
+            "Log In Successfully",
+            snackPosition: SnackPosition.BOTTOM,
+            duration: const Duration(seconds: 4),
+            backgroundColor: Colors.green,
+            colorText: Colors.white,
+          );
+        } else {
+          Get.off(() => const MailVerificationScreen());
+        }
+      } else {
+        Get.to(() => const WelcomeScreen());
+      }
     } on FirebaseAuthException catch (e) {
       final ex = SignUpWithEmailAndPasswordFailure.code(e.code);
       print("FIREBASE AUTH EXCEPTION -${ex.message}");
@@ -137,9 +229,9 @@ class AuthenticationRepository extends GetxController {
   }
 
   Future<void> sendPasswordResetLink(String email) async {
-    try{
+    try {
       await _auth.sendPasswordResetEmail(email: email);
-    }catch(e){
+    } catch (e) {
       if (kDebugMode) {
         print("Error: $e");
       }
@@ -162,7 +254,7 @@ class AuthenticationRepository extends GetxController {
   //   }
   // }
 
-  Future<void> logout() async{
+  Future<void> logout() async {
     await _auth.signOut();
     Get.offAll(() => const LoginScreen());
   }

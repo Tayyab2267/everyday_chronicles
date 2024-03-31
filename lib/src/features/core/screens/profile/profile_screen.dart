@@ -101,6 +101,8 @@ class ProfileScreen extends StatelessWidget {
                             ),
                             const SizedBox(height: myFormHeight - 20),
                             TextFormField(
+                              enabled: false,
+                              style: Theme.of(context).textTheme.titleSmall,
                               controller: email,
                               decoration: const InputDecoration(
                                 label: Text(myEmail),
