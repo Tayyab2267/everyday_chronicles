@@ -10,7 +10,7 @@ import '../card/card_screen.dart';
 import 'filter_screen.dart';
 
 class Home extends StatefulWidget {
-  Home({super.key});
+  const Home({super.key});
 
   @override
   State<Home> createState() => _HomeState();
@@ -20,13 +20,13 @@ class _HomeState extends State<Home> {
   final SelectedTagsController _selectedTagsController =
       Get.put(SelectedTagsController());
 
-  final _backServiceCont = Get.put(BackgroundServiceController());
+  //final _backServiceCont = Get.put(BackgroundServiceController());
 
-  @override
-  void initState() {
-    super.initState();
-    _backServiceCont.createDummyDayDataService();
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   //_backServiceCont.createDummyDayDataServiceFunction();
+  // }
 
   // List of data for each DailyRecordCard
   final List<Map<String, dynamic>> dailyRecords = [

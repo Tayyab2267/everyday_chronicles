@@ -7,8 +7,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:workmanager/workmanager.dart';
+
+import '../../features/core/controllers/background_service_controller.dart';
 
 // String getCurrentDate() {
 //   DateTime now = DateTime.now();
@@ -158,37 +159,15 @@ class AuthenticationRepository extends GetxController {
       if (firebaseUser.value != null) {
         if (firebaseUser.value!.emailVerified) {
 
+          ///change hive code into sqflite code
           // Hive.openBox(email) creates a new HiveBox
-          var currentUserHiveBox = await Hive.openBox(email);
-          print("Hive Box is created\nName: $email");
-
-          //WorkManager background service initialization to run callbackDispatcher function
-          // await Workmanager().initialize(
-          //   callbackDispatcher,
-          //   // isInDebugMode true means it will shows Notification on mobile
-          //   // to confirm that functions work properly
-          //   isInDebugMode: true,
-          // );
-
-          // Background service to create and store dummy day data
-          // in the Hive database everyday
-          // await Workmanager().registerPeriodicTask(
-          //   'task_one_create_dummy_day_data',
-          //   'task_one_create_dummy_day_data',
-          //   frequency: const Duration(minutes: 16),
-          //   inputData: {
-          //     'string': email,
-          //   },
-          // );
-
-
-          // Workmanager().cancelAll();
-
-          // await Workmanager().registerOneOffTask(
-          //   uniqueId,
-          //   task,
-          //   initialDelay: const Duration(seconds: 10),
-          // );
+          // await Hive.initFlutter();
+          // var box = await Hive.openBox(email);
+          // print("Hive Box is created\nName: ${email.toString().trim()}");
+          /// here
+          /// /////////////////////////////
+          /// ///////////////////////////
+          createDummyDayDataServiceFunction();
 
           // Open home Screen
           Get.off(() => const BottomNavigationBarWidget());
@@ -255,7 +234,38 @@ class AuthenticationRepository extends GetxController {
   // }
 
   Future<void> logout() async {
+    // this will cancel all background services
+    // because background service store data in current user's local DB
+    // if user is logged out then we don't have to store data.
+    Workmanager().cancelAll();
     await _auth.signOut();
     Get.offAll(() => const LoginScreen());
   }
+
+
+  Future<void> createDummyDayDataServiceFunction() async {
+    print("\t ---------> createDummyDayDataService() function called");
+    // background service code
+    await Workmanager().registerPeriodicTask(
+      'task_one_create_dummy_data_service',
+      'task_one_create_dummy_data_service', // This is task_name used in callbackDispatcher in Main.dart
+      inputData: {
+        'email': _auth.currentUser?.email,
+      },
+      //input data send current logged in user email
+      initialDelay: const Duration(seconds: 5),
+      frequency: const Duration(minutes: 15),
+    );
+  }
+  String getCurrentDate() {
+    DateTime now = DateTime.now();
+    String formattedDate = '${now.day} ${now.month} ${now.year} ${now.hour}:${now.minute}';
+    return formattedDate;
+  }
+  String getUserEmail() {
+    final email = _auth.currentUser?.email;
+    print("\t ----> getUserEmail() returns Email: ${email.toString()}");
+    return email.toString();
+  }
+
 }
