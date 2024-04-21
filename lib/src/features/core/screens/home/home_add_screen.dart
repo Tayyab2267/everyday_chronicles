@@ -1,9 +1,11 @@
-import 'dart:io';
+import 'package:everyday_chronicles/src/features/core/controllers/sql_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import '../../../../constants/colors.dart';
+import 'bottom_navigation_bar_widget.dart';
 
 class HomeAddScreen extends StatefulWidget {
   const HomeAddScreen({super.key});
@@ -13,27 +15,53 @@ class HomeAddScreen extends StatefulWidget {
 }
 
 class _HomeAddScreenState extends State<HomeAddScreen> {
-  final ImagePicker imagePicker = ImagePicker();
-  List<XFile> imageFileList = [];
+  String selectedMood = 'fantastic'; // Variable to store the selected mood
+  late String subtitle;
 
-  void selectImages() async {
-    final List<XFile> selectedImages = await imagePicker.pickMultiImage();
-    if (selectedImages.isNotEmpty) {
-      imageFileList.addAll(selectedImages);
+  @override
+  void initState() {
+    super.initState();
+    print("--->> check 1");
+    fetchData(); // Call fetchData without awaiting
+    print("--->> check 2");
+  }
+
+  Future<void> fetchData() async {
+    DateTime now = DateTime.now();
+    String presentDate = DateFormat('MMM dd, yyyy').format(now).toString();
+
+    final data = await SQLHelper.getItemByDate(presentDate);
+    print(" ---> presentDate = $presentDate");
+    if (data.isNotEmpty) {
+      setState(() {
+        selectedMood = data[0]['icon'];
+        subtitle = data[0]['subtitle'];
+      });
+    } else {
+      setState(() {
+        subtitle = '';
+        return;
+      });
     }
-    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
+    // Get the current date
+    DateTime now = DateTime.now();
+    // Format the date as "Month Date, Year"
+    String presentDate = DateFormat('MMM dd, yyyy').format(now).toString();
+
     return Scaffold(
       //backgroundColor: myHomeScreenBackgroundColor,
-      backgroundColor: Get.isDarkMode ? myHomeScreenBackgroundDarkColor : myHomeScreenBackgroundColor, // home screen Dark background color
+      backgroundColor: Get.isDarkMode
+          ? myHomeScreenBackgroundDarkColor
+          : myHomeScreenBackgroundColor, // home screen Dark background color
       appBar: AppBar(
         foregroundColor: Colors.black,
         //elevation: 2,
         title: Text(
-          "Nov 16, 2023",
+          presentDate,
           style: Theme.of(context)
               .textTheme
               .headlineSmall!
@@ -42,13 +70,30 @@ class _HomeAddScreenState extends State<HomeAddScreen> {
         centerTitle: true,
         actions: <Widget>[
           IconButton(
-            onPressed: () {},
+            onPressed: () async {
+              final existingItem = await SQLHelper.getItemByDate(presentDate);
+              if (existingItem.isNotEmpty) {
+                await SQLHelper.updateItemByDate(
+                    presentDate,
+                    selectedMood.toString(),
+                    subtitle.substring(0, 10),
+                    subtitle.toString());
+              } else {
+                await SQLHelper.createItem(presentDate, selectedMood.toString(),
+                    subtitle.substring(0, 10), subtitle.toString());
+              }
+
+              Get.offAll(() => const BottomNavigationBarWidget());
+            },
             icon: const FaIcon(FontAwesomeIcons.check, size: 20),
           ),
         ],
         backgroundColor: myBackgroundLightColor,
         leading: IconButton(
-          onPressed: () {},
+          onPressed: () {
+            print("Button Clicked");
+            Get.offAll(() => const BottomNavigationBarWidget());
+          },
           icon: const FaIcon(FontAwesomeIcons.xmark, size: 20),
         ),
       ),
@@ -61,11 +106,13 @@ class _HomeAddScreenState extends State<HomeAddScreen> {
               // 1. Mood
               Material(
                 elevation: 4,
-                shadowColor: Get.isDarkMode ? Colors.black : Colors.white, 
+                shadowColor: Get.isDarkMode ? Colors.black : Colors.white,
                 borderRadius: BorderRadius.circular(10.0),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Get.isDarkMode ? myCardBackgroundDarkColor : myCardBackgroundLightColor,
+                    color: Get.isDarkMode
+                        ? myCardBackgroundDarkColor
+                        : myCardBackgroundLightColor,
                     borderRadius: BorderRadius.circular(
                         10.0), // Adjust the border radius as needed
                   ),
@@ -85,31 +132,94 @@ class _HomeAddScreenState extends State<HomeAddScreen> {
                         children: [
                           Container(
                             decoration: BoxDecoration(
-                              color: Colors.green,
+                              color: selectedMood == 'fantastic'
+                                  ? Colors.green
+                                  : null,
                               borderRadius: BorderRadius.circular(50),
                             ),
                             child: IconButton(
-                              icon: const FaIcon(FontAwesomeIcons.faceLaughBeam,
+                              icon: const FaIcon(
+                                FontAwesomeIcons.faceLaughBeam,
                                 color: Colors.white,
                               ),
-                              onPressed: () {},
+                              onPressed: () {
+                                setState(() {
+                                  selectedMood = 'fantastic';
+                                });
+                              },
                             ),
                           ),
-                          IconButton(
-                            onPressed: () {},
-                            icon: const FaIcon(FontAwesomeIcons.faceSmile),
+                          Container(
+                            decoration: BoxDecoration(
+                              color:
+                                  selectedMood == 'happy' ? Colors.green : null,
+                              borderRadius: BorderRadius.circular(50),
+                            ),
+                            child: IconButton(
+                              icon: const FaIcon(
+                                FontAwesomeIcons.faceSmile,
+                                color: Colors.white,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  selectedMood = 'happy';
+                                });
+                              },
+                            ),
                           ),
-                          IconButton(
-                            onPressed: () {},
-                            icon: const FaIcon(FontAwesomeIcons.faceMeh),
+                          Container(
+                            decoration: BoxDecoration(
+                              color:
+                                  selectedMood == 'fine' ? Colors.green : null,
+                              borderRadius: BorderRadius.circular(50),
+                            ),
+                            child: IconButton(
+                              icon: const FaIcon(
+                                FontAwesomeIcons.faceMeh,
+                                color: Colors.white,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  selectedMood = 'fine';
+                                });
+                              },
+                            ),
                           ),
-                          IconButton(
-                            onPressed: () {},
-                            icon: const FaIcon(FontAwesomeIcons.faceSadTear),
+                          Container(
+                            decoration: BoxDecoration(
+                              color:
+                                  selectedMood == 'sad' ? Colors.green : null,
+                              borderRadius: BorderRadius.circular(50),
+                            ),
+                            child: IconButton(
+                              icon: const FaIcon(
+                                FontAwesomeIcons.faceSadTear,
+                                color: Colors.white,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  selectedMood = 'sad';
+                                });
+                              },
+                            ),
                           ),
-                          IconButton(
-                            onPressed: () {},
-                            icon: const FaIcon(FontAwesomeIcons.faceAngry),
+                          Container(
+                            decoration: BoxDecoration(
+                              color:
+                                  selectedMood == 'worst' ? Colors.green : null,
+                              borderRadius: BorderRadius.circular(50),
+                            ),
+                            child: IconButton(
+                              icon: const FaIcon(
+                                FontAwesomeIcons.faceAngry,
+                                color: Colors.white,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  selectedMood = 'worst';
+                                });
+                              },
+                            ),
                           ),
                         ],
                       ),
@@ -121,11 +231,13 @@ class _HomeAddScreenState extends State<HomeAddScreen> {
               // 2. Write
               Material(
                 elevation: 4,
-                shadowColor: Get.isDarkMode ? Colors.black : Colors.white, 
+                shadowColor: Get.isDarkMode ? Colors.black : Colors.white,
                 borderRadius: BorderRadius.circular(10.0),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Get.isDarkMode ? myCardBackgroundDarkColor : myCardBackgroundLightColor,
+                    color: Get.isDarkMode
+                        ? myCardBackgroundDarkColor
+                        : myCardBackgroundLightColor,
                     borderRadius: BorderRadius.circular(
                         10.0), // Adjust the border radius as needed
                   ),
@@ -143,12 +255,22 @@ class _HomeAddScreenState extends State<HomeAddScreen> {
                       const SizedBox(height: 10.0),
                       TextFormField(
                         keyboardType: TextInputType.text,
-                        maxLines: 4,
+                        maxLines: 12,
                         style: TextStyle(
-                          fontSize: 15.0,
+                          fontSize: 18.0,
                           fontWeight: FontWeight.normal,
-                          color: Get.isDarkMode ? Colors.white : Colors.grey.shade700,
+                          color: Get.isDarkMode
+                              ? Colors.white
+                              : Colors.grey.shade700,
                         ),
+                        initialValue: subtitle,
+                        // Set the initial value to the value of subtitle
+                        onChanged: (value) {
+                          // Update the description variable when text changes
+                          setState(() {
+                            subtitle = value;
+                          });
+                        },
                         decoration: const InputDecoration(
                           hintText: "Type your daily doing in it...",
                           border: OutlineInputBorder(),
@@ -159,105 +281,6 @@ class _HomeAddScreenState extends State<HomeAddScreen> {
                 ),
               ),
               const SizedBox(height: 20.0),
-              // 3. Photos
-              Material(
-                elevation: 4,
-                shadowColor: Get.isDarkMode ? Colors.black : Colors.white, 
-                borderRadius: BorderRadius.circular(10.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Get.isDarkMode ? myCardBackgroundDarkColor : myCardBackgroundLightColor,
-                    borderRadius: BorderRadius.circular(
-                        10.0), // Adjust the border radius as needed
-                  ),
-                  padding: const EdgeInsets.all(12.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text("Your photos",
-                          style: Theme.of(context).textTheme.titleLarge),
-                      Divider(
-                        color: Colors.grey.shade300,
-                        thickness: 2,
-                        height: 20.0,
-                      ),
-                      const SizedBox(height: 10.0),
-                      SizedBox(
-                        height: 100.0, // Adjust the height as needed
-                        child: GridView.builder(
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 3,
-                            crossAxisSpacing: 4,
-                            mainAxisSpacing: 4,
-                          ),
-                          itemCount: imageFileList.length,
-                          itemBuilder: (context, index) {
-                            return Image.file(File(imageFileList[index].path));
-                          },
-                        ),
-                      ),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: IconButton(
-                          onPressed: () {
-                            selectImages();
-                          },
-                          icon: const Icon(Icons.add_photo_alternate, size: 35),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20.0),
-              // 4. Recording
-              Material(
-                elevation: 4,
-                shadowColor: Get.isDarkMode ? Colors.black : Colors.white, 
-                borderRadius: BorderRadius.circular(10.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Get.isDarkMode ? myCardBackgroundDarkColor : myCardBackgroundLightColor,
-                    borderRadius: BorderRadius.circular(
-                        10.0), // Adjust the border radius as needed
-                  ),
-                  padding: const EdgeInsets.all(12.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text("Record Audio",
-                          style: Theme.of(context).textTheme.titleLarge),
-                      Divider(
-                        color: Colors.grey.shade300,
-                        thickness: 2,
-                        height: 20.0,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              color: Colors.blue,
-                              borderRadius: BorderRadius.circular(50),
-                            ),
-                            child: IconButton(
-                              icon: const Icon(
-                                Icons.mic,
-                                size: 30,
-                                color: Colors.white,
-                              ),
-                              onPressed: () {},
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              //const SizedBox(height: 20.0),
             ],
           ),
         ),

@@ -1,27 +1,41 @@
-import 'package:flutter/material.dart';
+import 'dart:convert';
+
+import 'package:everyday_chronicles/src/features/core/controllers/sql_helper.dart';
+import 'package:everyday_chronicles/src/features/core/controllers/weather_controller.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class BackgroundServiceController extends GetxController {
   static BackgroundServiceController get instance => Get.find();
 
-  Future<void> taskOneCreateDummyDayDataService(String email) async {
+  final WeatherController _weatherController = WeatherController();
 
-    //create dummy list for Hive Day Data
-    List<dynamic> dummyList = [
-      Icons.sentiment_satisfied,
-      "Title Of Day",
-      "Subtitle which is dummy text of the day. it will change later when a user will complete its day."
-    ];
+  Future<void> taskOneCreateDummyDayDataService() async {
+    SQLHelper.createItem(getCurrentDate(), "fantastic", "Title of the day",
+        "This is the dummy text. this text will be changed after 11:59 when your through out day will be fetched");
+  }
 
-    /// Add sqflite code here
-    /// /////////////////////////////
-    /// ///////////////////////////
+  Future<void> taskTwoFetchWeatherConditionService() async {
+    List<dynamic> weatherData = await _weatherController.fetchWeatherData();
+    String weatherDataString = listToJson(weatherData);
+    //String weatherDataString = listToJson(weatherData);
+    SQLHelper.updateItemWeatherByDate(getCurrentDate(), weatherDataString);
+  }
+
+  /// Function to convert a list of objects to a JSON string
+  String listToJson(List<dynamic> list) {
+    return jsonEncode(list);
+  }
+  /// Function to convert a JSON string to a list of objects
+  List<dynamic> jsonToList(String json) {
+    return jsonDecode(json);
   }
 
   String getCurrentDate() {
+    // Get the current date
     DateTime now = DateTime.now();
-    String formattedDate =
-        '${now.day} ${now.month} ${now.year} ${now.hour}:${now.minute}';
-    return formattedDate;
+    // Format the date as "Month Date, Year"
+    String presentDate = DateFormat('MMM dd, yyyy').format(now).toString();
+    return presentDate.toString();
   }
 }

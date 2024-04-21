@@ -50,10 +50,9 @@ class _CardScreenState extends State<CardScreen> {
   List<SmsMessage> inboxMessages = [];
 
   Future<void> fetchInboxMessages() async {
-    // Hardcoded date: March 25, 2024
-    DateTime date = DateTime(2024, 3, 25);
-    // Calculate the start and end of the day for the provided date
-    DateTime startDate = DateTime(date.year, date.month, date.day);
+    String cardDateString = "Apr 21, 2024";
+    DateTime cardDate = DateFormat('MMM dd, yyyy').parse(cardDateString);
+    DateTime startDate = DateTime(cardDate.year, cardDate.month, cardDate.day);
     DateTime endDate = startDate.add(const Duration(days: 1));
 
     List<SmsMessage> messages = await telephony.getInboxSms(
@@ -84,10 +83,6 @@ class _CardScreenState extends State<CardScreen> {
           messageAddress, // Format the date to display only time (HH:mm)
           messageBody, // Format the date to display only time (HH:mm)
           () {
-        // Functionality when the message row is clicked
-        if (kDebugMode) {
-          print("$messageBody: MSG Icon Clicked");
-        }
       });
     }
   }
@@ -97,6 +92,7 @@ class _CardScreenState extends State<CardScreen> {
     fetchInboxMessages();
     super.initState();
   }
+
   // message code ends
 
   @override

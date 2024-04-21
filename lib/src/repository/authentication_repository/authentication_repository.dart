@@ -70,10 +70,10 @@ class AuthenticationRepository extends GetxController {
   }
 
   setInitialScreen(User? user) async {
-    if(user == null){
+    if (user == null) {
       Get.offAll(() => const WelcomeScreen());
     } else {
-      if(user.emailVerified){
+      if (user.emailVerified) {
         Get.offAll(() => const BottomNavigationBarWidget());
       } else {
         Get.offAll(() => const MailVerificationScreen());
@@ -158,16 +158,8 @@ class AuthenticationRepository extends GetxController {
       await _auth.signInWithEmailAndPassword(email: email, password: password);
       if (firebaseUser.value != null) {
         if (firebaseUser.value!.emailVerified) {
-
-          ///change hive code into sqflite code
-          // Hive.openBox(email) creates a new HiveBox
-          // await Hive.initFlutter();
-          // var box = await Hive.openBox(email);
-          // print("Hive Box is created\nName: ${email.toString().trim()}");
-          /// here
-          /// /////////////////////////////
-          /// ///////////////////////////
-          createDummyDayDataServiceFunction();
+          createDummyDayDataService();
+          fetchWeatherConditionService();
 
           // Open home Screen
           Get.off(() => const BottomNavigationBarWidget());
@@ -234,38 +226,59 @@ class AuthenticationRepository extends GetxController {
   // }
 
   Future<void> logout() async {
-    // this will cancel all background services
-    // because background service store data in current user's local DB
-    // if user is logged out then we don't have to store data.
-    Workmanager().cancelAll();
+    //Workmanager().cancelAll();
+    Workmanager().cancelByTag("task_one_create_dummy_data_service");
     await _auth.signOut();
     Get.offAll(() => const LoginScreen());
   }
 
+  // Function to calculate the initial delay until 12:00 AM of the next day
+  Duration _calculateInitialDelay() {
+    final now = DateTime.now();
+    final nextDay = now.add(const Duration(days: 1));
+    final midnight = DateTime(nextDay.year, nextDay.month, nextDay.day);
+    final delay = midnight.difference(now);
+    return delay;
+  }
 
-  Future<void> createDummyDayDataServiceFunction() async {
+  Future<void> createDummyDayDataService() async {
     print("\t ---------> createDummyDayDataService() function called");
     // background service code
     await Workmanager().registerPeriodicTask(
       'task_one_create_dummy_data_service',
-      'task_one_create_dummy_data_service', // This is task_name used in callbackDispatcher in Main.dart
-      inputData: {
-        'email': _auth.currentUser?.email,
-      },
-      //input data send current logged in user email
-      initialDelay: const Duration(seconds: 5),
-      frequency: const Duration(minutes: 15),
+      'task_one_create_dummy_data_service',
+      // inputData: {
+      //   'email': _auth.currentUser?.email,
+      // },
+      initialDelay: _calculateInitialDelay(),
+      frequency: const Duration(days: 1),
     );
   }
+
+  Future<void> fetchWeatherConditionService() async {
+    print("\t ---------> fetchWeatherConditionService() function called");
+    // background service code
+    await Workmanager().registerPeriodicTask(
+      'task_two_fetch_weather_condition_service',
+      'task_two_fetch_weather_condition_service',
+      // inputData: {
+      //   'email': _auth.currentUser?.email,
+      // },
+      initialDelay: _calculateInitialDelay(),
+      frequency: const Duration(hours: 8),
+    );
+  }
+
   String getCurrentDate() {
     DateTime now = DateTime.now();
-    String formattedDate = '${now.day} ${now.month} ${now.year} ${now.hour}:${now.minute}';
+    String formattedDate =
+        '${now.day} ${now.month} ${now.year} ${now.hour}:${now.minute}';
     return formattedDate;
   }
+
   String getUserEmail() {
     final email = _auth.currentUser?.email;
     print("\t ----> getUserEmail() returns Email: ${email.toString()}");
     return email.toString();
   }
-
 }

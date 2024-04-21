@@ -17,9 +17,14 @@ void callbackDispatcher() {
     switch (taskName) {
       case 'task_one_create_dummy_data_service':
         {
-          print("\t -------> Email: ${data['email']}");
-          final email = data['email'];
-          _backgroundService.taskOneCreateDummyDayDataService(email);
+          //print("\t -------> Email: ${data['email']}");
+          //final email = data['email'];
+          _backgroundService.taskOneCreateDummyDayDataService();
+        }
+        break;
+      case 'task_two_fetch_weather_condition_service':
+        {
+          _backgroundService.taskTwoFetchWeatherConditionService();
         }
         break;
       default:

@@ -1,35 +1,32 @@
-import 'package:everyday_chronicles/src/features/core/controllers/weather_service.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lottie/lottie.dart';
 
 import '../../model/weather_model.dart';
+import '../../controllers/weather_controller.dart';
 
 class WeatherPage extends StatefulWidget {
-  const WeatherPage({super.key});
+  const WeatherPage({Key? key}) : super(key: key);
 
   @override
   State<WeatherPage> createState() => _WeatherPageState();
 }
 
 class _WeatherPageState extends State<WeatherPage> {
-  final _weatherService = WeatherService('d5e0785bbb2b18fc6cd370794e1ab333');
-  Weather? _weather;
+  final WeatherController _weatherController = WeatherController();
+  List<dynamic> _weatherData = [];
 
-  _fetchWeather() async {
-    String? cityName = await _weatherService.getCurrentCity();
+  @override
+  void initState() {
+    super.initState();
+    _fetchWeatherData();
+  }
 
-    try {
-      final weather = await _weatherService.getWeather(cityName!);
-      setState(() {
-        _weather = weather;
-      });
-    } catch (e) {
-      if (kDebugMode) {
-        print(e);
-      }
-    }
+  _fetchWeatherData() async {
+    final weatherData = await _weatherController.fetchWeatherData();
+    setState(() {
+      _weatherData = weatherData;
+    });
   }
 
   IconData? getWeatherCondition(String? mainCondition) {
@@ -57,27 +54,19 @@ class _WeatherPageState extends State<WeatherPage> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    _fetchWeather();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(_weather?.cityName ?? "Loading city.."),
-            // Load a Lottie file from a remote url
+            Text(_weatherData.isNotEmpty ? _weatherData[0] ?? "Loading city.." : "Loading city.."),
             Icon(
-              getWeatherCondition(_weather?.mainCondition),
-              // Call the function directly inside Icon
+              getWeatherCondition(_weatherData.isNotEmpty ? _weatherData[1] : null),
               size: 100,
             ),
-            Text('${_weather?.temp.round()} C'),
-            Text(_weather?.mainCondition ?? ""),
+            Text('${_weatherData.isNotEmpty ? _weatherData[2] : ""} C'),
+            Text(_weatherData.isNotEmpty ? _weatherData[1] ?? "" : ""),
           ],
         ),
       ),

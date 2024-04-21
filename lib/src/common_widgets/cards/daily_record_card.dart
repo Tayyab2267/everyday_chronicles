@@ -53,7 +53,7 @@ class DailyRecordCard extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(15),
                               ),
                               child: Icon(
-                                  cardIcon, size: 30, color: Colors.white),
+                                  cardIcon, size: 30, color: Colors.black),
                             ),
                             const SizedBox(height: 10),
                             Text(
