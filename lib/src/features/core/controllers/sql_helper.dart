@@ -1,5 +1,7 @@
 import 'package:everyday_chronicles/src/repository/authentication_repository/authentication_repository.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
+import 'package:get/get.dart';
 import 'package:sqflite/sqflite.dart' as sql;
 
 class SQLHelper {
@@ -35,7 +37,6 @@ class SQLHelper {
 
   static Future<int> createItem(String date, String icon, String title, String? subtitle) async {
     final db = await SQLHelper.db();
-
     final data = {'date': date, 'icon': icon, 'title': title, 'subtitle': subtitle};
     final id = await db.insert('items', data,
         conflictAlgorithm: sql.ConflictAlgorithm.replace);
@@ -51,6 +52,21 @@ class SQLHelper {
   static Future<List<Map<String, dynamic>>> getItemByDate(String date) async {
     final db = await SQLHelper.db();
     return db.query('items', where: "date = ?", whereArgs: [date], limit: 1);
+  }
+
+  static Future<String?> getWeatherListByDate(String date) async {
+    final db = await SQLHelper.db();
+    final result = await db.query('items', columns: ['weatherList'], where: "date = ?", whereArgs: [date], limit: 1);
+    if (result.isNotEmpty) {
+      final weatherList = result.first['weatherList']; // Get the weatherList field
+      if (weatherList != null) {
+        return weatherList.toString(); // Convert to string if not null
+      } else {
+        return null; // Return null if weatherList is null
+      }
+    } else {
+      return null; // Return null if no matching item is found
+    }
   }
 
   static Future<List<Map<String, dynamic>>> getItem(int id) async {
@@ -74,6 +90,7 @@ class SQLHelper {
 
   static Future<int> updateItemWeatherByDate(
       String date, String weatherList) async {
+
     final db = await SQLHelper.db();
 
     final data = {

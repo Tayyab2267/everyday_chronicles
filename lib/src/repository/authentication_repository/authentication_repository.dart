@@ -9,8 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:workmanager/workmanager.dart';
 
-import '../../features/core/controllers/background_service_controller.dart';
-
 // String getCurrentDate() {
 //   DateTime now = DateTime.now();
 //   String formattedDate = '${now.day} ${now.month} ${now.year} ${now.hour}:${now.minute}';
@@ -247,10 +245,8 @@ class AuthenticationRepository extends GetxController {
     await Workmanager().registerPeriodicTask(
       'task_one_create_dummy_data_service',
       'task_one_create_dummy_data_service',
-      // inputData: {
-      //   'email': _auth.currentUser?.email,
-      // },
-      initialDelay: _calculateInitialDelay(),
+      //initialDelay: _calculateInitialDelay(),
+      initialDelay: const Duration(seconds: 5),
       frequency: const Duration(days: 1),
     );
   }
@@ -261,9 +257,6 @@ class AuthenticationRepository extends GetxController {
     await Workmanager().registerPeriodicTask(
       'task_two_fetch_weather_condition_service',
       'task_two_fetch_weather_condition_service',
-      // inputData: {
-      //   'email': _auth.currentUser?.email,
-      // },
       initialDelay: _calculateInitialDelay(),
       frequency: const Duration(hours: 8),
     );
@@ -278,7 +271,7 @@ class AuthenticationRepository extends GetxController {
 
   String getUserEmail() {
     final email = _auth.currentUser?.email;
-    print("\t ----> getUserEmail() returns Email: ${email.toString()}");
-    return email.toString();
+    // Check if email is null before calling toString()
+    return email != null ? email.toString() : ""; // Return an empty string if email is null
   }
 }

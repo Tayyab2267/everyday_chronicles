@@ -1,17 +1,16 @@
 import 'dart:convert';
-
 import 'package:everyday_chronicles/src/features/core/controllers/sql_helper.dart';
 import 'package:everyday_chronicles/src/features/core/screens/profile/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:workmanager/workmanager.dart';
 import '../../../../common_widgets/cards/daily_record_card.dart';
 import '../../../../constants/colors.dart';
 import '../../controllers/selected_tags_controller.dart';
 import '../../controllers/weather_controller.dart';
 import '../card/card_screen.dart';
-import 'filter_screen.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -47,10 +46,6 @@ class _HomeState extends State<Home> {
     print("...Number of items: ${_journals.length}");
   }
 
-  String listToJson(List<dynamic> list) {
-    return jsonEncode(list);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,18 +66,8 @@ class _HomeState extends State<Home> {
         actions: <Widget>[
           IconButton(
             onPressed: () async {
-              List<dynamic> weatherData = await _weatherController.fetchWeatherData();
-              weatherList.addAll(weatherData);
-              print("-----------> ");
-              print(weatherList);
-              print("-----------> ");
-
-              String listToJsonString = listToJson(weatherList);
-              print("============> ");
-              print(listToJsonString);
-              print("=============> ");
-
-              // await Workmanager().cancelAll();
+              await Workmanager().cancelAll();
+              
               // await SQLHelper.deleteDatabase();
             },
             icon: const Icon(FontAwesomeIcons.magnifyingGlass, size: 16),

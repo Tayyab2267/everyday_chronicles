@@ -1,11 +1,12 @@
-import 'package:everyday_chronicles/src/features/core/screens/card/card_traditional_screen.dart';
-import 'package:flutter/foundation.dart';
+import 'dart:convert';
+import 'package:everyday_chronicles/src/features/core/screens/card/AppUsageTime.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:telephony/telephony.dart';
 import '../../../../constants/colors.dart';
+import '../../controllers/sql_helper.dart';
 import 'WeatherPage.dart';
 import 'circle_painter_end.dart';
 import 'circle_painter_start.dart';
@@ -29,10 +30,22 @@ class CardScreen extends StatefulWidget {
 }
 
 class _CardScreenState extends State<CardScreen> {
+
   // Define list of data for rows
   final List<Map<String, dynamic>> rowData = [];
 
-  void addNewData(IconData iconData, String time, String address, String body,
+  /// This method to compare times and sort the rowData list
+  void sortRowDataByTime() {
+    rowData.sort((a, b) {
+      // Parse time strings to DateTime objects for comparison
+      DateTime timeA = DateFormat('HH:mm').parse(a['time']);
+      DateTime timeB = DateFormat('HH:mm').parse(b['time']);
+      // Compare the times
+      return timeA.compareTo(timeB);
+    });
+  }
+
+  void addNewMessageData(IconData iconData, String time, String address, String body, String msgOrWeather,
       Function onPressed) {
     setState(() {
       rowData.add({
@@ -40,6 +53,7 @@ class _CardScreenState extends State<CardScreen> {
         'time': time,
         'address': address,
         'body': body,
+        'msgOrWeather': msgOrWeather,
         'onPressed': onPressed
       });
     });
@@ -50,8 +64,7 @@ class _CardScreenState extends State<CardScreen> {
   List<SmsMessage> inboxMessages = [];
 
   Future<void> fetchInboxMessages() async {
-    String cardDateString = "Apr 21, 2024";
-    DateTime cardDate = DateFormat('MMM dd, yyyy').parse(cardDateString);
+    DateTime cardDate = DateFormat('MMM dd, yyyy').parse(widget.cardDate);
     DateTime startDate = DateTime(cardDate.year, cardDate.month, cardDate.day);
     DateTime endDate = startDate.add(const Duration(days: 1));
 
@@ -77,26 +90,78 @@ class _CardScreenState extends State<CardScreen> {
               int.parse(message.date.toString())));
       String messageAddress = message.address!;
       String messageBody = message.body!;
-      addNewData(
+      addNewMessageData(
           Icons.message, // Icon for SMS message
           messageTime,
           messageAddress, // Format the date to display only time (HH:mm)
           messageBody, // Format the date to display only time (HH:mm)
+          "message",
           () {
       });
+    }
+  }
+
+  Future<void> fetchWeatherData() async {
+    String? requiredWeatherList = await SQLHelper.getWeatherListByDate(widget.cardDate);
+
+    if (requiredWeatherList != null && requiredWeatherList.isNotEmpty) {
+      List<dynamic> weatherDataList = jsonDecode(requiredWeatherList);
+      // Loop through the weather data list in steps of 4 to process each weather entry
+      for (int i = 0; i < weatherDataList.length; i += 4) {
+        String weatherTime = weatherDataList[i];
+        String cityName = weatherDataList[i + 1];
+        String condition = weatherDataList[i + 2];
+        String temperature = weatherDataList[i + 3].toString();
+
+        IconData weatherIcon = getWeatherIcon(condition);
+
+        // Add weather data to rowData list
+        addNewMessageData(
+          weatherIcon, // Weather icon based on condition
+          weatherTime, // Time
+          cityName, // City name or any other appropriate text
+          temperature, // Body
+          'weather',
+              () {},
+        );
+      }
+    }
+  }
+
+  IconData getWeatherIcon(String condition) {
+    // Map weather conditions to appropriate icons
+    switch (condition.toLowerCase()) {
+      case 'clear':
+        return Icons.wb_sunny;
+      case 'rain':
+      case 'drizzle':
+      case 'shower rain':
+        return Icons.beach_access;
+      case 'clouds':
+      case 'mist':
+      case 'smoke':
+      case 'haze':
+      case 'dust':
+      case 'fog':
+        return Icons.cloud;
+      case 'thunderstorm':
+        return FontAwesomeIcons.cloudBolt;
+      default:
+        return FontAwesomeIcons.solidSun;
     }
   }
 
   @override
   void initState() {
     fetchInboxMessages();
+    fetchWeatherData();
     super.initState();
   }
 
-  // message code ends
-
   @override
   Widget build(BuildContext context) {
+    // Sort the rowData list before displaying
+    sortRowDataByTime();
     final Color timeBackgroundColor = Get.isDarkMode ? color3 : Colors.grey;
     return Scaffold(
       backgroundColor: Get.isDarkMode
@@ -146,6 +211,7 @@ class _CardScreenState extends State<CardScreen> {
                       data['time'],
                       data['address'],
                       data['body'],
+                      data['msgOrWeather'],
                       timeBackgroundColor,
                       data['onPressed'],
                     ),
@@ -179,7 +245,10 @@ class _CardScreenState extends State<CardScreen> {
             child: FloatingActionButton(
               onPressed: () {
                 //Get.to(() => const CardTraditionalScreen());
-                Get.to(() => const WeatherPage());
+                //Get.to(() => const WeatherPage());
+                /// Delete Weather Page
+                Get.to(() => const MobileUsageTime());
+
               },
               backgroundColor: color1,
               tooltip: "Opens Traditional Page",
@@ -192,7 +261,7 @@ class _CardScreenState extends State<CardScreen> {
     );
   }
 
-  Widget _buildRow(IconData iconData, String time, String address, String body,
+  Widget _buildRow(IconData iconData, String time, String address, String body, String msgOrWeather,
       Color backgroundColor, Function onPressed) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -225,22 +294,45 @@ class _CardScreenState extends State<CardScreen> {
           onPressed: () {
             showDialog(
               context: context,
-              builder: (context) => AlertDialog(
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text("Close"),
-                  ),
-                ],
-                title: Text("Sender: $address\nTime: $time"),
-                contentPadding: const EdgeInsets.all(20.0),
-                content: Text(
-                  "Message: $body",
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-              ),
+              builder: (context) {
+                if (msgOrWeather == 'message') {
+                  return AlertDialog(
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text("Close"),
+                      ),
+                    ],
+                    title: Text("Sender: $address\nTime: $time"),
+                    contentPadding: const EdgeInsets.all(20.0),
+                    content: Text(
+                      "Message: $body",
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  );
+                } else if (msgOrWeather == 'weather') {
+                  return AlertDialog(
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text("Close"),
+                      ),
+                    ],
+                    title: Text("City Name: $address\nTime: $time\nTemperature: $body"),
+                    contentPadding: const EdgeInsets.all(20.0),
+                    content: Icon(
+                      iconData,
+                      size: 60,
+                    ),
+                  );
+                }
+                // Default return statement
+                return const SizedBox.shrink(); // or any other default Widget
+              },
             );
             onPressed(); // Call the provided onPressed function
           },
@@ -249,4 +341,5 @@ class _CardScreenState extends State<CardScreen> {
       ],
     );
   }
+
 }

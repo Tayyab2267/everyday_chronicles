@@ -12,13 +12,10 @@ final _backgroundService = Get.put(BackgroundServiceController());
 void callbackDispatcher() {
   print(" ------> callbackDispatcher() function has been run");
   Workmanager().executeTask((taskName, inputData) async {
-    final data = inputData as Map<String, dynamic>; // Ensure inputData is of type Map<String, dynamic>
     print(" ------> Before Switch statement");
     switch (taskName) {
       case 'task_one_create_dummy_data_service':
         {
-          //print("\t -------> Email: ${data['email']}");
-          //final email = data['email'];
           _backgroundService.taskOneCreateDummyDayDataService();
         }
         break;
@@ -32,8 +29,6 @@ void callbackDispatcher() {
     return Future.value(true);
   });
 }
-
-
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

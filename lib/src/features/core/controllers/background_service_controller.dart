@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:everyday_chronicles/src/features/core/controllers/sql_helper.dart';
 import 'package:everyday_chronicles/src/features/core/controllers/weather_controller.dart';
 import 'package:get/get.dart';
@@ -11,30 +10,39 @@ class BackgroundServiceController extends GetxController {
   final WeatherController _weatherController = WeatherController();
 
   Future<void> taskOneCreateDummyDayDataService() async {
-    SQLHelper.createItem(getCurrentDate(), "fantastic", "Title of the day",
-        "This is the dummy text. this text will be changed after 11:59 when your through out day will be fetched");
+    print("-----> Adding new data to localDatabase");
+    try{
+      print("-----> Before SQL Flite ");
+      SQLHelper.createItem(getCurrentDate(), "fantastic", "Title of the day","This is the dummy text. this text will be changed after 11:59 when your through out day will be fetched");
+      print("-----> After SQL Flite");
+    }catch(ex){
+      print("----> Ex: ${ex.toString()}");
+    }
+
   }
 
   Future<void> taskTwoFetchWeatherConditionService() async {
+    print("----->");
     List<dynamic> weatherData = await _weatherController.fetchWeatherData();
-    String weatherDataString = listToJson(weatherData);
-    //String weatherDataString = listToJson(weatherData);
-    SQLHelper.updateItemWeatherByDate(getCurrentDate(), weatherDataString);
-  }
+    print("-----> WeatherData: $weatherData");
+    String? requiredWeatherList = await SQLHelper.getWeatherListByDate(getCurrentDate());
+    print("-----> weatherList from Database: $requiredWeatherList");
 
-  /// Function to convert a list of objects to a JSON string
-  String listToJson(List<dynamic> list) {
-    return jsonEncode(list);
-  }
-  /// Function to convert a JSON string to a list of objects
-  List<dynamic> jsonToList(String json) {
-    return jsonDecode(json);
+    if (requiredWeatherList != null) {
+      // Unpack the requiredWeatherList and add its elements to weatherData
+      List<dynamic> unpackedWeatherList = jsonDecode(requiredWeatherList);
+      weatherData.addAll(unpackedWeatherList);
+      print("-----> add database weather list to weatherdata: $weatherData");
+    } else {
+      print("-----> No weather list found in the database or it's empty.");
+    }
+
+    SQLHelper.updateItemWeatherByDate(getCurrentDate(), jsonEncode(weatherData));
+    print("----->");
   }
 
   String getCurrentDate() {
-    // Get the current date
     DateTime now = DateTime.now();
-    // Format the date as "Month Date, Year"
     String presentDate = DateFormat('MMM dd, yyyy').format(now).toString();
     return presentDate.toString();
   }

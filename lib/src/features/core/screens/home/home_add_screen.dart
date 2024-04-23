@@ -20,10 +20,10 @@ class _HomeAddScreenState extends State<HomeAddScreen> {
 
   @override
   void initState() {
-    super.initState();
     print("--->> check 1");
     fetchData(); // Call fetchData without awaiting
     print("--->> check 2");
+    super.initState();
   }
 
   Future<void> fetchData() async {
