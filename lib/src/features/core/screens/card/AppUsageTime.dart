@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:usage_stats/usage_stats.dart';
 
 class MobileUsageTime extends StatefulWidget {
-  const MobileUsageTime({Key? key}) : super(key: key);
+  final String cardDate;
+
+  const MobileUsageTime({Key? key, required this.cardDate}) : super(key: key);
 
   @override
   _MobileUsageTimeState createState() => _MobileUsageTimeState();
 }
+
 
 class _MobileUsageTimeState extends State<MobileUsageTime> {
   List<UsageInfo> usageStats = [];
@@ -18,8 +22,9 @@ class _MobileUsageTimeState extends State<MobileUsageTime> {
   }
 
   Future<void> fetchUsageStats() async {
-    DateTime endDate = DateTime.now();
-    DateTime startDate = DateTime(endDate.year, endDate.month, endDate.day, 0, 0, 0);
+    DateTime selectedDate = DateFormat('MMM dd, yyyy').parse(widget.cardDate);
+    DateTime startDate = DateTime(selectedDate.year, selectedDate.month, selectedDate.day);
+    DateTime endDate = startDate.add(const Duration(days: 1));
 
     // grant usage permission - opens Usage Settings
     UsageStats.grantUsagePermission();
@@ -35,7 +40,7 @@ class _MobileUsageTimeState extends State<MobileUsageTime> {
         usageStats = stats.where((usage) => getMinutes(usage.totalTimeInForeground) > 0).toList();
       });
     } else {
-      // Handle permission not granted
+      UsageStats.grantUsagePermission();
     }
   }
 
@@ -58,6 +63,10 @@ class _MobileUsageTimeState extends State<MobileUsageTime> {
             const Text(
               'Mobile Usage Time',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              widget.cardDate,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
             Expanded(

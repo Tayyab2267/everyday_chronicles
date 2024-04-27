@@ -24,7 +24,7 @@ const String mySignupImage = "assets/images/login_signup_images/signup-image.png
 const String myForgetPasswordImage = "assets/images/forget_password_images/forget-password-image.png";
 
 // Profile Screen
-const String profileImage = "assets/images/profile/awais-profile.JPG";
+const String profileImage = "assets/images/profile/awais-profile.jpg";
 
 // Card Icons Images
 const String cameraIcon = "assets/images/card_images/camera.png";

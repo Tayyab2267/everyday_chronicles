@@ -68,23 +68,7 @@ class ProfileScreen extends StatelessWidget {
                               ),
                             ),
                           ),
-                          Positioned(
-                            bottom: 0,
-                            right: 0,
-                            child: Container(
-                              width: 35,
-                              height: 35,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(100),
-                                color: Colors.greenAccent,
-                              ),
-                              child: const Icon(
-                                LineAwesomeIcons.pen,
-                                color: Colors.black,
-                                size: 20,
-                              ),
-                            ),
-                          ),
+
                         ],
                       ),
                       const SizedBox(height: 50),

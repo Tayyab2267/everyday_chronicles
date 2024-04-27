@@ -5,11 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:workmanager/workmanager.dart';
 import '../../../../common_widgets/cards/daily_record_card.dart';
 import '../../../../constants/colors.dart';
+import '../../controllers/location_service.dart';
 import '../../controllers/selected_tags_controller.dart';
 import '../../controllers/weather_controller.dart';
+import '../../controllers/weather_service.dart';
 import '../card/card_screen.dart';
 
 class Home extends StatefulWidget {
@@ -22,6 +25,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   final SelectedTagsController _selectedTagsController =
       Get.put(SelectedTagsController());
+
 
   final WeatherController _weatherController = WeatherController();
 
@@ -39,9 +43,23 @@ class _HomeState extends State<Home> {
     });
   }
 
+  Future<void> requestPermissions() async {
+    // Request the necessary permissions
+    Map<Permission, PermissionStatus> permissions = await [
+      Permission.manageExternalStorage,
+      Permission.backgroundRefresh,
+      Permission.ignoreBatteryOptimizations,
+      // Permission.location,
+      // Permission.locationAlways,
+      // Permission.locationWhenInUse,
+    ].request();
+
+  }
+
   @override
   void initState() {
     super.initState();
+    requestPermissions();
     _refreshJournals();
     print("...Number of items: ${_journals.length}");
   }
@@ -66,8 +84,11 @@ class _HomeState extends State<Home> {
         actions: <Widget>[
           IconButton(
             onPressed: () async {
-              await Workmanager().cancelAll();
-              
+              Workmanager().cancelAll();
+              print(" -----> task_one_create_dummy_data_service Background service has been stopped.....");
+              print(" -----> task_two_fetch_weather_condition_service Background service has been stopped.....");
+
+              // await SQLHelper.deleteItem(6);
               // await SQLHelper.deleteDatabase();
             },
             icon: const Icon(FontAwesomeIcons.magnifyingGlass, size: 16),

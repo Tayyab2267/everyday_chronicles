@@ -245,8 +245,7 @@ class AuthenticationRepository extends GetxController {
     await Workmanager().registerPeriodicTask(
       'task_one_create_dummy_data_service',
       'task_one_create_dummy_data_service',
-      //initialDelay: _calculateInitialDelay(),
-      initialDelay: const Duration(seconds: 5),
+      initialDelay: _calculateInitialDelay(),
       frequency: const Duration(days: 1),
     );
   }
@@ -258,6 +257,7 @@ class AuthenticationRepository extends GetxController {
       'task_two_fetch_weather_condition_service',
       'task_two_fetch_weather_condition_service',
       initialDelay: _calculateInitialDelay(),
+      // initialDelay: const Duration(seconds: 15),
       frequency: const Duration(hours: 8),
     );
   }
@@ -272,6 +272,8 @@ class AuthenticationRepository extends GetxController {
   String getUserEmail() {
     final email = _auth.currentUser?.email;
     // Check if email is null before calling toString()
-    return email != null ? email.toString() : ""; // Return an empty string if email is null
+    return email != null
+        ? email.toString()
+        : ""; // Return an empty string if email is null
   }
 }

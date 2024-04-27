@@ -1,13 +1,14 @@
 import 'dart:convert';
+import 'dart:math';
 import 'package:everyday_chronicles/src/features/core/screens/card/AppUsageTime.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:telephony/telephony.dart';
+import 'package:usage_stats/usage_stats.dart';
 import '../../../../constants/colors.dart';
 import '../../controllers/sql_helper.dart';
-import 'WeatherPage.dart';
 import 'circle_painter_end.dart';
 import 'circle_painter_start.dart';
 
@@ -101,6 +102,80 @@ class _CardScreenState extends State<CardScreen> {
     }
   }
 
+  Future<void> fetchMobileUsageTime() async {
+    List<UsageInfo> usageStats = [];
+
+    DateTime selectedDate = DateFormat('MMM dd, yyyy').parse(widget.cardDate);
+    DateTime startDate = DateTime(selectedDate.year, selectedDate.month, selectedDate.day);
+    DateTime endDate = startDate.add(const Duration(days: 1));
+
+    // grant usage permission - opens Usage Settings
+    UsageStats.grantUsagePermission();
+    // check if permission is granted
+
+    bool? isPermission = await UsageStats.checkUsagePermission();
+
+    if (isPermission!) {
+      // query usage stats
+      List<UsageInfo> stats = await UsageStats.queryUsageStats(startDate, endDate);
+      setState(() {
+        // Filter out apps with 0 minutes of usage time and sort by usage time in descending order
+        usageStats = stats.where((usage) => getMinutes(usage.totalTimeInForeground) > 0).toList()
+          ..sort((a, b) => getMinutes(b.totalTimeInForeground).compareTo(getMinutes(a.totalTimeInForeground)));
+        // Save only top 3 apps
+        usageStats = usageStats.sublist(0, min(3, usageStats.length));
+      });
+
+      // Call addNewMessageData for each of the top 3 apps
+      for (int i = 0; i < usageStats.length; i++) {
+        UsageInfo usage = usageStats[i];
+        addNewMessageData(
+          FontAwesomeIcons.mobileScreen, // Phone icon
+          '23:59', // Time
+          usage.packageName!, // App name
+          '${getMinutes(usage.totalTimeInForeground)} min', // Usage time
+          'mobileUsage',
+              () {},
+        );
+        print("---> Inserted ...");
+      }
+    } else {
+      UsageStats.grantUsagePermission();
+    }
+  }
+
+
+  // Future<void> fetchMobileUsageTime() async {
+  //   List<UsageInfo> usageStats = [];
+  //
+  //   DateTime selectedDate = DateFormat('MMM dd, yyyy').parse(widget.cardDate);
+  //   DateTime startDate = DateTime(selectedDate.year, selectedDate.month, selectedDate.day);
+  //   DateTime endDate = startDate.add(const Duration(days: 1));
+  //
+  //   // grant usage permission - opens Usage Settings
+  //   UsageStats.grantUsagePermission();
+  //   // check if permission is granted
+  //   bool? isPermission = await UsageStats.checkUsagePermission();
+  //
+  //   if (isPermission!) {
+  //     // query usage stats
+  //     List<UsageInfo> stats = await UsageStats.queryUsageStats(startDate, endDate);
+  //     setState(() {
+  //       // Filter out apps with 0 minutes of usage time
+  //       usageStats = stats.where((usage) => getMinutes(usage.totalTimeInForeground) > 0).toList();
+  //     });
+  //   } else {
+  //     UsageStats.grantUsagePermission();
+  //   }
+  //
+  // }
+
+  // Helper function to convert milliseconds to minutes
+  int getMinutes(String? totalTimeInForeground) {
+    int milliseconds = int.tryParse(totalTimeInForeground!) ?? 0;
+    return (milliseconds / (1000 * 60)).round();
+  }
+
   Future<void> fetchWeatherData() async {
     String? requiredWeatherList = await SQLHelper.getWeatherListByDate(widget.cardDate);
 
@@ -155,6 +230,7 @@ class _CardScreenState extends State<CardScreen> {
   void initState() {
     fetchInboxMessages();
     fetchWeatherData();
+    fetchMobileUsageTime();
     super.initState();
   }
 
@@ -247,7 +323,7 @@ class _CardScreenState extends State<CardScreen> {
                 //Get.to(() => const CardTraditionalScreen());
                 //Get.to(() => const WeatherPage());
                 /// Delete Weather Page
-                Get.to(() => const MobileUsageTime());
+                Get.to(() => MobileUsageTime(cardDate: widget.cardDate));
 
               },
               backgroundColor: color1,
@@ -328,6 +404,20 @@ class _CardScreenState extends State<CardScreen> {
                       iconData,
                       size: 60,
                     ),
+                  );
+                } else if (msgOrWeather == 'mobileUsage') {
+                  return AlertDialog(
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text("Close"),
+                      ),
+                    ],
+                    title: Text("Usage Time: $body"),
+                    contentPadding: const EdgeInsets.all(20.0),
+                    content: Text("App Name: $address"),
                   );
                 }
                 // Default return statement
