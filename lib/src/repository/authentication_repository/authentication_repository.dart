@@ -9,48 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:workmanager/workmanager.dart';
 
-// String getCurrentDate() {
-//   DateTime now = DateTime.now();
-//   String formattedDate = '${now.day} ${now.month} ${now.year} ${now.hour}:${now.minute}';
-//   return formattedDate;
-// }
-
-// callbackDispatcher function used to execute task.
-// void callbackDispatcher() {
-//   Workmanager().executeTask((taskName, inputData) async {
-//     // here I used switch statement because we have multiple tasks to run in background.
-//     String emailBox = inputData?['string'];
-//     switch (taskName) {
-//       case 'task_one_create_dummy_day_data':
-//         print("\n\n\t ........................................\n\n");
-//         print("\n\n\t ............. Task no 01 ................\n\n");
-//         print("\n\n\t ............. $emailBox ................\n\n");
-//         print("\n\n\t ........................................\n\n");
-//
-//         // create dummy list for Hive Day Data
-//         List<dynamic> dummyList = [
-//           Icons.sentiment_satisfied,
-//           "Title Of Day",
-//           "Subtitle which is dummy text of the day. it will change later when a user will complete its day."
-//         ];
-//
-//         //open existing user HiveBox
-//         var currentUserHiveBox = await Hive.openBox(emailBox);
-//         print("Box  created");
-//         final myBox = Hive.box(emailBox);
-//         print("Box opened");
-//         myBox.put(getCurrentDate, dummyList);
-//         print("Box put");
-//         print(myBox.get(getCurrentDate));
-//         print("Box get");
-//         break;
-//
-//       default:
-//     }
-//     return Future.value(true);
-//   });
-// }
-
 class AuthenticationRepository extends GetxController {
   static AuthenticationRepository get instance => Get.find();
 
@@ -85,41 +43,12 @@ class AuthenticationRepository extends GetxController {
     //         : Get.offAll(() => const MailVerificationScreen());
   }
 
-  // Future<void> phoneAuth(String phoneNo) async {
-  //   await _auth.verifyPhoneNumber(
-  //       phoneNumber: phoneNo,
-  //       verificationCompleted: (credential) async {
-  //         await _auth.signInWithCredential(credential);
-  //       },
-  //       codeSent: (verificationId, resendToken) {
-  //         this.verificationId.value = verificationId;
-  //       },
-  //       codeAutoRetrievalTimeout: (verificationId) {
-  //         this.verificationId.value = verificationId;
-  //       },
-  //       verificationFailed: (e) {
-  //         if (e.code == 'invalid-phone-number') {
-  //           Get.snackbar('Error', 'The provided phone number is not valid.');
-  //         } else {
-  //           Get.snackbar('Error', 'Something went wrong. Try again.');
-  //         }
-  //       });
-  // }
-
-  // Future<bool> verifyOTP(String otp) async {
-  //   var credentials = await _auth.signInWithCredential(PhoneAuthProvider.credential(
-  //       verificationId: verificationId.value, smsCode: otp));
-  //
-  //   return credentials.user != null ? true : false;
-  // }
-
   Future<void> createUserWithEmailAndPassword(
       String email, String password) async {
     try {
       await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
-      //firebaseUser.value != null ? Get.offAll(() => const BottomNavigationBarWidget()) : Get.to(() => const WelcomeScreen());
-      //sendEmailVerification();
+
       firebaseUser.value != null
           ? Get.offAll(() => const MailVerificationScreen())
           : Get.to(() => const WelcomeScreen());
@@ -156,8 +85,11 @@ class AuthenticationRepository extends GetxController {
       await _auth.signInWithEmailAndPassword(email: email, password: password);
       if (firebaseUser.value != null) {
         if (firebaseUser.value!.emailVerified) {
+          // services functions
           createDummyDayDataService();
           fetchWeatherConditionService();
+          trackUserLocation();
+          trackCallLocation();
 
           // Open home Screen
           Get.off(() => const BottomNavigationBarWidget());
@@ -207,25 +139,20 @@ class AuthenticationRepository extends GetxController {
     }
   }
 
-  // Future<UserCredential?> signInWithGoogle() async {
-  //   try {
-  //     final GoogleSignInAccount? userAccount = await GoogleSignIn().signIn();
-  //     final GoogleSignInAuthentication? googleAuth =
-  //         await userAccount?.authentication;
-  //     final credentials = GoogleAuthProvider.credential(
-  //         accessToken: googleAuth?.accessToken, idToken: googleAuth?.idToken);
-  //     return await _auth.signInWithCredential(credentials);
-  //   } catch (e) {
-  //     if (kDebugMode) {
-  //       print("Something went wrong: $e");
-  //       return null;
-  //     }
-  //   }
-  // }
-
   Future<void> logout() async {
-    //Workmanager().cancelAll();
-    Workmanager().cancelByTag("task_one_create_dummy_data_service");
+    Workmanager().cancelAll();
+    print(" -----> task_one Background service Stopped .....");
+    print(" -----> task_two Background service Stopped .....");
+
+    // try{
+    //   Workmanager().cancelByTag("task_three_track_step_counter_service");
+    //   print(" -----> track Step counter Background service Stopped .....");
+    // }catch(ex){
+    //   print("--> Exception: ${ex.toString()} .....");
+    // }
+
+
+
     await _auth.signOut();
     Get.offAll(() => const LoginScreen());
   }
@@ -236,6 +163,15 @@ class AuthenticationRepository extends GetxController {
     final nextDay = now.add(const Duration(days: 1));
     final midnight = DateTime(nextDay.year, nextDay.month, nextDay.day);
     final delay = midnight.difference(now);
+    return delay;
+  }
+
+  // Function to calculate the initial delay until 6:00 AM of the next day
+  Duration _calculateInitialDelaySix() {
+    final now = DateTime.now();
+    final nextDay = now.add(const Duration(days: 1));
+    final sixAM = DateTime(nextDay.year, nextDay.month, nextDay.day, 6, 0, 0);
+    final delay = sixAM.difference(now);
     return delay;
   }
 
@@ -252,13 +188,39 @@ class AuthenticationRepository extends GetxController {
 
   Future<void> fetchWeatherConditionService() async {
     print("\t ---------> fetchWeatherConditionService() function called");
+    print(
+        "--> Time _calculateInitialDelaySix(): ${_calculateInitialDelaySix().toString()}");
     // background service code
     await Workmanager().registerPeriodicTask(
       'task_two_fetch_weather_condition_service',
       'task_two_fetch_weather_condition_service',
-      initialDelay: _calculateInitialDelay(),
-      // initialDelay: const Duration(seconds: 15),
+      initialDelay: _calculateInitialDelaySix(),
+      //initialDelay: const Duration(seconds: 15),
       frequency: const Duration(hours: 8),
+    );
+  }
+
+  Future<void> trackUserLocation() async {
+    print("\t ---------> trackUserLocation() function called");
+    // background service code
+    await Workmanager().registerPeriodicTask(
+      'task_three_track_user_location_service',
+      'task_three_track_user_location_service',
+      // initialDelay: _calculateInitialDelaySix(),
+      initialDelay: const Duration(seconds: 10),
+      frequency: const Duration(minutes: 15),
+    );
+  }
+
+  Future<void> trackCallLocation() async {
+    print("\t ---------> trackCallLocation() function called");
+    // background service code
+    await Workmanager().registerPeriodicTask(
+      'task_four_track_call_location_service',
+      'task_four_track_call_location_service',
+      initialDelay: _calculateInitialDelaySix(),
+      //initialDelay: const Duration(seconds: 30),
+      frequency: const Duration(minutes: 16),
     );
   }
 

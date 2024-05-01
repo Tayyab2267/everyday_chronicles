@@ -5,12 +5,10 @@
         android:name="android.hardware.telephony"
         android:required="false" />
 
-    <uses-permission android:minSdkVersion="34" android:name="android.permission.USE_EXACT_ALARM"
-        tools:ignore="ExactAlarm" />
-
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_SMS"/>
     <uses-permission android:name="android.permission.RECEIVE_SMS"/>
+    <uses-permission android:name="android.permission.READ_CALL_LOG" />
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
@@ -32,8 +30,14 @@
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
-
     <uses-permission android:name="android.permission.BACKGROUND_REFRESH"/>
+
+    <!-- Steps counter permission -->
+    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:minSdkVersion="34" android:name="android.permission.USE_EXACT_ALARM"
+        tools:ignore="ExactAlarm" />
+    <uses-permission android:name="android.permission.BODY_SENSORS" />
 
     <application
         tools:replace="android:label"
@@ -63,7 +67,8 @@
         </activity>
 
         <receiver android:name="com.shounakmulay.telephony.sms.IncomingSmsReceiver"
-            android:permission="android.permission.BROADCAST_SMS" android:exported="true">
+            android:permission="android.permission.BROADCAST_SMS" android:exported="true"
+            tools:ignore="MissingClass">
             <intent-filter>
                 <action android:name="android.provider.Telephony.SMS_RECEIVED"/>
             </intent-filter>
@@ -74,6 +79,28 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+
+        <!-- flutter_background_geolocation licence -->
+        <meta-data android:name="com.transistorsoft.locationmanager.license" android:value="YOUR_LICENCE_KEY_HERE" />
+
+        <!-- configuration of background_locator_2 -->
+        <receiver android:name="yukams.app.background_locator_2.BootBroadcastReceiver"
+            android:enabled="true"
+            android:exported="true"
+            tools:ignore="MissingClass">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
+        <service android:name="yukams.app.background_locator_2.IsolateHolderService"
+            android:permission="android.permission.FOREGROUND_SERVICE"
+            android:exported="true"
+            android:foregroundServiceType = "location"
+            tools:ignore="MissingClass" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyCkj3vO8eHVS8j4A2axlT-WifX__dOOURw"/>
 
     </application>
 </manifest>

@@ -1,8 +1,9 @@
 import 'dart:convert';
-import 'dart:math';
-import 'package:everyday_chronicles/src/features/core/screens/card/AppUsageTime.dart';
+import 'package:device_apps/device_apps.dart';
+import 'package:everyday_chronicles/src/features/core/screens/card/step_counter.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:telephony/telephony.dart';
@@ -11,6 +12,7 @@ import '../../../../constants/colors.dart';
 import '../../controllers/sql_helper.dart';
 import 'circle_painter_end.dart';
 import 'circle_painter_start.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class CardScreen extends StatefulWidget {
   const CardScreen({
@@ -31,7 +33,6 @@ class CardScreen extends StatefulWidget {
 }
 
 class _CardScreenState extends State<CardScreen> {
-
   // Define list of data for rows
   final List<Map<String, dynamic>> rowData = [];
 
@@ -46,8 +47,8 @@ class _CardScreenState extends State<CardScreen> {
     });
   }
 
-  void addNewMessageData(IconData iconData, String time, String address, String body, String msgOrWeather,
-      Function onPressed) {
+  void addNewMessageData(IconData iconData, String time,
+      String address, String body, String msgOrWeather, Function onPressed) {
     setState(() {
       rowData.add({
         'icon': iconData,
@@ -92,13 +93,15 @@ class _CardScreenState extends State<CardScreen> {
       String messageAddress = message.address!;
       String messageBody = message.body!;
       addNewMessageData(
-          Icons.message, // Icon for SMS message
+          Icons.message,
+          // Icon for SMS message
           messageTime,
-          messageAddress, // Format the date to display only time (HH:mm)
-          messageBody, // Format the date to display only time (HH:mm)
+          messageAddress,
+          // Format the date to display only time (HH:mm)
+          messageBody,
+          // Format the date to display only time (HH:mm)
           "message",
-          () {
-      });
+          () {});
     }
   }
 
@@ -107,32 +110,70 @@ class _CardScreenState extends State<CardScreen> {
 
     DateTime selectedDate = DateFormat('MMM dd, yyyy').parse(widget.cardDate);
     DateTime startDate = DateTime(selectedDate.year, selectedDate.month, selectedDate.day);
-    DateTime endDate = startDate.add(const Duration(days: 1));
+    DateTime endDate = DateTime(selectedDate.year, selectedDate.month, selectedDate.day, 23, 59, 0);
 
-    // grant usage permission - opens Usage Settings
+    print("---> Selected Date: ${selectedDate.toString()}");
+    print("---> Start Date: ${startDate.toString()}");
+    print("---> End Date: ${endDate.toString()}");
+
+    // Grant usage permission
     UsageStats.grantUsagePermission();
-    // check if permission is granted
 
+    // Check if permission is granted
     bool? isPermission = await UsageStats.checkUsagePermission();
 
     if (isPermission!) {
-      // query usage stats
+      // Get apps with launch intents
+      List<Application> installedApps = await DeviceApps.getInstalledApplications(
+        onlyAppsWithLaunchIntent: true,
+        includeSystemApps: true,
+      );
+      List<String> appPackageNames = installedApps.map((app) => app.packageName!).toList();
+
+      // Query usage stats for all packages within the date range
       List<UsageInfo> stats = await UsageStats.queryUsageStats(startDate, endDate);
+
       setState(() {
-        // Filter out apps with 0 minutes of usage time and sort by usage time in descending order
-        usageStats = stats.where((usage) => getMinutes(usage.totalTimeInForeground) > 0).toList()
-          ..sort((a, b) => getMinutes(b.totalTimeInForeground).compareTo(getMinutes(a.totalTimeInForeground)));
-        // Save only top 3 apps
-        usageStats = usageStats.sublist(0, min(3, usageStats.length));
+        // Filter out apps with 0 minutes of usage time
+        List<UsageInfo> filteredStats = stats
+            .where((usage) => getMinutes(usage.totalTimeInForeground) > 0)
+            .toList();
+
+        // Filter by app package names (optional, if needed for additional security)
+        filteredStats = filteredStats.where((usage) => appPackageNames.contains(usage.packageName!)).toList();
+
+        // Group by package name and sum usage time
+        Map<String, int> usageMap = {};
+        for (UsageInfo usage in filteredStats) {
+          usageMap[usage.packageName!] = (usageMap[usage.packageName!] ?? 0) + getMinutes(usage.totalTimeInForeground);
+        }
+
+        // Sort apps by usage time in descending order
+        List<MapEntry<String, int>> sortedMap = usageMap.entries.toList()..sort((a, b) => b.value.compareTo(a.value));
+
+        // Select top 3 packages and corresponding usage info
+        usageStats = sortedMap
+            .take(3)
+            .map((entry) => filteredStats.firstWhere((usage) => usage.packageName == entry.key))
+            .toList();
       });
 
       // Call addNewMessageData for each of the top 3 apps
       for (int i = 0; i < usageStats.length; i++) {
         UsageInfo usage = usageStats[i];
+        String appName = '';
+        try {
+          Application? app = await DeviceApps.getApp(usage.packageName!);
+          appName = app!.appName;
+          print("---> App Name: $appName ...");
+        } catch (ex) {
+          print("--> ex: ${ex.toString()} ...");
+        }
+
         addNewMessageData(
           FontAwesomeIcons.mobileScreen, // Phone icon
           '23:59', // Time
-          usage.packageName!, // App name
+          appName, // App name
           '${getMinutes(usage.totalTimeInForeground)} min', // Usage time
           'mobileUsage',
               () {},
@@ -144,40 +185,14 @@ class _CardScreenState extends State<CardScreen> {
     }
   }
 
-
-  // Future<void> fetchMobileUsageTime() async {
-  //   List<UsageInfo> usageStats = [];
-  //
-  //   DateTime selectedDate = DateFormat('MMM dd, yyyy').parse(widget.cardDate);
-  //   DateTime startDate = DateTime(selectedDate.year, selectedDate.month, selectedDate.day);
-  //   DateTime endDate = startDate.add(const Duration(days: 1));
-  //
-  //   // grant usage permission - opens Usage Settings
-  //   UsageStats.grantUsagePermission();
-  //   // check if permission is granted
-  //   bool? isPermission = await UsageStats.checkUsagePermission();
-  //
-  //   if (isPermission!) {
-  //     // query usage stats
-  //     List<UsageInfo> stats = await UsageStats.queryUsageStats(startDate, endDate);
-  //     setState(() {
-  //       // Filter out apps with 0 minutes of usage time
-  //       usageStats = stats.where((usage) => getMinutes(usage.totalTimeInForeground) > 0).toList();
-  //     });
-  //   } else {
-  //     UsageStats.grantUsagePermission();
-  //   }
-  //
-  // }
-
-  // Helper function to convert milliseconds to minutes
   int getMinutes(String? totalTimeInForeground) {
     int milliseconds = int.tryParse(totalTimeInForeground!) ?? 0;
     return (milliseconds / (1000 * 60)).round();
   }
 
   Future<void> fetchWeatherData() async {
-    String? requiredWeatherList = await SQLHelper.getWeatherListByDate(widget.cardDate);
+    String? requiredWeatherList =
+        await SQLHelper.getWeatherListByDate(widget.cardDate);
 
     if (requiredWeatherList != null && requiredWeatherList.isNotEmpty) {
       List<dynamic> weatherDataList = jsonDecode(requiredWeatherList);
@@ -197,6 +212,46 @@ class _CardScreenState extends State<CardScreen> {
           cityName, // City name or any other appropriate text
           temperature, // Body
           'weather',
+          () {},
+        );
+      }
+    }
+  }
+
+  Future<void> fetchUserLocationData() async {
+    String? requiredUserLocationList =
+    await SQLHelper.getUserLocationListByDate(widget.cardDate);
+
+    if (requiredUserLocationList != null && requiredUserLocationList.isNotEmpty) {
+      List<dynamic> userLocationDataList = jsonDecode(requiredUserLocationList);
+      // Loop through the weather data list in steps of 4 to process each weather entry
+      for (int i = 0; i < userLocationDataList.length; i += 3) {
+        String locationTime = userLocationDataList[i];
+        String locationLat = userLocationDataList[i + 1];
+        String locationLong = userLocationDataList[i + 2];
+
+        // double locationLat = double.parse(userLocationDataList[i + 1]);
+        // double locationLong = double.parse(userLocationDataList[i + 2]);
+
+        // List<Placemark> placemarks = await placemarkFromCoordinates(
+        //   locationLat,
+        //   locationLong,
+        // );
+
+        // String? locationAddress = placemarks[0].name;
+        print("location Time = $locationTime");
+        print("location Lat = $locationLat");
+        print("location Long = $locationLong");
+        // print("location Address = $locationAddress");
+        print("================================");
+
+        // Add user location data to rowData list
+        addNewMessageData(
+          FontAwesomeIcons.locationPin, // Weather icon based on condition
+          locationTime, // Time
+          locationLat, // address
+          locationLong, // Body
+          'userLocation',
               () {},
         );
       }
@@ -231,6 +286,7 @@ class _CardScreenState extends State<CardScreen> {
     fetchInboxMessages();
     fetchWeatherData();
     fetchMobileUsageTime();
+    fetchUserLocationData();
     super.initState();
   }
 
@@ -323,8 +379,8 @@ class _CardScreenState extends State<CardScreen> {
                 //Get.to(() => const CardTraditionalScreen());
                 //Get.to(() => const WeatherPage());
                 /// Delete Weather Page
-                Get.to(() => MobileUsageTime(cardDate: widget.cardDate));
-
+                /// Delete Mobile Usage Time Page
+                Get.to(() => const StepCounter());
               },
               backgroundColor: color1,
               tooltip: "Opens Traditional Page",
@@ -337,8 +393,8 @@ class _CardScreenState extends State<CardScreen> {
     );
   }
 
-  Widget _buildRow(IconData iconData, String time, String address, String body, String msgOrWeather,
-      Color backgroundColor, Function onPressed) {
+  Widget _buildRow(IconData iconData, String time, String address, String body,
+      String msgOrWeather, Color backgroundColor, Function onPressed) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
@@ -398,7 +454,8 @@ class _CardScreenState extends State<CardScreen> {
                         child: const Text("Close"),
                       ),
                     ],
-                    title: Text("City Name: $address\nTime: $time\nTemperature: $body"),
+                    title: Text(
+                        "City Name: $address\nTime: $time\nTemperature: $body"),
                     contentPadding: const EdgeInsets.all(20.0),
                     content: Icon(
                       iconData,
@@ -419,6 +476,56 @@ class _CardScreenState extends State<CardScreen> {
                     contentPadding: const EdgeInsets.all(20.0),
                     content: Text("App Name: $address"),
                   );
+                } // Inside your function or method
+                else if (msgOrWeather == 'userLocation') {
+                  // Convert latitude and longitude strings to doubles
+                  double latitude = double.parse(address);
+                  double longitude = double.parse(body);
+
+                  return FutureBuilder<List<Placemark>>(
+                    future: placemarkFromCoordinates(latitude, longitude),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      } else {
+                        String? locationName = snapshot.data?[0].name;
+
+                        return AlertDialog(
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text("Close"),
+                            ),
+                          ],
+                          title: Text("Time: $time\nAddress: $locationName"),
+                          contentPadding: const EdgeInsets.all(20.0),
+                          content: SizedBox(
+                            height: 300,
+                            child: GoogleMap(
+                              initialCameraPosition: CameraPosition(
+                                target: LatLng(latitude, longitude),
+                                zoom: 16,
+                              ),
+                              markers: <Marker>{
+                                Marker(
+                                  markerId: const MarkerId('userLocation'),
+                                  position: LatLng(latitude, longitude),
+                                  infoWindow: InfoWindow(
+                                    title: 'Location Address',
+                                    snippet: locationName,
+                                  ),
+                                ),
+                              },
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                  );
                 }
                 // Default return statement
                 return const SizedBox.shrink(); // or any other default Widget
@@ -431,5 +538,4 @@ class _CardScreenState extends State<CardScreen> {
       ],
     );
   }
-
 }

@@ -1,12 +1,8 @@
 import 'dart:async';
-
 import 'package:flutter_background_geolocation/flutter_background_geolocation.dart' as bg;
 import 'package:geocoding/geocoding.dart';
-import 'package:geolocator/geolocator.dart';
 
 class LocationService {
-
-
   static Future<String?> getCurrentCity() async {
     Completer<String?> completer = Completer<String?>();
 
@@ -20,8 +16,7 @@ class LocationService {
 
       bg.BackgroundGeolocation.onLocation((bg.Location location) async {
         try {
-          List
-          <Placemark> placemarks = await placemarkFromCoordinates(
+          List<Placemark> placemarks = await placemarkFromCoordinates(
             location.coords.latitude,
             location.coords.longitude,
           );
@@ -29,18 +24,18 @@ class LocationService {
             String cityName = placemarks[0].locality!;
             print("-----> CityName: $cityName .....");
             completer.complete(cityName);
-            // Stop background geolocation after fetching the city name
+            // Don't stop here, as we want to continue listening for location updates in the background
             bg.BackgroundGeolocation.stop();
           }
         } catch (e) {
-          print('Error getting location: $e');
+          print('--> Error getting location: $e');
           completer.completeError('Location Error');
         }
       });
 
       bg.BackgroundGeolocation.start();
     } catch (e) {
-      print('Error initializing background geolocation: $e');
+      print('---> Error initializing background geolocation: $e');
       completer.completeError('Location Error');
     }
 

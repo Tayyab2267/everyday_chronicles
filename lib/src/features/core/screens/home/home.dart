@@ -1,19 +1,21 @@
 import 'dart:convert';
+
+import 'package:call_log/call_log.dart';
 import 'package:everyday_chronicles/src/features/core/controllers/sql_helper.dart';
+import 'package:everyday_chronicles/src/features/core/screens/home/bottom_navigation_bar_widget.dart';
 import 'package:everyday_chronicles/src/features/core/screens/profile/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:workmanager/workmanager.dart';
 import '../../../../common_widgets/cards/daily_record_card.dart';
 import '../../../../constants/colors.dart';
-import '../../controllers/location_service.dart';
 import '../../controllers/selected_tags_controller.dart';
 import '../../controllers/weather_controller.dart';
-import '../../controllers/weather_service.dart';
 import '../card/card_screen.dart';
+import 'package:carp_background_location/carp_background_location.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -25,7 +27,6 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   final SelectedTagsController _selectedTagsController =
       Get.put(SelectedTagsController());
-
 
   final WeatherController _weatherController = WeatherController();
 
@@ -49,11 +50,8 @@ class _HomeState extends State<Home> {
       Permission.manageExternalStorage,
       Permission.backgroundRefresh,
       Permission.ignoreBatteryOptimizations,
-      // Permission.location,
-      // Permission.locationAlways,
-      // Permission.locationWhenInUse,
+      Permission.phone,
     ].request();
-
   }
 
   @override
@@ -84,17 +82,118 @@ class _HomeState extends State<Home> {
         actions: <Widget>[
           IconButton(
             onPressed: () async {
-              Workmanager().cancelAll();
-              print(" -----> task_one_create_dummy_data_service Background service has been stopped.....");
-              print(" -----> task_two_fetch_weather_condition_service Background service has been stopped.....");
+              List<dynamic> callLocationData = [];
+              // Fetch call logs from phone
+              Iterable<CallLogEntry> callLogs = await CallLog.get();
+              // Get the current date
+              DateTime now = DateTime.now();
+              String currentDate = DateFormat('MMM dd, yyyy').format(now);
 
-              // await SQLHelper.deleteItem(6);
+              // Filter call logs for the current date
+              Iterable<CallLogEntry> currentCallLogs = callLogs.where((call) {
+                // Extract the date from the call timestamp
+                DateTime callDateTime =
+                DateTime.fromMillisecondsSinceEpoch(call.timestamp!);
+                String callDate = DateFormat('MMM dd, yyyy').format(callDateTime);
+
+                // Return true if the call date matches the current date
+                return callDate == currentDate;
+              });
+
+              // Iterate over filtered call logs
+              for (var call in currentCallLogs) {
+                print("===============================");
+                print("Call Time: ${call.timestamp}");
+                print("Call Address: ${call.number}");
+                print("Call Name: ${call.name}");
+                print("===============================");
+
+                DateTime recentCallTime =
+                    DateTime.fromMillisecondsSinceEpoch(call.timestamp!);
+                String formattedTime =
+                    '${recentCallTime.hour.toString().padLeft(2, '0')}:${recentCallTime.minute.toString().padLeft(2, '0')}';
+                //print("----> Recent call time: $recentCallTime");
+                print("----> RECENT CALL TIME: $formattedTime");
+                DateTime now = DateTime.now();
+                String presentDate =
+                    DateFormat('MMM dd, yyyy').format(now).toString();
+                // Fetch recent call time from the database
+                String? requiredCallLocationList =
+                    await SQLHelper.getCallLocationListByDate(presentDate);
+                print(
+                    "-----> LIST FROM DATABASE: $requiredCallLocationList");
+                // Check if recent call time is equal to recent call time from database
+
+                if (requiredCallLocationList != null) {
+                  callLocationData = jsonDecode(requiredCallLocationList);
+                  if (callLocationData[0] == formattedTime.toString()) {
+                    print(callLocationData[0] +
+                        " == " +
+                        formattedTime.toString());
+                    print(
+                        "-----> DATABASE TIME == RECENT CALL TIME. EXITING...");
+                    break;
+                  } else {
+                    print(callLocationData[0] +
+                        " != " +
+                        formattedTime.toString());
+                    // Fetch current location
+                    final location =
+                        await LocationManager().getCurrentLocation();
+                    // Save data into userLocationData
+                    // callLocationData.insert(0, location.longitude.toString());
+                    // callLocationData.insert(0, location.latitude.toString());
+                    // callLocationData.insert(0, callLogs.first.number);
+                    // callLocationData.insert(0, formattedTime.toString());
+
+                    callLocationData.add(formattedTime.toString());
+                    callLocationData.add(callLogs.first.number);
+                    callLocationData.add(location.latitude.toString());
+                    callLocationData.add(location.longitude.toString());
+
+                    print(
+                        "-----> UPDATED CALL LOCATION LIST: $callLocationData");
+
+                    // Update database with userLocationData
+                    SQLHelper.updateItemCallLocationByDate(
+                        presentDate, jsonEncode(callLocationData));
+                    print("-----> FUNCTION END");
+                  }
+                } else {
+                  print("DATABASE IS NULL");
+                  // Fetch current location
+                  final location = await LocationManager().getCurrentLocation();
+                  // Save data into userLocationData
+                  callLocationData.add(formattedTime.toString());
+                  callLocationData.add(callLogs.first.number);
+                  callLocationData.add(location.latitude.toString());
+                  callLocationData.add(location.longitude.toString());
+                  print(
+                      "-----> CALL LIST: $callLocationData");
+
+                  // Update database with userLocationData
+                  SQLHelper.updateItemCallLocationByDate(
+                      presentDate, jsonEncode(callLocationData));
+                  print("-----> FUNCTION END");
+                }
+              }
+
+              LocationManager().stop();
+
+              print("=========== SERVICE STOPS =========");
+
+              // await SQLHelper.updateTable();
+              //await SQLHelper.deleteItem(16);
               // await SQLHelper.deleteDatabase();
             },
             icon: const Icon(FontAwesomeIcons.magnifyingGlass, size: 16),
           ),
           IconButton(
-            onPressed: () {
+            onPressed: () async {
+
+               //await SQLHelper.deleteItem(19);
+              LocationManager().stop();
+              Get.offAll(() => const BottomNavigationBarWidget());
               //FilterScreen.buildShowModalBottomSheet(context);
             },
             icon: const Icon(FontAwesomeIcons.rotate, size: 16),
