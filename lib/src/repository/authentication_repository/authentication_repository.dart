@@ -140,40 +140,38 @@ class AuthenticationRepository extends GetxController {
   }
 
   Future<void> logout() async {
-    Workmanager().cancelAll();
-    print(" -----> task_one Background service Stopped .....");
-    print(" -----> task_two Background service Stopped .....");
+    //Workmanager().cancelAll();
+    //print(" -----> task_one Background service Stopped .....");
+    //print(" -----> task_two Background service Stopped .....");
 
-    // try{
-    //   Workmanager().cancelByTag("task_three_track_step_counter_service");
-    //   print(" -----> track Step counter Background service Stopped .....");
-    // }catch(ex){
-    //   print("--> Exception: ${ex.toString()} .....");
-    // }
-
-
+    try {
+      await Workmanager().cancelByUniqueName('task_four_track_call_location_service');
+      print("---> Track Call Location task stopped successfully");
+    } catch (e) {
+      print("---> Error stopping task: $e");
+    }
 
     await _auth.signOut();
     Get.offAll(() => const LoginScreen());
   }
 
   // Function to calculate the initial delay until 12:00 AM of the next day
-  Duration _calculateInitialDelay() {
+  Duration _calculateInitialDelay(int seconds) {
     final now = DateTime.now();
     final nextDay = now.add(const Duration(days: 1));
     final midnight = DateTime(nextDay.year, nextDay.month, nextDay.day);
-    final delay = midnight.difference(now);
+    final delay = midnight.difference(now) + Duration(seconds: seconds);
     return delay;
   }
 
-  // Function to calculate the initial delay until 6:00 AM of the next day
-  Duration _calculateInitialDelaySix() {
-    final now = DateTime.now();
-    final nextDay = now.add(const Duration(days: 1));
-    final sixAM = DateTime(nextDay.year, nextDay.month, nextDay.day, 6, 0, 0);
-    final delay = sixAM.difference(now);
-    return delay;
-  }
+  // // Function to calculate the initial delay until 6:00 AM of the next day
+  // Duration _calculateInitialDelaySix() {
+  //   final now = DateTime.now();
+  //   final nextDay = now.add(const Duration(days: 1));
+  //   final sixAM = DateTime(nextDay.year, nextDay.month, nextDay.day, 6, 0, 0);
+  //   final delay = sixAM.difference(now);
+  //   return delay;
+  // }
 
   Future<void> createDummyDayDataService() async {
     print("\t ---------> createDummyDayDataService() function called");
@@ -181,20 +179,18 @@ class AuthenticationRepository extends GetxController {
     await Workmanager().registerPeriodicTask(
       'task_one_create_dummy_data_service',
       'task_one_create_dummy_data_service',
-      initialDelay: _calculateInitialDelay(),
+      initialDelay: _calculateInitialDelay(0),
       frequency: const Duration(days: 1),
     );
   }
 
   Future<void> fetchWeatherConditionService() async {
     print("\t ---------> fetchWeatherConditionService() function called");
-    print(
-        "--> Time _calculateInitialDelaySix(): ${_calculateInitialDelaySix().toString()}");
     // background service code
     await Workmanager().registerPeriodicTask(
       'task_two_fetch_weather_condition_service',
       'task_two_fetch_weather_condition_service',
-      initialDelay: _calculateInitialDelaySix(),
+      initialDelay: _calculateInitialDelay(21600),
       //initialDelay: const Duration(seconds: 15),
       frequency: const Duration(hours: 8),
     );
@@ -206,8 +202,8 @@ class AuthenticationRepository extends GetxController {
     await Workmanager().registerPeriodicTask(
       'task_three_track_user_location_service',
       'task_three_track_user_location_service',
-      // initialDelay: _calculateInitialDelaySix(),
-      initialDelay: const Duration(seconds: 10),
+      initialDelay: _calculateInitialDelay(30),
+      // initialDelay: const Duration(seconds: 10),
       frequency: const Duration(minutes: 15),
     );
   }
@@ -218,8 +214,8 @@ class AuthenticationRepository extends GetxController {
     await Workmanager().registerPeriodicTask(
       'task_four_track_call_location_service',
       'task_four_track_call_location_service',
-      initialDelay: _calculateInitialDelaySix(),
-      //initialDelay: const Duration(seconds: 30),
+      initialDelay: _calculateInitialDelay(60),
+      //initialDelay: const Duration(seconds: 15),
       frequency: const Duration(minutes: 16),
     );
   }

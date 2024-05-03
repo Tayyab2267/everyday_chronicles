@@ -82,117 +82,124 @@ class _HomeState extends State<Home> {
         actions: <Widget>[
           IconButton(
             onPressed: () async {
-              List<dynamic> callLocationData = [];
-              // Fetch call logs from phone
-              Iterable<CallLogEntry> callLogs = await CallLog.get();
-              // Get the current date
-              DateTime now = DateTime.now();
-              String currentDate = DateFormat('MMM dd, yyyy').format(now);
-
-              // Filter call logs for the current date
-              Iterable<CallLogEntry> currentCallLogs = callLogs.where((call) {
-                // Extract the date from the call timestamp
-                DateTime callDateTime =
-                DateTime.fromMillisecondsSinceEpoch(call.timestamp!);
-                String callDate = DateFormat('MMM dd, yyyy').format(callDateTime);
-
-                // Return true if the call date matches the current date
-                return callDate == currentDate;
-              });
-
-              // Iterate over filtered call logs
-              for (var call in currentCallLogs) {
-                print("===============================");
-                print("Call Time: ${call.timestamp}");
-                print("Call Address: ${call.number}");
-                print("Call Name: ${call.name}");
-                print("===============================");
-
-                DateTime recentCallTime =
-                    DateTime.fromMillisecondsSinceEpoch(call.timestamp!);
-                String formattedTime =
-                    '${recentCallTime.hour.toString().padLeft(2, '0')}:${recentCallTime.minute.toString().padLeft(2, '0')}';
-                //print("----> Recent call time: $recentCallTime");
-                print("----> RECENT CALL TIME: $formattedTime");
-                DateTime now = DateTime.now();
-                String presentDate =
-                    DateFormat('MMM dd, yyyy').format(now).toString();
-                // Fetch recent call time from the database
-                String? requiredCallLocationList =
-                    await SQLHelper.getCallLocationListByDate(presentDate);
-                print(
-                    "-----> LIST FROM DATABASE: $requiredCallLocationList");
-                // Check if recent call time is equal to recent call time from database
-
-                if (requiredCallLocationList != null) {
-                  callLocationData = jsonDecode(requiredCallLocationList);
-                  if (callLocationData[0] == formattedTime.toString()) {
-                    print(callLocationData[0] +
-                        " == " +
-                        formattedTime.toString());
-                    print(
-                        "-----> DATABASE TIME == RECENT CALL TIME. EXITING...");
-                    break;
-                  } else {
-                    print(callLocationData[0] +
-                        " != " +
-                        formattedTime.toString());
-                    // Fetch current location
-                    final location =
-                        await LocationManager().getCurrentLocation();
-                    // Save data into userLocationData
-                    // callLocationData.insert(0, location.longitude.toString());
-                    // callLocationData.insert(0, location.latitude.toString());
-                    // callLocationData.insert(0, callLogs.first.number);
-                    // callLocationData.insert(0, formattedTime.toString());
-
-                    callLocationData.add(formattedTime.toString());
-                    callLocationData.add(callLogs.first.number);
-                    callLocationData.add(location.latitude.toString());
-                    callLocationData.add(location.longitude.toString());
-
-                    print(
-                        "-----> UPDATED CALL LOCATION LIST: $callLocationData");
-
-                    // Update database with userLocationData
-                    SQLHelper.updateItemCallLocationByDate(
-                        presentDate, jsonEncode(callLocationData));
-                    print("-----> FUNCTION END");
-                  }
-                } else {
-                  print("DATABASE IS NULL");
-                  // Fetch current location
-                  final location = await LocationManager().getCurrentLocation();
-                  // Save data into userLocationData
-                  callLocationData.add(formattedTime.toString());
-                  callLocationData.add(callLogs.first.number);
-                  callLocationData.add(location.latitude.toString());
-                  callLocationData.add(location.longitude.toString());
-                  print(
-                      "-----> CALL LIST: $callLocationData");
-
-                  // Update database with userLocationData
-                  SQLHelper.updateItemCallLocationByDate(
-                      presentDate, jsonEncode(callLocationData));
-                  print("-----> FUNCTION END");
-                }
-              }
-
-              LocationManager().stop();
-
-              print("=========== SERVICE STOPS =========");
-
-              // await SQLHelper.updateTable();
-              //await SQLHelper.deleteItem(16);
-              // await SQLHelper.deleteDatabase();
+              // List<dynamic> callLocationData = [];
+              // // Fetch call logs from phone
+              // Iterable<CallLogEntry> callLogs = await CallLog.get();
+              // // Get the current date
+              // DateTime now = DateTime.now();
+              // String currentDate = DateFormat('MMM dd, yyyy').format(now);
+              //
+              // // Filter call logs for the current date
+              // Iterable<CallLogEntry> currentCallLogs = callLogs.where((call) {
+              //   // Extract the date from the call timestamp
+              //   DateTime callDateTime =
+              //       DateTime.fromMillisecondsSinceEpoch(call.timestamp!);
+              //   String callDate =
+              //       DateFormat('MMM dd, yyyy').format(callDateTime);
+              //
+              //   // Return true if the call date matches the current date
+              //   return callDate == currentDate;
+              // });
+              //
+              // // Iterate over filtered call logs
+              // for (var call in currentCallLogs) {
+              //   print("===============================");
+              //   print("Call Time: ${call.timestamp}");
+              //   print("Call Address: ${call.number}");
+              //   print("Call Name: ${call.name}");
+              //   print("===============================");
+              //
+              //   DateTime recentCallTime =
+              //       DateTime.fromMillisecondsSinceEpoch(call.timestamp!);
+              //   String formattedTime =
+              //       '${recentCallTime.hour.toString().padLeft(2, '0')}:${recentCallTime.minute.toString().padLeft(2, '0')}';
+              //   //print("----> Recent call time: $recentCallTime");
+              //   print("----> RECENT CALL TIME: $formattedTime");
+              //   DateTime now = DateTime.now();
+              //   String presentDate =
+              //       DateFormat('MMM dd, yyyy').format(now).toString();
+              //   // Fetch recent call time from the database
+              //   String? requiredCallLocationList =
+              //       await SQLHelper.getCallLocationListByDate(presentDate);
+              //   print("-----> LIST FROM DATABASE: $requiredCallLocationList");
+              //   // Check if recent call time is equal to recent call time from database
+              //
+              //   if (requiredCallLocationList != null) {
+              //     callLocationData = jsonDecode(requiredCallLocationList);
+              //
+              //     bool check = false;
+              //     for (int i = 0; i < callLocationData.length; i += 5) {
+              //       if (callLocationData[i] == formattedTime.toString()) {
+              //         print("$formattedTime == ${callLocationData[i]}");
+              //         print(
+              //             "-----> CALL TIME == DATABASE TIME. EXITING...");
+              //         check = true; // call found
+              //         break;
+              //       } else {
+              //         print(callLocationData[i] +
+              //             " != " +
+              //             formattedTime.toString());
+              //         check = false;// call not found
+              //       }
+              //     }
+              //
+              //     if(check == false){
+              //       // configure the location manager
+              //       LocationManager().interval = 1;
+              //       LocationManager().distanceFilter = 0;
+              //       LocationManager().notificationTitle = 'CARP Location Example';
+              //       LocationManager().notificationMsg = 'CARP is tracking your location';
+              //       final location = await LocationManager().getCurrentLocation();
+              //
+              //       callLocationData.add(formattedTime.toString());
+              //       callLocationData.add(call.number.toString());
+              //       callLocationData.add(location.latitude.toString());
+              //       callLocationData.add(location.longitude.toString());
+              //       callLocationData.add(call.name.toString());
+              //
+              //       print(
+              //           "-----> UPDATED CALL LOCATION LIST: $callLocationData");
+              //
+              //       // Update database with userLocationData
+              //       SQLHelper.updateItemCallLocationByDate(
+              //           presentDate, jsonEncode(callLocationData));
+              //       print("-----> FUNCTION END");
+              //     }
+              //
+              //   } else {
+              //     print("DATABASE IS NULL");
+              //     // configure the location manager
+              //     LocationManager().interval = 1;
+              //     LocationManager().distanceFilter = 0;
+              //     LocationManager().notificationTitle = 'CARP Location Example';
+              //     LocationManager().notificationMsg = 'CARP is tracking your location';
+              //     final location = await LocationManager().getCurrentLocation();
+              //     // Save data into userLocationData
+              //     callLocationData.add(formattedTime.toString());
+              //     callLocationData.add(call.number.toString());
+              //     callLocationData.add(location.latitude.toString());
+              //     callLocationData.add(location.longitude.toString());
+              //     callLocationData.add(call.name.toString());
+              //     print("-----> CALL LIST: $callLocationData");
+              //
+              //     // Update database with userLocationData
+              //     SQLHelper.updateItemCallLocationByDate(
+              //         presentDate, jsonEncode(callLocationData));
+              //     print("-----> FUNCTION END");
+              //   }
+              // }
+              //
+              //
+              // LocationManager().stop();
+              // print("=========== SERVICE STOPS =========");
             },
             icon: const Icon(FontAwesomeIcons.magnifyingGlass, size: 16),
           ),
           IconButton(
             onPressed: () async {
-
-               //await SQLHelper.deleteItem(19);
               LocationManager().stop();
+              print("=========== SERVICE STOPS =========");
+
               Get.offAll(() => const BottomNavigationBarWidget());
               //FilterScreen.buildShowModalBottomSheet(context);
             },
@@ -253,6 +260,7 @@ class _HomeState extends State<Home> {
                           cardDate: record['date'],
                           cardTitle: record['title'],
                           cardSubTitle: record['subtitle'],
+                          cardID: record['id'].toString(),
                           color: record['icon'] == "fantastic"
                               ? Colors.green
                               : record['icon'] == "happy"

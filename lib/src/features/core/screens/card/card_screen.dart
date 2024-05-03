@@ -10,6 +10,7 @@ import 'package:telephony/telephony.dart';
 import 'package:usage_stats/usage_stats.dart';
 import '../../../../constants/colors.dart';
 import '../../controllers/sql_helper.dart';
+import '../home/bottom_navigation_bar_widget.dart';
 import 'circle_painter_end.dart';
 import 'circle_painter_start.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -19,13 +20,14 @@ class CardScreen extends StatefulWidget {
     super.key,
     required this.cardIcon,
     required this.cardDate,
+    required this.cardID,
     required this.cardTitle,
     required this.cardSubTitle,
     required this.color,
   });
 
   final IconData cardIcon;
-  final String cardDate, cardTitle, cardSubTitle;
+  final String cardID, cardDate, cardTitle, cardSubTitle;
   final Color color;
 
   @override
@@ -47,8 +49,8 @@ class _CardScreenState extends State<CardScreen> {
     });
   }
 
-  void addNewMessageData(IconData iconData, String time,
-      String address, String body, String msgOrWeather, Function onPressed) {
+  void addNewMessageData(IconData iconData, String time, String address,
+      String body, String msgOrWeather, Function onPressed) {
     setState(() {
       rowData.add({
         'icon': iconData,
@@ -109,8 +111,10 @@ class _CardScreenState extends State<CardScreen> {
     List<UsageInfo> usageStats = [];
 
     DateTime selectedDate = DateFormat('MMM dd, yyyy').parse(widget.cardDate);
-    DateTime startDate = DateTime(selectedDate.year, selectedDate.month, selectedDate.day);
-    DateTime endDate = DateTime(selectedDate.year, selectedDate.month, selectedDate.day, 23, 59, 0);
+    DateTime startDate =
+        DateTime(selectedDate.year, selectedDate.month, selectedDate.day);
+    DateTime endDate = DateTime(
+        selectedDate.year, selectedDate.month, selectedDate.day, 23, 59, 0);
 
     print("---> Selected Date: ${selectedDate.toString()}");
     print("---> Start Date: ${startDate.toString()}");
@@ -124,14 +128,17 @@ class _CardScreenState extends State<CardScreen> {
 
     if (isPermission!) {
       // Get apps with launch intents
-      List<Application> installedApps = await DeviceApps.getInstalledApplications(
+      List<Application> installedApps =
+          await DeviceApps.getInstalledApplications(
         onlyAppsWithLaunchIntent: true,
         includeSystemApps: true,
       );
-      List<String> appPackageNames = installedApps.map((app) => app.packageName!).toList();
+      List<String> appPackageNames =
+          installedApps.map((app) => app.packageName!).toList();
 
       // Query usage stats for all packages within the date range
-      List<UsageInfo> stats = await UsageStats.queryUsageStats(startDate, endDate);
+      List<UsageInfo> stats =
+          await UsageStats.queryUsageStats(startDate, endDate);
 
       setState(() {
         // Filter out apps with 0 minutes of usage time
@@ -140,21 +147,26 @@ class _CardScreenState extends State<CardScreen> {
             .toList();
 
         // Filter by app package names (optional, if needed for additional security)
-        filteredStats = filteredStats.where((usage) => appPackageNames.contains(usage.packageName!)).toList();
+        filteredStats = filteredStats
+            .where((usage) => appPackageNames.contains(usage.packageName!))
+            .toList();
 
         // Group by package name and sum usage time
         Map<String, int> usageMap = {};
         for (UsageInfo usage in filteredStats) {
-          usageMap[usage.packageName!] = (usageMap[usage.packageName!] ?? 0) + getMinutes(usage.totalTimeInForeground);
+          usageMap[usage.packageName!] = (usageMap[usage.packageName!] ?? 0) +
+              getMinutes(usage.totalTimeInForeground);
         }
 
         // Sort apps by usage time in descending order
-        List<MapEntry<String, int>> sortedMap = usageMap.entries.toList()..sort((a, b) => b.value.compareTo(a.value));
+        List<MapEntry<String, int>> sortedMap = usageMap.entries.toList()
+          ..sort((a, b) => b.value.compareTo(a.value));
 
         // Select top 3 packages and corresponding usage info
         usageStats = sortedMap
             .take(3)
-            .map((entry) => filteredStats.firstWhere((usage) => usage.packageName == entry.key))
+            .map((entry) => filteredStats
+                .firstWhere((usage) => usage.packageName == entry.key))
             .toList();
       });
 
@@ -176,7 +188,7 @@ class _CardScreenState extends State<CardScreen> {
           appName, // App name
           '${getMinutes(usage.totalTimeInForeground)} min', // Usage time
           'mobileUsage',
-              () {},
+          () {},
         );
         print("---> Inserted ...");
       }
@@ -218,46 +230,6 @@ class _CardScreenState extends State<CardScreen> {
     }
   }
 
-  Future<void> fetchUserLocationData() async {
-    String? requiredUserLocationList =
-    await SQLHelper.getUserLocationListByDate(widget.cardDate);
-
-    if (requiredUserLocationList != null && requiredUserLocationList.isNotEmpty) {
-      List<dynamic> userLocationDataList = jsonDecode(requiredUserLocationList);
-      // Loop through the weather data list in steps of 4 to process each weather entry
-      for (int i = 0; i < userLocationDataList.length; i += 3) {
-        String locationTime = userLocationDataList[i];
-        String locationLat = userLocationDataList[i + 1];
-        String locationLong = userLocationDataList[i + 2];
-
-        // double locationLat = double.parse(userLocationDataList[i + 1]);
-        // double locationLong = double.parse(userLocationDataList[i + 2]);
-
-        // List<Placemark> placemarks = await placemarkFromCoordinates(
-        //   locationLat,
-        //   locationLong,
-        // );
-
-        // String? locationAddress = placemarks[0].name;
-        print("location Time = $locationTime");
-        print("location Lat = $locationLat");
-        print("location Long = $locationLong");
-        // print("location Address = $locationAddress");
-        print("================================");
-
-        // Add user location data to rowData list
-        addNewMessageData(
-          FontAwesomeIcons.locationPin, // Weather icon based on condition
-          locationTime, // Time
-          locationLat, // address
-          locationLong, // Body
-          'userLocation',
-              () {},
-        );
-      }
-    }
-  }
-
   IconData getWeatherIcon(String condition) {
     // Map weather conditions to appropriate icons
     switch (condition.toLowerCase()) {
@@ -281,12 +253,91 @@ class _CardScreenState extends State<CardScreen> {
     }
   }
 
+  Future<void> fetchUserLocationData() async {
+    String? requiredUserLocationList =
+        await SQLHelper.getUserLocationListByDate(widget.cardDate);
+
+    if (requiredUserLocationList != null &&
+        requiredUserLocationList.isNotEmpty) {
+      List<dynamic> userLocationDataList = jsonDecode(requiredUserLocationList);
+      // Loop through the weather data list in steps of 4 to process each weather entry
+      for (int i = 0; i < userLocationDataList.length; i += 3) {
+        String locationTime = userLocationDataList[i];
+        String locationLat = userLocationDataList[i + 1];
+        String locationLong = userLocationDataList[i + 2];
+
+
+        // String? locationAddress = placemarks[0].name;
+        print("location Time = $locationTime");
+        print("location Lat = $locationLat");
+        print("location Long = $locationLong");
+        // print("location Address = $locationAddress");
+        print("================================");
+
+        // Add user location data to rowData list
+        addNewMessageData(
+          FontAwesomeIcons.locationPin, // Weather icon based on condition
+          locationTime, // Time
+          locationLat, // address
+          locationLong, // Body
+          'userLocation',
+          () {},
+        );
+      }
+    }
+  }
+
+  Future<void> fetchCallLocationData() async {
+    print("fetching Call Location Data .........");
+    String? requiredCallLocationList = await SQLHelper.getCallLocationListByDate(widget.cardDate);
+
+    if (requiredCallLocationList != null &&
+        requiredCallLocationList.isNotEmpty) {
+      List<dynamic> callLocationDataList = jsonDecode(requiredCallLocationList);
+      // Loop through the weather data list in steps of 4 to process each weather entry
+      for (int i = 0; i < callLocationDataList.length; i += 5) {
+        String callTime = callLocationDataList[i].toString();
+        String callNumber = callLocationDataList[i + 1].toString();
+        String callLocationLat = callLocationDataList[i + 2].toString();
+        String callLocationLong = callLocationDataList[i + 3].toString();
+        String callName = callLocationDataList[i + 4].toString();
+
+        print("================================");
+        print("Call Time = $callTime");
+        print("Call Number = $callNumber");
+        print("Call Location Lat = $callLocationLat");
+        print("Call Location Long = $callLocationLong");
+        print("Call Name = $callName");
+        print("================================");
+
+        List<dynamic> sendDataList = [];
+        sendDataList.add(callLocationLat);
+        sendDataList.add(callLocationLong);
+        sendDataList.add(callName);
+
+        String? sendDataString = jsonEncode(sendDataList);
+        // Add user location data to rowData list
+        addNewMessageData(
+           FontAwesomeIcons.phone, // Weather icon based on condition
+          callTime, // Time
+          sendDataString, // lat, long, name == address
+          callNumber, // number == body
+          'callLocation',
+              () {},
+        );
+      }
+    } else{
+      print("Call Location List is null.......");
+    }
+  }
+
   @override
   void initState() {
     fetchInboxMessages();
     fetchWeatherData();
     fetchMobileUsageTime();
     fetchUserLocationData();
+    fetchCallLocationData();
     super.initState();
   }
 
@@ -310,6 +361,38 @@ class _CardScreenState extends State<CardScreen> {
           ),
           child: Icon(widget.cardIcon, color: Colors.black),
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(
+              Icons.delete,
+              color: Colors.red,
+            ),
+            onPressed: () {
+              Get.snackbar(
+                "DELETE", // Title
+                "Are you sure you want to delete ${widget.cardDate} data?",
+                // Message
+                snackPosition: SnackPosition.BOTTOM,
+                // You can adjust the position as needed
+                duration: const Duration(seconds: 3),
+                // You can adjust the duration as needed
+                backgroundColor: Colors.redAccent,
+                colorText: Colors.white,
+                mainButton: TextButton(
+                  onPressed: () async {
+                    print("Card ID: ${widget.cardID} ....");
+                    await SQLHelper.deleteItem(int.parse(widget.cardID));
+                    Get.offAll(() => const BottomNavigationBarWidget());
+                  },
+                  child: Text(
+                    "Confirm".toUpperCase(),
+                    style: const TextStyle(color: Colors.white, fontSize: 15.0),
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -422,7 +505,7 @@ class _CardScreenState extends State<CardScreen> {
           ),
         ),
         IconButton(
-          icon: Icon(iconData),
+          icon: Icon(iconData, size: 30,),
           onPressed: () {
             showDialog(
               context: context,
@@ -513,6 +596,59 @@ class _CardScreenState extends State<CardScreen> {
                               markers: <Marker>{
                                 Marker(
                                   markerId: const MarkerId('userLocation'),
+                                  position: LatLng(latitude, longitude),
+                                  infoWindow: InfoWindow(
+                                    title: 'Location Address',
+                                    snippet: locationName,
+                                  ),
+                                ),
+                              },
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                  );
+                } else if (msgOrWeather == 'callLocation') {
+
+                  List<dynamic> sendDataList = jsonDecode(address);
+
+                  // Convert latitude and longitude strings to doubles
+                  double latitude = double.parse(sendDataList[0]);
+                  double longitude = double.parse(sendDataList[1]);
+                  String callName = sendDataList[2];
+
+                  return FutureBuilder<List<Placemark>>(
+                    future: placemarkFromCoordinates(latitude, longitude),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      } else {
+                        String? locationName = snapshot.data?[0].name;
+
+                        return AlertDialog(
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text("Close"),
+                            ),
+                          ],
+                          title: Text("Time: $time\nNumber: $body\nName: $callName\nAddress: $locationName"),
+                          contentPadding: const EdgeInsets.all(20.0),
+                          content: SizedBox(
+                            height: 300,
+                            child: GoogleMap(
+                              initialCameraPosition: CameraPosition(
+                                target: LatLng(latitude, longitude),
+                                zoom: 16,
+                              ),
+                              markers: <Marker>{
+                                Marker(
+                                  markerId: const MarkerId('Call Location'),
                                   position: LatLng(latitude, longitude),
                                   infoWindow: InfoWindow(
                                     title: 'Location Address',
