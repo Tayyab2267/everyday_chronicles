@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:everyday_chronicles/src/features/core/controllers/sql_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -16,17 +18,17 @@ class HomeAddScreen extends StatefulWidget {
 
 class _HomeAddScreenState extends State<HomeAddScreen> {
   String selectedMood = 'fantastic'; // Variable to store the selected mood
-  late String subtitle;
+  String subtitle = '';
+  Future<String>? _fetchDataFuture;
 
   @override
   void initState() {
-    print("--->> check 1");
-    fetchData(); // Call fetchData without awaiting
-    print("--->> check 2");
     super.initState();
+    fetchMood();
+    _fetchDataFuture = fetchData();
   }
 
-  Future<void> fetchData() async {
+  Future<void> fetchMood() async {
     DateTime now = DateTime.now();
     String presentDate = DateFormat('MMM dd, yyyy').format(now).toString();
 
@@ -35,14 +37,21 @@ class _HomeAddScreenState extends State<HomeAddScreen> {
     if (data.isNotEmpty) {
       setState(() {
         selectedMood = data[0]['icon'];
-        subtitle = data[0]['subtitle'];
-      });
-    } else {
-      setState(() {
-        subtitle = '';
-        return;
+        subtitle = data[0]['subtitle']; // Update subtitle here
       });
     }
+  }
+
+  Future<String> fetchData() async {
+    DateTime now = DateTime.now();
+    String presentDate = DateFormat('MMM dd, yyyy').format(now).toString();
+
+    final data = await SQLHelper.getItemByDate(presentDate);
+    print(" ---> presentDate = $presentDate");
+    if (data.isNotEmpty) {
+      subtitle = data[0]['subtitle'];
+    }
+    return subtitle;
   }
 
   @override
@@ -229,6 +238,7 @@ class _HomeAddScreenState extends State<HomeAddScreen> {
               ),
               const SizedBox(height: 20.0),
               // 2. Write
+              // 2. Write
               Material(
                 elevation: 4,
                 shadowColor: Get.isDarkMode ? Colors.black : Colors.white,
@@ -253,34 +263,45 @@ class _HomeAddScreenState extends State<HomeAddScreen> {
                         height: 20.0,
                       ),
                       const SizedBox(height: 10.0),
-                      TextFormField(
-                        keyboardType: TextInputType.text,
-                        maxLines: 12,
-                        style: TextStyle(
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.normal,
-                          color: Get.isDarkMode
-                              ? Colors.white
-                              : Colors.grey.shade700,
-                        ),
-                        initialValue: subtitle,
-                        // Set the initial value to the value of subtitle
-                        onChanged: (value) {
-                          // Update the description variable when text changes
-                          setState(() {
-                            subtitle = value;
-                          });
+                      FutureBuilder<String>(
+                        // future: fetchData(),
+                        future: _fetchDataFuture,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const CircularProgressIndicator();
+                          } else {
+                            return TextFormField(
+                              keyboardType: TextInputType.text,
+                              maxLines: 12,
+                              style: TextStyle(
+                                fontSize: 18.0,
+                                fontWeight: FontWeight.normal,
+                                color: Get.isDarkMode
+                                    ? Colors.white
+                                    : Colors.grey.shade700,
+                              ),
+                              initialValue: snapshot.data ?? '',
+                              onChanged: (value) {
+                                // Update the description variable when text changes
+                                setState(() {
+                                  subtitle = value;
+                                });
+                              },
+                              decoration: const InputDecoration(
+                                hintText: "Type your daily doing in it...",
+                                border: OutlineInputBorder(),
+                              ),
+                            );
+                          }
                         },
-                        decoration: const InputDecoration(
-                          hintText: "Type your daily doing in it...",
-                          border: OutlineInputBorder(),
-                        ),
                       ),
                     ],
                   ),
                 ),
               ),
               const SizedBox(height: 20.0),
+
             ],
           ),
         ),

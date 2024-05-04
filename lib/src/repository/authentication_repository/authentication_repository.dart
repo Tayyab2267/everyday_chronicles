@@ -86,13 +86,13 @@ class AuthenticationRepository extends GetxController {
       if (firebaseUser.value != null) {
         if (firebaseUser.value!.emailVerified) {
           // services functions
-          createDummyDayDataService();
-          fetchWeatherConditionService();
-          trackUserLocation();
-          trackCallLocation();
+          createDummyDataService();
+          weatherService();
+          userLocationService();
+          callLocationService();
 
           // Open home Screen
-          Get.off(() => const BottomNavigationBarWidget());
+          Get.offAll(() => const BottomNavigationBarWidget());
           // Print message to screen
           Get.snackbar(
             "Successfully",
@@ -140,13 +140,17 @@ class AuthenticationRepository extends GetxController {
   }
 
   Future<void> logout() async {
-    //Workmanager().cancelAll();
-    //print(" -----> task_one Background service Stopped .....");
-    //print(" -----> task_two Background service Stopped .....");
+    // Workmanager().cancelAll();
+
 
     try {
-      await Workmanager().cancelByUniqueName('task_four_track_call_location_service');
-      print("---> Track Call Location task stopped successfully");
+      await Workmanager().cancelByTag("weather");
+      print("---> weather_service stopped successfully");
+      await Workmanager().cancelByTag("user");
+      print("---> user_location_service stopped successfully");
+      await Workmanager().cancelByTag("call");
+      print("---> call_location_service stopped successfully");
+
     } catch (e) {
       print("---> Error stopping task: $e");
     }
@@ -173,50 +177,54 @@ class AuthenticationRepository extends GetxController {
   //   return delay;
   // }
 
-  Future<void> createDummyDayDataService() async {
-    print("\t ---------> createDummyDayDataService() function called");
+  Future<void> createDummyDataService() async {
+    print("\t ---------> createDummyDataService() function called");
     // background service code
     await Workmanager().registerPeriodicTask(
-      'task_one_create_dummy_data_service',
-      'task_one_create_dummy_data_service',
+      'create_dummy_data_service',
+      'create_dummy_data_service',
+      tag: 'create',
       initialDelay: _calculateInitialDelay(0),
       frequency: const Duration(days: 1),
     );
   }
 
-  Future<void> fetchWeatherConditionService() async {
-    print("\t ---------> fetchWeatherConditionService() function called");
+  Future<void> weatherService() async {
+    print("\t ---------> weatherService() function called");
     // background service code
     await Workmanager().registerPeriodicTask(
-      'task_two_fetch_weather_condition_service',
-      'task_two_fetch_weather_condition_service',
-      initialDelay: _calculateInitialDelay(21600),
-      //initialDelay: const Duration(seconds: 15),
+      'weather_service',
+      'weather_service',
+      tag: 'weather',
+      // initialDelay: _calculateInitialDelay(21600),
+      initialDelay: const Duration(minutes: 2),
       frequency: const Duration(hours: 8),
     );
   }
 
-  Future<void> trackUserLocation() async {
-    print("\t ---------> trackUserLocation() function called");
+  Future<void> userLocationService() async {
+    print("\t ---------> userLocationService() function called");
     // background service code
     await Workmanager().registerPeriodicTask(
-      'task_three_track_user_location_service',
-      'task_three_track_user_location_service',
-      initialDelay: _calculateInitialDelay(30),
-      // initialDelay: const Duration(seconds: 10),
+      'user_location_service',
+      'user_location_service',
+      tag: 'user',
+      // initialDelay: _calculateInitialDelay(30),
+      initialDelay: const Duration(seconds: 60),
       frequency: const Duration(minutes: 15),
     );
   }
 
-  Future<void> trackCallLocation() async {
-    print("\t ---------> trackCallLocation() function called");
+  Future<void> callLocationService() async {
+    print("\t ---------> callLocationService() function called");
     // background service code
     await Workmanager().registerPeriodicTask(
-      'task_four_track_call_location_service',
-      'task_four_track_call_location_service',
-      initialDelay: _calculateInitialDelay(60),
-      //initialDelay: const Duration(seconds: 15),
-      frequency: const Duration(minutes: 16),
+      'call_location_service',
+      'call_location_service',
+      tag: 'call',
+      //initialDelay: _calculateInitialDelay(60),
+      initialDelay: const Duration(seconds: 10),
+      frequency: const Duration(minutes: 15),
     );
   }
 

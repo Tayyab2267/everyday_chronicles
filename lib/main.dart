@@ -23,22 +23,27 @@ void callbackDispatcher() {
   Workmanager().executeTask((taskName, inputData) async {
     print(" ------> Before Switch statement");
     switch (taskName) {
-      case 'task_one_create_dummy_data_service':
+      case 'create_dummy_data_service':
         {
           await _backgroundService.taskOneCreateDummyDayDataService();
         }
         break;
-      case 'task_two_fetch_weather_condition_service':
+      case 'weather_service':
         {
           final WeatherService weatherService =
               WeatherService('d5e0785bbb2b18fc6cd370794e1ab333');
 
           List<dynamic> weatherData = [];
 
-          String? cityName;
+          String? cityName = '';
           try {
             // get the current location
-            final location = await LocationManager().getCurrentLocation();
+            LocationManager locationManagerWeather = LocationManager();
+            locationManagerWeather.interval = 1;
+            locationManagerWeather.distanceFilter = 0;
+            locationManagerWeather.notificationTitle = 'Weather Location';
+            locationManagerWeather.notificationMsg = 'CARP is tracking your location for weather';
+            final location = await locationManagerWeather.getCurrentLocation();
             List<Placemark> placemarks = await placemarkFromCoordinates(
               location.latitude,
               location.longitude,
@@ -48,6 +53,9 @@ void callbackDispatcher() {
             cityName = placemarks[0].locality.toString();
             //cityName = await LocationService.getCurrentCity();
             print("---> Position: ${cityName.toString()} ...");
+
+            locationManagerWeather.stop();
+            print("Weather Location Manager has been stopped......");
           } catch (ex) {
             print("--> Exception Occur: ${ex.toString()}");
           }
@@ -94,11 +102,17 @@ void callbackDispatcher() {
           }
         }
         break;
-      case 'task_three_track_user_location_service':
+      case 'user_location_service':
         {
           List<dynamic> userLocationData = [];
 
-          final location = await LocationManager().getCurrentLocation();
+          // configure the location manager
+          LocationManager locationManagerUser = LocationManager();
+          locationManagerUser.interval = 1;
+          locationManagerUser.distanceFilter = 0;
+          locationManagerUser.notificationTitle = 'User Location';
+          locationManagerUser.notificationMsg = 'CARP is tracking your location';
+          final location = await locationManagerUser.getCurrentLocation();
           List<Placemark> placemarks = await placemarkFromCoordinates(
             location.latitude,
             location.longitude,
@@ -106,6 +120,8 @@ void callbackDispatcher() {
           print("----> Latitude: ${location.latitude} ...");
           print("----> Longitude: ${location.longitude} ...");
           print("----> House Address: ${placemarks[0].name.toString()}");
+          locationManagerUser.stop();
+          print("---> User Location Manager Stops .........");
 
           DateTime now = DateTime.now();
           String formattedTime =
@@ -157,11 +173,9 @@ void callbackDispatcher() {
           SQLHelper.updateItemUserLocationByDate(
               presentDate, jsonEncode(userLocationData));
           print("-----> End Function");
-          LocationManager().stop();
-          print("---> Location Manager Stops");
         }
         break;
-      case 'task_four_track_call_location_service':
+      case 'call_location_service':
         {
           List<dynamic> callLocationData = [];
           // Fetch call logs from phone
@@ -181,6 +195,13 @@ void callbackDispatcher() {
             // Return true if the call date matches the current date
             return callDate == currentDate;
           });
+
+          // configure the location manager
+          LocationManager locationManagerCall = LocationManager();
+          locationManagerCall.interval = 1;
+          locationManagerCall.distanceFilter = 0;
+          locationManagerCall.notificationTitle = 'Call Location';
+          locationManagerCall.notificationMsg = 'CARP is tracking your call location';
 
           // Iterate over filtered call logs
           for (var call in currentCallLogs) {
@@ -225,12 +246,8 @@ void callbackDispatcher() {
               }
 
               if(check == false){
-                // configure the location manager
-                LocationManager().interval = 1;
-                LocationManager().distanceFilter = 0;
-                LocationManager().notificationTitle = 'CARP Location Example';
-                LocationManager().notificationMsg = 'CARP is tracking your location';
-                final location = await LocationManager().getCurrentLocation();
+
+                final location = await locationManagerCall.getCurrentLocation();
 
                 callLocationData.add(formattedTime.toString());
                 callLocationData.add(call.number.toString());
@@ -249,12 +266,7 @@ void callbackDispatcher() {
 
             } else {
               print("DATABASE IS NULL");
-              // configure the location manager
-              LocationManager().interval = 1;
-              LocationManager().distanceFilter = 0;
-              LocationManager().notificationTitle = 'CARP Location Example';
-              LocationManager().notificationMsg = 'CARP is tracking your location';
-              final location = await LocationManager().getCurrentLocation();
+              final location = await locationManagerCall.getCurrentLocation();
               // Save data into userLocationData
               callLocationData.add(formattedTime.toString());
               callLocationData.add(call.number.toString());
@@ -270,9 +282,8 @@ void callbackDispatcher() {
             }
           }
 
-
-          LocationManager().stop();
-          print("=========== SERVICE STOPS =========");
+          locationManagerCall.stop();
+          print(" Call Location Manager STOPS .......");
         }
         break;
 
