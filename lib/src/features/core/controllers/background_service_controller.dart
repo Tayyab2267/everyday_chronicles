@@ -13,7 +13,7 @@ class BackgroundServiceController extends GetxController {
     try {
       print("-----> Before SQL Flite ");
       await SQLHelper.createItem(getCurrentDate(), "fantastic",
-          "Title of the day", "This is the dummy text");
+          "Title of the day", "This is the dummy text", "this is dummy 3 am thoughts");
       print("-----> After SQL Flite");
     } catch (ex) {
       print("----> Ex: ${ex.toString()}");

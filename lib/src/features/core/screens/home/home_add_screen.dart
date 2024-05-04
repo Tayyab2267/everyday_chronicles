@@ -1,10 +1,7 @@
-import 'dart:ffi';
-
 import 'package:everyday_chronicles/src/features/core/controllers/sql_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import '../../../../constants/colors.dart';
 import 'bottom_navigation_bar_widget.dart';
@@ -21,11 +18,15 @@ class _HomeAddScreenState extends State<HomeAddScreen> {
   String subtitle = '';
   Future<String>? _fetchDataFuture;
 
+  String thoughts = '';
+  Future<String>? _fetch3amThoughts;
+
   @override
   void initState() {
     super.initState();
     fetchMood();
     _fetchDataFuture = fetchData();
+    _fetch3amThoughts = fetch3amData();
   }
 
   Future<void> fetchMood() async {
@@ -52,6 +53,18 @@ class _HomeAddScreenState extends State<HomeAddScreen> {
       subtitle = data[0]['subtitle'];
     }
     return subtitle;
+  }
+
+  Future<String> fetch3amData() async {
+    DateTime now = DateTime.now();
+    String presentDate = DateFormat('MMM dd, yyyy').format(now).toString();
+
+    final data = await SQLHelper.getItemByDate(presentDate);
+    print(" ---> presentDate = $presentDate");
+    if (data.isNotEmpty) {
+      thoughts = data[0]['thoughts'];
+    }
+    return thoughts;
   }
 
   @override
@@ -86,12 +99,12 @@ class _HomeAddScreenState extends State<HomeAddScreen> {
                     presentDate,
                     selectedMood.toString(),
                     subtitle.substring(0, 10),
-                    subtitle.toString());
+                    subtitle.toString(),
+                    thoughts.toString());
               } else {
                 await SQLHelper.createItem(presentDate, selectedMood.toString(),
-                    subtitle.substring(0, 10), subtitle.toString());
+                    subtitle.substring(0, 10), subtitle.toString(), thoughts.toString());
               }
-
               Get.offAll(() => const BottomNavigationBarWidget());
             },
             icon: const FaIcon(FontAwesomeIcons.check, size: 20),
@@ -238,7 +251,6 @@ class _HomeAddScreenState extends State<HomeAddScreen> {
               ),
               const SizedBox(height: 20.0),
               // 2. Write
-              // 2. Write
               Material(
                 elevation: 4,
                 shadowColor: Get.isDarkMode ? Colors.black : Colors.white,
@@ -273,7 +285,7 @@ class _HomeAddScreenState extends State<HomeAddScreen> {
                           } else {
                             return TextFormField(
                               keyboardType: TextInputType.text,
-                              maxLines: 12,
+                              maxLines: 8,
                               style: TextStyle(
                                 fontSize: 18.0,
                                 fontWeight: FontWeight.normal,
@@ -301,7 +313,68 @@ class _HomeAddScreenState extends State<HomeAddScreen> {
                 ),
               ),
               const SizedBox(height: 20.0),
-
+              // 2. 3am thoughts
+              Material(
+                elevation: 4,
+                shadowColor: Get.isDarkMode ? Colors.black : Colors.white,
+                borderRadius: BorderRadius.circular(10.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Get.isDarkMode
+                        ? myCardBackgroundDarkColor
+                        : myCardBackgroundLightColor,
+                    borderRadius: BorderRadius.circular(
+                        10.0), // Adjust the border radius as needed
+                  ),
+                  padding: const EdgeInsets.all(12.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text("3am thoughts",
+                          style: Theme.of(context).textTheme.titleLarge),
+                      Divider(
+                        color: Colors.grey.shade300,
+                        thickness: 2,
+                        height: 20.0,
+                      ),
+                      const SizedBox(height: 10.0),
+                      FutureBuilder<String>(
+                        future: _fetch3amThoughts,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const CircularProgressIndicator();
+                          } else {
+                            return TextFormField(
+                              keyboardType: TextInputType.text,
+                              maxLines: 8,
+                              style: TextStyle(
+                                fontSize: 18.0,
+                                fontWeight: FontWeight.normal,
+                                color: Get.isDarkMode
+                                    ? Colors.white
+                                    : Colors.grey.shade700,
+                              ),
+                              initialValue: snapshot.data ?? '',
+                              onChanged: (value) {
+                                // Update the description variable when text changes
+                                setState(() {
+                                  thoughts = value;
+                                });
+                              },
+                              decoration: const InputDecoration(
+                                hintText: "Type your 3am thoughts in it...",
+                                border: OutlineInputBorder(),
+                              ),
+                            );
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10.0),
             ],
           ),
         ),

@@ -11,6 +11,7 @@ import 'package:usage_stats/usage_stats.dart';
 import '../../../../constants/colors.dart';
 import '../../controllers/sql_helper.dart';
 import '../home/bottom_navigation_bar_widget.dart';
+import 'card_traditional_screen.dart';
 import 'circle_painter_end.dart';
 import 'circle_painter_start.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -266,7 +267,6 @@ class _CardScreenState extends State<CardScreen> {
         String locationLat = userLocationDataList[i + 1];
         String locationLong = userLocationDataList[i + 2];
 
-
         // String? locationAddress = placemarks[0].name;
         print("location Time = $locationTime");
         print("location Lat = $locationLat");
@@ -289,7 +289,8 @@ class _CardScreenState extends State<CardScreen> {
 
   Future<void> fetchCallLocationData() async {
     print("fetching Call Location Data .........");
-    String? requiredCallLocationList = await SQLHelper.getCallLocationListByDate(widget.cardDate);
+    String? requiredCallLocationList =
+        await SQLHelper.getCallLocationListByDate(widget.cardDate);
 
     if (requiredCallLocationList != null &&
         requiredCallLocationList.isNotEmpty) {
@@ -318,15 +319,15 @@ class _CardScreenState extends State<CardScreen> {
         String? sendDataString = jsonEncode(sendDataList);
         // Add user location data to rowData list
         addNewMessageData(
-           FontAwesomeIcons.phone, // Weather icon based on condition
+          FontAwesomeIcons.phone, // Weather icon based on condition
           callTime, // Time
           sendDataString, // lat, long, name == address
           callNumber, // number == body
           'callLocation',
-              () {},
+          () {},
         );
       }
-    } else{
+    } else {
       print("Call Location List is null.......");
     }
   }
@@ -459,11 +460,19 @@ class _CardScreenState extends State<CardScreen> {
             padding: const EdgeInsets.only(left: 30),
             child: FloatingActionButton(
               onPressed: () {
-                //Get.to(() => const CardTraditionalScreen());
+                Get.to(
+                  () => CardTraditionalScreen(
+                    cardIcon: widget.cardIcon,
+                    cardDate: widget.cardDate,
+                    cardID: widget.cardID,
+                    cardTitle: widget.cardTitle,
+                    cardSubTitle: widget.cardSubTitle,
+                  ),
+                );
                 //Get.to(() => const WeatherPage());
                 /// Delete Weather Page
                 /// Delete Mobile Usage Time Page
-                Get.to(() => const StepCounter());
+                // Get.to(() => const StepCounter());
               },
               backgroundColor: color1,
               tooltip: "Opens Traditional Page",
@@ -505,7 +514,10 @@ class _CardScreenState extends State<CardScreen> {
           ),
         ),
         IconButton(
-          icon: Icon(iconData, size: 30,),
+          icon: Icon(
+            iconData,
+            size: 30,
+          ),
           onPressed: () {
             showDialog(
               context: context,
@@ -610,7 +622,6 @@ class _CardScreenState extends State<CardScreen> {
                     },
                   );
                 } else if (msgOrWeather == 'callLocation') {
-
                   List<dynamic> sendDataList = jsonDecode(address);
 
                   // Convert latitude and longitude strings to doubles
@@ -637,7 +648,8 @@ class _CardScreenState extends State<CardScreen> {
                               child: const Text("Close"),
                             ),
                           ],
-                          title: Text("Time: $time\nNumber: $body\nName: $callName\nAddress: $locationName"),
+                          title: Text(
+                              "Time: $time\nNumber: $body\nName: $callName\nAddress: $locationName"),
                           contentPadding: const EdgeInsets.all(20.0),
                           content: SizedBox(
                             height: 300,

@@ -38,6 +38,7 @@ class SQLHelper {
       icon TEXT,
       title TEXT,
       subtitle TEXT,
+      thoughts TEXT,
       weatherList TEXT,
       userLocationList TEXT,
       callLocationList TEXT
@@ -59,6 +60,7 @@ class SQLHelper {
         icon TEXT,
         title TEXT,
         subtitle TEXT,
+        thoughts TEXT,
         weatherList TEXT,
         userLocationList TEXT,
         callLocationList TEXT
@@ -81,10 +83,10 @@ class SQLHelper {
     print("-----> Table updated successfully.");
   }
 
-  static Future<int> createItem(String date, String icon, String title, String? subtitle) async {
+  static Future<int> createItem(String date, String icon, String title, String? subtitle, String? thoughts) async {
     print("-----> Creating item...");
     final db = await SQLHelper.db();
-    final data = {'date': date, 'icon': icon, 'title': title, 'subtitle': subtitle};
+    final data = {'date': date, 'icon': icon, 'title': title, 'subtitle': subtitle, 'thoughts': thoughts};
     final id = await db.insert('items', data,
         conflictAlgorithm: sql.ConflictAlgorithm.replace);
     print(" -----> Item inserted with ID: $id");
@@ -158,7 +160,7 @@ class SQLHelper {
   }
 
   static Future<int> updateItemByDate(
-      String date, String icon, String title, String? subtitle) async {
+      String date, String icon, String title, String? subtitle, String? thoughts) async {
     print("-----> Updating item by date...");
     final db = await SQLHelper.db();
 
@@ -166,6 +168,7 @@ class SQLHelper {
       'icon': icon,
       'title': title,
       'subtitle': subtitle,
+      'thoughts': thoughts,
     };
 
     final result = await db.update('items', data, where: "date = ?", whereArgs: [date]);
@@ -215,7 +218,7 @@ class SQLHelper {
   }
 
   static Future<int> updateItem(
-      int id, String icon, String title, String? subtitle) async {
+      int id, String icon, String title, String? subtitle, String? thoughts) async {
     print("-----> Updating item by ID...");
     final db = await SQLHelper.db();
 
@@ -223,6 +226,7 @@ class SQLHelper {
       'icon': icon,
       'title': title,
       'subtitle': subtitle,
+      'thoughts': thoughts,
     };
 
     final result = await db.update('items', data, where: "id = ?", whereArgs: [id]);
