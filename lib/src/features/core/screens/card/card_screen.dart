@@ -1,11 +1,13 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:device_apps/device_apps.dart';
-import 'package:everyday_chronicles/src/features/core/screens/card/step_counter.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:photo_gallery/photo_gallery.dart';
 import 'package:telephony/telephony.dart';
 import 'package:usage_stats/usage_stats.dart';
 import '../../../../constants/colors.dart';
@@ -15,6 +17,7 @@ import 'card_traditional_screen.dart';
 import 'circle_painter_end.dart';
 import 'circle_painter_start.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:http/http.dart' as http;
 
 class CardScreen extends StatefulWidget {
   const CardScreen({
@@ -24,11 +27,12 @@ class CardScreen extends StatefulWidget {
     required this.cardID,
     required this.cardTitle,
     required this.cardSubTitle,
+    required this.cardThought,
     required this.color,
   });
 
   final IconData cardIcon;
-  final String cardID, cardDate, cardTitle, cardSubTitle;
+  final String cardID, cardDate, cardTitle, cardSubTitle, cardThought;
   final Color color;
 
   @override
@@ -38,6 +42,37 @@ class CardScreen extends StatefulWidget {
 class _CardScreenState extends State<CardScreen> {
   // Define list of data for rows
   final List<Map<String, dynamic>> rowData = [];
+  final List<Map<String, dynamic>> rowDataText = [];
+
+  // /// Mood AI Model Function
+  // Future<String> sendTextToPredictEmotion(String text) async {
+  //   // var url = 'http://127.0.0.1:5001/predict-emotion';
+  //   var url = 'http://192.168.0.113:5001/predict-emotion';
+  //   var response = await http.post(Uri.parse(url),
+  //       headers: {"Content-Type": "application/json"},
+  //       body: jsonEncode({"text": text}));
+  //
+  //   if (response.statusCode == 200) {
+  //     return jsonDecode(response.body)['predicted_emotion'];
+  //   } else {
+  //     throw Exception('Failed to send text to Flask');
+  //   }
+  // }
+
+  /// Mood AI Model Function
+  Future<String> sendTextToSummary(String text) async {
+    // var url = 'http://127.0.0.1:5001/predict-emotion';
+    var url = 'http://192.168.0.113:5001/summarize-text';
+    var response = await http.post(Uri.parse(url),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({"text": text}));
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body)['summary'];
+    } else {
+      throw Exception('Failed to send text to Flask');
+    }
+  }
 
   /// This method to compare times and sort the rowData list
   void sortRowDataByTime() {
@@ -47,6 +82,22 @@ class _CardScreenState extends State<CardScreen> {
       DateTime timeB = DateFormat('HH:mm').parse(b['time']);
       // Compare the times
       return timeA.compareTo(timeB);
+    });
+    rowDataText.sort((a, b) {
+      // Parse time strings to DateTime objects for comparison
+      DateTime timeA = DateFormat('HH:mm').parse(a['time']);
+      DateTime timeB = DateFormat('HH:mm').parse(b['time']);
+      // Compare the times
+      return timeA.compareTo(timeB);
+    });
+  }
+
+  void addNewString(String time, String text) {
+    setState(() {
+      rowDataText.add({
+        'time': time,
+        'text': text,
+      });
     });
   }
 
@@ -67,7 +118,6 @@ class _CardScreenState extends State<CardScreen> {
   // message code start
   final Telephony telephony = Telephony.instance;
   List<SmsMessage> inboxMessages = [];
-
   Future<void> fetchInboxMessages() async {
     DateTime cardDate = DateFormat('MMM dd, yyyy').parse(widget.cardDate);
     DateTime startDate = DateTime(cardDate.year, cardDate.month, cardDate.day);
@@ -105,6 +155,14 @@ class _CardScreenState extends State<CardScreen> {
           // Format the date to display only time (HH:mm)
           "message",
           () {});
+
+      // Text Code below
+      String messageText =
+          'You have received a message("$messageBody") at "$messageTime" from ($messageAddress).';
+      addNewString(
+        messageTime, // time
+        messageText, // text
+      );
     }
   }
 
@@ -192,6 +250,14 @@ class _CardScreenState extends State<CardScreen> {
           () {},
         );
         print("---> Inserted ...");
+
+        //Text code below
+        String usageTime = getMinutes(usage.totalTimeInForeground).toString();
+        String text = 'You have used $appName for around $usageTime min.';
+        addNewString(
+          '23:59', // Time
+          text, // text
+        );
       }
     } else {
       UsageStats.grantUsagePermission();
@@ -227,10 +293,17 @@ class _CardScreenState extends State<CardScreen> {
           'weather',
           () {},
         );
+
+        // text code below
+        String text =
+            'The weather condition is $condition and "$temperature"C  at "$weatherTime".';
+        addNewString(
+          weatherTime, // Time
+          text, // text
+        );
       }
     }
   }
-
   IconData getWeatherIcon(String condition) {
     // Map weather conditions to appropriate icons
     switch (condition.toLowerCase()) {
@@ -283,6 +356,17 @@ class _CardScreenState extends State<CardScreen> {
           'userLocation',
           () {},
         );
+
+        //Text code below
+        List<Placemark> placemarks = await placemarkFromCoordinates(
+          double.parse(locationLat),
+          double.parse(locationLong),
+        );
+        String text = 'you are at "${placemarks[0].name}" at "$locationTime".';
+        addNewString(
+          locationTime, // Time
+          text, // Text
+        );
       }
     }
   }
@@ -326,6 +410,18 @@ class _CardScreenState extends State<CardScreen> {
           'callLocation',
           () {},
         );
+
+        // text code below
+        List<Placemark> placemarks = await placemarkFromCoordinates(
+          double.parse(callLocationLat),
+          double.parse(callLocationLong),
+        );
+        String text =
+            'You have received call at "$callTime" from "$callName" and "$callNumber" at this "${placemarks[0].name}".';
+        addNewString(
+          callTime, // Time
+          text, // Text
+        );
       }
     } else {
       print("Call Location List is null.......");
@@ -342,10 +438,23 @@ class _CardScreenState extends State<CardScreen> {
     super.initState();
   }
 
+  ///
+  bool isSubtitleVisible = false;
+  bool isThoughtsVisible = false;
+  TextEditingController subtitleController = TextEditingController();
+  TextEditingController thoughtsController = TextEditingController();
+
+  ///
+
   @override
   Widget build(BuildContext context) {
     // Sort the rowData list before displaying
     sortRowDataByTime();
+
+    // Concatenate rowDataText strings
+    String rowDataTextText =
+        rowDataText.map((data) => "${data['text']}").join(' ');
+
     final Color timeBackgroundColor = Get.isDarkMode ? color3 : Colors.grey;
     return Scaffold(
       backgroundColor: Get.isDarkMode
@@ -402,50 +511,156 @@ class _CardScreenState extends State<CardScreen> {
             child: Container(
               padding: const EdgeInsets.all(20),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // shows circle pointer start
-                  Container(
-                    padding: const EdgeInsets.only(top: 20),
-                    decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(15),
-                        topRight: Radius.circular(15),
+                  //subtitle and 3am thoughts code
+                  Column(
+                    children: [
+
+                      // ElevatedButton.icon(
+                      //   onPressed: () async {
+                      //     String text = "I feel sad today because I have not done my homework that's why it give me zero marks today";
+                      //     String mood = await sendTextToPredictEmotion(text);
+                      //     String summaryText = await sendTextToSummary(text);
+                      //     print("====> Predicted Mood: $mood ===========");
+                      //     print("====> Summary Text : $summaryText ===========");
+                      //   },
+                      //
+                      //   icon: const Icon(FontAwesomeIcons.wandMagicSparkles),
+                      //   label: const Text("Analyze Mood"),
+                      //   style: ButtonStyle(
+                      //     padding: MaterialStateProperty.all(const EdgeInsets.only(left: 30, right: 30, top: 10, bottom: 10)),
+                      //     backgroundColor:
+                      //         MaterialStateProperty.all(Colors.blue),
+                      //   ),
+                      // ),
+                      // const SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: () {
+                                setState(() {
+                                  isSubtitleVisible = !isSubtitleVisible;
+                                  if (isSubtitleVisible) {
+                                    subtitleController.text = widget
+                                        .cardSubTitle; //'Initial subtitle value';
+                                  }
+                                  isThoughtsVisible = false;
+                                });
+                              },
+                              style: ButtonStyle(
+                                backgroundColor: isSubtitleVisible
+                                    ? MaterialStateProperty.all(Colors.green)
+                                    : MaterialStateProperty.all(Colors.blue),
+                              ),
+                              child: isSubtitleVisible
+                                  ? const Text("Hide Subtitle")
+                                  : const Text("Show Subtitle"),
+                            ),
+                          ),
+                          const SizedBox(width: 10.0),
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: () {
+                                setState(() {
+                                  isThoughtsVisible = !isThoughtsVisible;
+                                  if (isThoughtsVisible) {
+                                    thoughtsController.text = widget
+                                        .cardThought; //'Initial 3am thoughts';
+                                  }
+                                  isSubtitleVisible = false;
+                                });
+                              },
+                              style: ButtonStyle(
+                                backgroundColor: isThoughtsVisible
+                                    ? MaterialStateProperty.all(Colors.green)
+                                    : MaterialStateProperty.all(Colors.blue),
+                              ),
+                              child: isThoughtsVisible
+                                  ? const Text("Hide Thoughts")
+                                  : const Text("Show Thoughts"),
+                            ),
+                          ),
+                        ],
                       ),
-                      color: timeBackgroundColor,
-                    ),
-                    height: 35,
-                    width: 70,
-                    child: CustomPaint(
-                      painter: CirclePainterStart(),
-                    ),
+                      // below if is textfield code
+                      if (isSubtitleVisible || isThoughtsVisible)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 20.0),
+                          child: TextField(
+                            enabled: false,
+                            keyboardType: TextInputType.text,
+                            maxLines: 8,
+                            style: TextStyle(
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.normal,
+                              color: Get.isDarkMode
+                                  ? Colors.white
+                                  : Colors.grey.shade700,
+                            ),
+                            controller: isSubtitleVisible
+                                ? subtitleController
+                                : thoughtsController,
+                            decoration: InputDecoration(
+                              border: const OutlineInputBorder(),
+                              hintText: isSubtitleVisible
+                                  ? 'Subtitle is empty'
+                                  : '3am Thoughts is empty',
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
-                  // Dynamically generate rows using rowData list
-                  for (var data in rowData)
-                    _buildRow(
-                      data['icon'],
-                      data['time'],
-                      data['address'],
-                      data['body'],
-                      data['msgOrWeather'],
-                      timeBackgroundColor,
-                      data['onPressed'],
-                    ),
-                  // shows circle end pointer
-                  Container(
-                    padding: const EdgeInsets.only(bottom: 20),
-                    decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.only(
-                        bottomLeft: Radius.circular(15),
-                        bottomRight: Radius.circular(15),
+                  const SizedBox(height: 15),
+                  // logo code
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // shows circle pointer start
+                      Container(
+                        padding: const EdgeInsets.only(top: 20),
+                        decoration: BoxDecoration(
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(15),
+                            topRight: Radius.circular(15),
+                          ),
+                          color: timeBackgroundColor,
+                        ),
+                        height: 35,
+                        width: 70,
+                        child: CustomPaint(
+                          painter: CirclePainterStart(),
+                        ),
                       ),
-                      color: timeBackgroundColor,
-                    ),
-                    height: 35,
-                    width: 70,
-                    child: CustomPaint(
-                      painter: CirclePainterEnd(),
-                    ),
+                      // Dynamically generate rows using rowData list
+                      for (var data in rowData)
+                        _buildRow(
+                          data['icon'],
+                          data['time'],
+                          data['address'],
+                          data['body'],
+                          data['msgOrWeather'],
+                          timeBackgroundColor,
+                          data['onPressed'],
+                        ),
+                      // shows circle end pointer
+                      Container(
+                        padding: const EdgeInsets.only(bottom: 20),
+                        decoration: BoxDecoration(
+                          borderRadius: const BorderRadius.only(
+                            bottomLeft: Radius.circular(15),
+                            bottomRight: Radius.circular(15),
+                          ),
+                          color: timeBackgroundColor,
+                        ),
+                        height: 35,
+                        width: 70,
+                        child: CustomPaint(
+                          painter: CirclePainterEnd(),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -463,10 +678,13 @@ class _CardScreenState extends State<CardScreen> {
                 Get.to(
                   () => CardTraditionalScreen(
                     cardIcon: widget.cardIcon,
+                    color: widget.color,
                     cardDate: widget.cardDate,
                     cardID: widget.cardID,
                     cardTitle: widget.cardTitle,
                     cardSubTitle: widget.cardSubTitle,
+                    cardThoughts: widget.cardThought,
+                    cardText: rowDataTextText,
                   ),
                 );
                 //Get.to(() => const WeatherPage());

@@ -25,7 +25,7 @@ dependencies:
   persistent_bottom_nav_bar_v2: ^5.0.0
   persistent_bottom_nav_bar: ^5.0.2
   font_awesome_flutter: ^10.7.0
-  image_picker: ^1.0.7
+  image_picker: ^1.0.8
   line_awesome_flutter: ^2.0.0
   syncfusion_flutter_charts: ^23.2.7
   fl_chart: ^0.66.2
@@ -54,6 +54,13 @@ dependencies:
   google_maps_flutter: ^2.5.0
 
   call_log: ^4.0.0
+
+  photo_gallery: ^2.2.1
+  transparent_image: ^2.0.1
+  video_player: ^2.5.0
+
+  awesome_notifications: ^0.8.2
+
 
 dev_dependencies:
   flutter_test:

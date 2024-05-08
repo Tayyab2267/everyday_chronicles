@@ -93,17 +93,25 @@ class _HomeAddScreenState extends State<HomeAddScreen> {
         actions: <Widget>[
           IconButton(
             onPressed: () async {
+              // on check button clicked following operations will be performed
               final existingItem = await SQLHelper.getItemByDate(presentDate);
               if (existingItem.isNotEmpty) {
                 await SQLHelper.updateItemByDate(
                     presentDate,
                     selectedMood.toString(),
+                    "true",
                     subtitle.substring(0, 10),
                     subtitle.toString(),
                     thoughts.toString());
               } else {
-                await SQLHelper.createItem(presentDate, selectedMood.toString(),
-                    subtitle.substring(0, 10), subtitle.toString(), thoughts.toString());
+                await SQLHelper.createItem(
+                  presentDate,
+                  selectedMood.toString(),
+                  "true",
+                  subtitle.substring(0, 10),
+                  subtitle.toString(),
+                  thoughts.toString(),
+                );
               }
               Get.offAll(() => const BottomNavigationBarWidget());
             },

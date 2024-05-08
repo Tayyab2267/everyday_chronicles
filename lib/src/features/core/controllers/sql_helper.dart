@@ -36,6 +36,7 @@ class SQLHelper {
       id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
       date TEXT,
       icon TEXT,
+      userSelectMood TEXT,
       title TEXT,
       subtitle TEXT,
       thoughts TEXT,
@@ -58,6 +59,7 @@ class SQLHelper {
         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
         date TEXT,
         icon TEXT,
+        userSelectMood TEXT,
         title TEXT,
         subtitle TEXT,
         thoughts TEXT,
@@ -83,10 +85,10 @@ class SQLHelper {
     print("-----> Table updated successfully.");
   }
 
-  static Future<int> createItem(String date, String icon, String title, String? subtitle, String? thoughts) async {
+  static Future<int> createItem(String date, String icon, String userSelectMood,String title, String? subtitle, String? thoughts) async {
     print("-----> Creating item...");
     final db = await SQLHelper.db();
-    final data = {'date': date, 'icon': icon, 'title': title, 'subtitle': subtitle, 'thoughts': thoughts};
+    final data = {'date': date, 'icon': icon, 'userSelectMood':userSelectMood, 'title': title, 'subtitle': subtitle, 'thoughts': thoughts};
     final id = await db.insert('items', data,
         conflictAlgorithm: sql.ConflictAlgorithm.replace);
     print(" -----> Item inserted with ID: $id");
@@ -103,6 +105,53 @@ class SQLHelper {
     print("-----> Getting item by date...");
     final db = await SQLHelper.db();
     return db.query('items', where: "date = ?", whereArgs: [date], limit: 1);
+  }
+
+  static Future<String?> getUserSelectMoodByDate(String date) async {
+    print("-----> Getting userSelectMood by date...");
+    final db = await SQLHelper.db();
+    final result = await db.query('items', columns: ['userSelectMood'], where: "date = ?", whereArgs: [date], limit: 1);
+    if (result.isNotEmpty) {
+      final userSelectMood = result.first['userSelectMood']; // Get the weatherList field
+      if (userSelectMood != null) {
+        return userSelectMood.toString(); // Convert to string if not null
+      } else {
+        return null; // Return null if weatherList is null
+      }
+    } else {
+      return null; // Return null if no matching item is found
+    }
+  }
+
+  static Future<String?> getSubtitleByDate(String date) async {
+    print("-----> Getting subtitle by date...");
+    final db = await SQLHelper.db();
+    final result = await db.query('items', columns: ['subtitle'], where: "date = ?", whereArgs: [date], limit: 1);
+    if (result.isNotEmpty) {
+      final subtitle = result.first['subtitle']; // Get the weatherList field
+      if (subtitle != null) {
+        return subtitle.toString(); // Convert to string if not null
+      } else {
+        return null; // Return null if weatherList is null
+      }
+    } else {
+      return null; // Return null if no matching item is found
+    }
+  }
+  static Future<String?> getThoughtsByDate(String date) async {
+    print("-----> Getting Thoughts by date...");
+    final db = await SQLHelper.db();
+    final result = await db.query('items', columns: ['thoughts'], where: "date = ?", whereArgs: [date], limit: 1);
+    if (result.isNotEmpty) {
+      final thoughts = result.first['thoughts']; // Get the weatherList field
+      if (thoughts != null) {
+        return thoughts.toString(); // Convert to string if not null
+      } else {
+        return null; // Return null if weatherList is null
+      }
+    } else {
+      return null; // Return null if no matching item is found
+    }
   }
 
   static Future<String?> getWeatherListByDate(String date) async {
@@ -160,15 +209,30 @@ class SQLHelper {
   }
 
   static Future<int> updateItemByDate(
-      String date, String icon, String title, String? subtitle, String? thoughts) async {
+      String date, String icon, String userSelectMood, String title, String? subtitle, String? thoughts) async {
     print("-----> Updating item by date...");
     final db = await SQLHelper.db();
 
     final data = {
       'icon': icon,
+      'userSelectMood': userSelectMood,
       'title': title,
       'subtitle': subtitle,
       'thoughts': thoughts,
+    };
+
+    final result = await db.update('items', data, where: "date = ?", whereArgs: [date]);
+    return result;
+  }
+
+  static Future<int> updateMoodIconByDate(
+      String date, String icon) async {
+
+    print("-----> Updating item icon by date...");
+    final db = await SQLHelper.db();
+
+    final data = {
+      'icon': icon,
     };
 
     final result = await db.update('items', data, where: "date = ?", whereArgs: [date]);
@@ -218,12 +282,13 @@ class SQLHelper {
   }
 
   static Future<int> updateItem(
-      int id, String icon, String title, String? subtitle, String? thoughts) async {
+      int id, String icon, String userSelectMood, String title, String? subtitle, String? thoughts) async {
     print("-----> Updating item by ID...");
     final db = await SQLHelper.db();
 
     final data = {
       'icon': icon,
+      'userSelectMood': userSelectMood,
       'title': title,
       'subtitle': subtitle,
       'thoughts': thoughts,

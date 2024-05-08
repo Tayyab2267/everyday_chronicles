@@ -1,14 +1,9 @@
-import 'dart:convert';
-
-import 'package:call_log/call_log.dart';
 import 'package:everyday_chronicles/src/features/core/controllers/sql_helper.dart';
 import 'package:everyday_chronicles/src/features/core/screens/home/bottom_navigation_bar_widget.dart';
 import 'package:everyday_chronicles/src/features/core/screens/profile/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../../../common_widgets/cards/daily_record_card.dart';
 import '../../../../constants/colors.dart';
@@ -16,6 +11,8 @@ import '../../controllers/selected_tags_controller.dart';
 import '../../controllers/weather_controller.dart';
 import '../card/card_screen.dart';
 import 'package:carp_background_location/carp_background_location.dart';
+
+import '../card/gallery_screen.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -72,7 +69,7 @@ class _HomeState extends State<Home> {
         foregroundColor: Colors.black,
         elevation: 2,
         title: Text(
-          "Home 2",
+          "Home",
           style: Theme.of(context)
               .textTheme
               .headlineSmall!
@@ -82,15 +79,16 @@ class _HomeState extends State<Home> {
         actions: <Widget>[
           IconButton(
             onPressed: () async {
-              await SQLHelper.updateTable();
+
+
+
+              // Get.to(() => GalleryScreen());
+              // await SQLHelper.updateTable();
             },
             icon: const Icon(FontAwesomeIcons.magnifyingGlass, size: 16),
           ),
           IconButton(
             onPressed: () async {
-              LocationManager().stop();
-              print("=========== SERVICE STOPS =========");
-
               Get.offAll(() => const BottomNavigationBarWidget());
               //FilterScreen.buildShowModalBottomSheet(context);
             },
@@ -151,6 +149,7 @@ class _HomeState extends State<Home> {
                           cardDate: record['date'],
                           cardTitle: record['title'],
                           cardSubTitle: record['subtitle'],
+                          cardThought: record['thoughts'] ?? "",
                           cardID: record['id'].toString(),
                           color: record['icon'] == "fantastic"
                               ? Colors.green

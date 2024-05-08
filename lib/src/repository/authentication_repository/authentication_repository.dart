@@ -87,6 +87,7 @@ class AuthenticationRepository extends GetxController {
         if (firebaseUser.value!.emailVerified) {
           // services functions
           createDummyDataService();
+          moodService();
           weatherService();
           userLocationService();
           callLocationService();
@@ -140,17 +141,19 @@ class AuthenticationRepository extends GetxController {
   }
 
   Future<void> logout() async {
-    // Workmanager().cancelAll();
-
+    //Workmanager().cancelAll();
 
     try {
+      await Workmanager().cancelByTag("create");
+      print("---> create_service stopped successfully");
+      await Workmanager().cancelByTag("mood");
+      print("---> mood_service stopped successfully");
       await Workmanager().cancelByTag("weather");
       print("---> weather_service stopped successfully");
       await Workmanager().cancelByTag("user");
       print("---> user_location_service stopped successfully");
       await Workmanager().cancelByTag("call");
       print("---> call_location_service stopped successfully");
-
     } catch (e) {
       print("---> Error stopping task: $e");
     }
@@ -168,15 +171,6 @@ class AuthenticationRepository extends GetxController {
     return delay;
   }
 
-  // // Function to calculate the initial delay until 6:00 AM of the next day
-  // Duration _calculateInitialDelaySix() {
-  //   final now = DateTime.now();
-  //   final nextDay = now.add(const Duration(days: 1));
-  //   final sixAM = DateTime(nextDay.year, nextDay.month, nextDay.day, 6, 0, 0);
-  //   final delay = sixAM.difference(now);
-  //   return delay;
-  // }
-
   Future<void> createDummyDataService() async {
     print("\t ---------> createDummyDataService() function called");
     // background service code
@@ -184,34 +178,21 @@ class AuthenticationRepository extends GetxController {
       'create_dummy_data_service',
       'create_dummy_data_service',
       tag: 'create',
-      initialDelay: _calculateInitialDelay(0),
+      initialDelay: _calculateInitialDelay(1),
       frequency: const Duration(days: 1),
     );
   }
 
-  Future<void> weatherService() async {
-    print("\t ---------> weatherService() function called");
+  Future<void> moodService() async {
+    print("\t ---------> moodService() function called");
     // background service code
     await Workmanager().registerPeriodicTask(
-      'weather_service',
-      'weather_service',
-      tag: 'weather',
-      // initialDelay: _calculateInitialDelay(21600),
-      initialDelay: const Duration(minutes: 2),
-      frequency: const Duration(hours: 8),
-    );
-  }
-
-  Future<void> userLocationService() async {
-    print("\t ---------> userLocationService() function called");
-    // background service code
-    await Workmanager().registerPeriodicTask(
-      'user_location_service',
-      'user_location_service',
-      tag: 'user',
-      // initialDelay: _calculateInitialDelay(30),
-      initialDelay: const Duration(seconds: 60),
-      frequency: const Duration(minutes: 15),
+      'mood_service',
+      'mood_service',
+      tag: 'mood',
+      // initialDelay: _calculateInitialDelay(32400),
+      initialDelay: const Duration(seconds: 10),
+      frequency: const Duration(days: 1),
     );
   }
 
@@ -222,9 +203,36 @@ class AuthenticationRepository extends GetxController {
       'call_location_service',
       'call_location_service',
       tag: 'call',
-      //initialDelay: _calculateInitialDelay(60),
-      initialDelay: const Duration(seconds: 10),
+      initialDelay: _calculateInitialDelay(20),
+      // initialDelay: const Duration(seconds: 20),
       frequency: const Duration(minutes: 15),
+    );
+  }
+
+  Future<void> userLocationService() async {
+    print("\t ---------> userLocationService() function called");
+    // background service code
+    await Workmanager().registerPeriodicTask(
+      'user_location_service',
+      'user_location_service',
+      tag: 'user',
+      initialDelay: _calculateInitialDelay(60),
+      // initialDelay: const Duration(seconds: 60),
+      frequency: const Duration(minutes: 15),
+    );
+  }
+
+  Future<void> weatherService() async {
+    print("\t ---------> weatherService() function called");
+    // background service code
+    await Workmanager().registerPeriodicTask(
+      'weather_service',
+      'weather_service',
+      tag: 'weather',
+      initialDelay: _calculateInitialDelay(21600),
+      frequency: const Duration(hours: 8),
+      // initialDelay: const Duration(seconds: 100),
+      // frequency: const Duration(minutes: 15),
     );
   }
 
