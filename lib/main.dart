@@ -343,6 +343,10 @@ void main() async {
   await Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
 
   Noti.initialize(flutterLocalNotificationsPlugin);
+
+  /// awesome_notification
+  await Noti.initializeNotification();
+
   runApp(const MyApp());
 }
 
