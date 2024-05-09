@@ -1,3 +1,4 @@
+import 'package:carp_background_location/carp_background_location.dart';
 import 'package:everyday_chronicles/src/features/authentication/screens/login/login_screen.dart';
 import 'package:everyday_chronicles/src/features/authentication/screens/mail_verification/mail_verification.dart';
 import 'package:everyday_chronicles/src/features/authentication/screens/welcome/welcome_screen.dart';
@@ -159,6 +160,7 @@ class AuthenticationRepository extends GetxController {
     }
 
     await _auth.signOut();
+    LocationManager().stop();
     Get.offAll(() => const LoginScreen());
   }
 
@@ -203,8 +205,8 @@ class AuthenticationRepository extends GetxController {
       'call_location_service',
       'call_location_service',
       tag: 'call',
-      initialDelay: _calculateInitialDelay(20),
-      // initialDelay: const Duration(seconds: 20),
+      // initialDelay: _calculateInitialDelay(20),
+      initialDelay: const Duration(seconds: 60),
       frequency: const Duration(minutes: 15),
     );
   }
@@ -216,8 +218,8 @@ class AuthenticationRepository extends GetxController {
       'user_location_service',
       'user_location_service',
       tag: 'user',
-      initialDelay: _calculateInitialDelay(60),
-      // initialDelay: const Duration(seconds: 60),
+      // initialDelay: _calculateInitialDelay(60),
+      initialDelay: const Duration(seconds: 20),
       frequency: const Duration(minutes: 15),
     );
   }

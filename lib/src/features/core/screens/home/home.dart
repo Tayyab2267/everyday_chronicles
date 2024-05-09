@@ -1,5 +1,6 @@
 import 'package:everyday_chronicles/src/features/core/controllers/sql_helper.dart';
 import 'package:everyday_chronicles/src/features/core/screens/home/bottom_navigation_bar_widget.dart';
+import 'package:everyday_chronicles/src/features/core/screens/home/notification_screen.dart';
 import 'package:everyday_chronicles/src/features/core/screens/profile/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -10,9 +11,6 @@ import '../../../../constants/colors.dart';
 import '../../controllers/selected_tags_controller.dart';
 import '../../controllers/weather_controller.dart';
 import '../card/card_screen.dart';
-import 'package:carp_background_location/carp_background_location.dart';
-
-import '../card/gallery_screen.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -22,6 +20,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+
   final SelectedTagsController _selectedTagsController =
       Get.put(SelectedTagsController());
 
@@ -51,6 +50,7 @@ class _HomeState extends State<Home> {
     ].request();
   }
 
+
   @override
   void initState() {
     super.initState();
@@ -79,9 +79,7 @@ class _HomeState extends State<Home> {
         actions: <Widget>[
           IconButton(
             onPressed: () async {
-
-
-
+              Get.to(() => const NotificationScreen());
               // Get.to(() => GalleryScreen());
               // await SQLHelper.updateTable();
             },

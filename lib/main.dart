@@ -55,7 +55,8 @@ void callbackDispatcher() {
             LocationManager().interval = 1;
             LocationManager().distanceFilter = 0;
             LocationManager().notificationTitle = 'CARP Location Example';
-            LocationManager().notificationMsg = 'CARP is tracking your location';
+            LocationManager().notificationMsg =
+                'CARP is tracking your location';
             final location = await LocationManager().getCurrentLocation();
             List<Placemark> placemarks = await placemarkFromCoordinates(
               location.latitude,
@@ -208,9 +209,8 @@ void callbackDispatcher() {
           Iterable<CallLogEntry> currentCallLogs = callLogs.where((call) {
             // Extract the date from the call timestamp
             DateTime callDateTime =
-            DateTime.fromMillisecondsSinceEpoch(call.timestamp!);
-            String callDate =
-            DateFormat('MMM dd, yyyy').format(callDateTime);
+                DateTime.fromMillisecondsSinceEpoch(call.timestamp!);
+            String callDate = DateFormat('MMM dd, yyyy').format(callDateTime);
 
             // Return true if the call date matches the current date
             return callDate == currentDate;
@@ -223,6 +223,14 @@ void callbackDispatcher() {
           // locationManagerCall.notificationTitle = 'Call Location';
           // locationManagerCall.notificationMsg = 'CARP is tracking your call location';
 
+          // configure the location manager
+          LocationManager().interval = 1;
+          LocationManager().distanceFilter = 0;
+          LocationManager().notificationTitle = 'CARP Location Example';
+          LocationManager().notificationMsg =
+          'CARP is tracking your location';
+          final location = await LocationManager().getCurrentLocation();
+
           // Iterate over filtered call logs
           for (var call in currentCallLogs) {
             print("===============================");
@@ -232,17 +240,17 @@ void callbackDispatcher() {
             print("===============================");
 
             DateTime recentCallTime =
-            DateTime.fromMillisecondsSinceEpoch(call.timestamp!);
+                DateTime.fromMillisecondsSinceEpoch(call.timestamp!);
             String formattedTime =
                 '${recentCallTime.hour.toString().padLeft(2, '0')}:${recentCallTime.minute.toString().padLeft(2, '0')}';
             //print("----> Recent call time: $recentCallTime");
             print("----> RECENT CALL TIME: $formattedTime");
             DateTime now = DateTime.now();
             String presentDate =
-            DateFormat('MMM dd, yyyy').format(now).toString();
+                DateFormat('MMM dd, yyyy').format(now).toString();
             // Fetch recent call time from the database
             String? requiredCallLocationList =
-            await SQLHelper.getCallLocationListByDate(presentDate);
+                await SQLHelper.getCallLocationListByDate(presentDate);
             print("-----> LIST FROM DATABASE: $requiredCallLocationList");
             // Check if recent call time is equal to recent call time from database
 
@@ -253,26 +261,24 @@ void callbackDispatcher() {
               for (int i = 0; i < callLocationData.length; i += 5) {
                 if (callLocationData[i] == formattedTime.toString()) {
                   print("$formattedTime == ${callLocationData[i]}");
-                  print(
-                      "-----> CALL TIME == DATABASE TIME. EXITING...");
+                  print("-----> CALL TIME == DATABASE TIME. EXITING...");
                   check = true; // call found
                   break;
                 } else {
-                  print(callLocationData[i] +
-                      " != " +
-                      formattedTime.toString());
-                  check = false;// call not found
+                  print(
+                      callLocationData[i] + " != " + formattedTime.toString());
+                  check = false; // call not found
                 }
               }
 
-              if(check == false){
-
-                // configure the location manager
-                LocationManager().interval = 1;
-                LocationManager().distanceFilter = 0;
-                LocationManager().notificationTitle = 'CARP Location Example';
-                LocationManager().notificationMsg = 'CARP is tracking your location';
-                final location = await LocationManager().getCurrentLocation();
+              if (check == false) {
+                // // configure the location manager
+                // LocationManager().interval = 1;
+                // LocationManager().distanceFilter = 0;
+                // LocationManager().notificationTitle = 'CARP Location Example';
+                // LocationManager().notificationMsg =
+                //     'CARP is tracking your location';
+                // final location = await LocationManager().getCurrentLocation();
 
                 callLocationData.add(formattedTime.toString());
                 callLocationData.add(call.number.toString());
@@ -280,23 +286,22 @@ void callbackDispatcher() {
                 callLocationData.add(location.longitude.toString());
                 callLocationData.add(call.name.toString());
 
-                print(
-                    "-----> UPDATED CALL LOCATION LIST: $callLocationData");
+                print("-----> UPDATED CALL LOCATION LIST: $callLocationData");
 
                 // Update database with userLocationData
                 SQLHelper.updateItemCallLocationByDate(
                     presentDate, jsonEncode(callLocationData));
                 print("-----> FUNCTION END");
               }
-
             } else {
               print("DATABASE IS NULL");
-              // configure the location manager
-              LocationManager().interval = 1;
-              LocationManager().distanceFilter = 0;
-              LocationManager().notificationTitle = 'CARP Location Example';
-              LocationManager().notificationMsg = 'CARP is tracking your location';
-              final location = await LocationManager().getCurrentLocation();
+              // // configure the location manager
+              // LocationManager().interval = 1;
+              // LocationManager().distanceFilter = 0;
+              // LocationManager().notificationTitle = 'CARP Location Example';
+              // LocationManager().notificationMsg =
+              //     'CARP is tracking your location';
+              // final location = await LocationManager().getCurrentLocation();
               // Save data into userLocationData
               callLocationData.add(formattedTime.toString());
               callLocationData.add(call.number.toString());
@@ -325,7 +330,6 @@ void callbackDispatcher() {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   // Initialize Firebase and AuthenticationRepository
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   Get.put(AuthenticationRepository());

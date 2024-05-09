@@ -5,7 +5,6 @@
         android:name="android.hardware.telephony"
         android:required="false" />
 
-
     <!-- Add permissions for accessing external storage -->
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
