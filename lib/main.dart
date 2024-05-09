@@ -3,12 +3,14 @@ import 'dart:convert';
 import 'package:call_log/call_log.dart';
 import 'package:carp_background_location/carp_background_location.dart';
 import 'package:everyday_chronicles/src/features/core/controllers/background_service_controller.dart';
+import 'package:everyday_chronicles/src/features/core/controllers/noti.dart';
 import 'package:everyday_chronicles/src/features/core/controllers/sql_helper.dart';
 import 'package:everyday_chronicles/src/features/core/controllers/weather_service.dart';
 import 'package:everyday_chronicles/src/repository/authentication_repository/authentication_repository.dart';
 import 'package:everyday_chronicles/src/utils/theme/theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
@@ -328,6 +330,9 @@ void callbackDispatcher() {
   });
 }
 
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+FlutterLocalNotificationsPlugin();
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // Initialize Firebase and AuthenticationRepository
@@ -337,6 +342,7 @@ void main() async {
   // Initialize Work manager (background services package)
   await Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
 
+  Noti.initialize(flutterLocalNotificationsPlugin);
   runApp(const MyApp());
 }
 

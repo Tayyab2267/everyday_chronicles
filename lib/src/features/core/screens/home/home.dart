@@ -3,6 +3,7 @@ import 'package:everyday_chronicles/src/features/core/screens/home/bottom_naviga
 import 'package:everyday_chronicles/src/features/core/screens/home/notification_screen.dart';
 import 'package:everyday_chronicles/src/features/core/screens/profile/profile_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -40,6 +41,9 @@ class _HomeState extends State<Home> {
     });
   }
 
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+  FlutterLocalNotificationsPlugin();
+
   Future<void> requestPermissions() async {
     // Request the necessary permissions
     Map<Permission, PermissionStatus> permissions = await [
@@ -48,7 +52,14 @@ class _HomeState extends State<Home> {
       Permission.ignoreBatteryOptimizations,
       Permission.phone,
     ].request();
+
+    bool? result = await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin>()
+        ?.requestPermission();
+    print("Permission Allowed or Not: $result");
   }
+
 
 
   @override

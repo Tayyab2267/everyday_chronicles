@@ -4,6 +4,7 @@ import 'package:device_apps/device_apps.dart';
 import 'package:everyday_chronicles/src/features/core/controllers/sql_helper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:get/get.dart';
@@ -12,8 +13,13 @@ import 'package:http/http.dart' as http;
 import 'package:telephony/telephony.dart';
 import 'package:usage_stats/usage_stats.dart';
 
+import 'noti.dart';
+
 class BackgroundServiceController extends GetxController {
   static BackgroundServiceController get instance => Get.find();
+
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+  FlutterLocalNotificationsPlugin();
 
   final List<Map<String, dynamic>> rowDataText = [];
 
@@ -344,6 +350,7 @@ class BackgroundServiceController extends GetxController {
       SQLHelper.updateMoodIconByDate(getCurrentDate(), moodFromText);
 
       //Show notification here
+      Noti.showBigTextNotification(title: moodFromText, body: "Your today's mood is '$moodFromText'", fln: flutterLocalNotificationsPlugin);
 
     } else {
       print("user has select Mood don't need to analyze mood");
