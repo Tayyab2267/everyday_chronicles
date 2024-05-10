@@ -41,8 +41,8 @@ class CalenderScreen extends StatelessWidget {
                 color: Colors.green,
                 cardIcon: LineAwesomeIcons.smiling_face_with_heart_eyes,
                 cardTitle: "Walking and Eating",
-                cardSubTitle:
-                    "Just the dummy text nothing else Don;t take this text seriously its just for practice",
+                cardSubTitle:"Just the dummy text nothing else Don;t take this text seriously its just for practice",
+                cardSummary:"Just the dummy text nothing else Don;t take this text seriously its just for practice",
                 cardDate: "Nov 20,\n2023",
               ),
               const SizedBox(height: 10),

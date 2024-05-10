@@ -25,7 +25,6 @@ class BackgroundServiceController extends GetxController {
 
   /// Text will send to server to fetch Mood
   Future<String> sendTextToPredictEmotion(String text) async {
-    // var url = 'http://127.0.0.1:5001/predict-emotion';
     var url = 'http://192.168.0.113:5001/predict-emotion';
     var response = await http.post(Uri.parse(url),
         headers: {"Content-Type": "application/json"},
@@ -369,6 +368,7 @@ class BackgroundServiceController extends GetxController {
         "Title of the day",
         "This is the dummy text",
         "this is dummy 3 am thoughts",
+        "Here the summary will be displayed when user enter something inside 3am thoughts and daily doing",
       );
       print("-----> After SQL Flite");
     } catch (ex) {

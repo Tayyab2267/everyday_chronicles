@@ -10,17 +10,19 @@ class DailyRecordCard extends StatelessWidget {
     required this.cardIcon,
     required this.cardTitle,
     required this.cardSubTitle,
+    required this.cardSummary,
     required this.cardDate,
     this.onTap,
   });
 
   final cardIcon;
   final color;
-  final String cardTitle, cardSubTitle, cardDate;
+  final String cardTitle, cardSubTitle, cardSummary, cardDate;
   final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 10.0),
       child: Material(
@@ -75,22 +77,23 @@ class DailyRecordCard extends StatelessWidget {
                         Expanded(
                           // Wrap the Column with Expanded
                           child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                            // mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                cardTitle,
-                                style: Theme
-                                    .of(context)
-                                    .textTheme
-                                    .headlineSmall,
-                                maxLines: 1,
-                              ),
+                              // Text(
+                              //   cardTitle,
+                              //   style: Theme
+                              //       .of(context)
+                              //       .textTheme
+                              //       .headlineSmall,
+                              //   maxLines: 1,
+                              // ),
                               const SizedBox(height: 5),
                               Text(
-                                cardSubTitle,
-                                maxLines: 2,
+                                cardSummary,
+                                maxLines: 3,
                                 overflow: TextOverflow.ellipsis,
+                                style: Theme.of(context).textTheme.titleSmall,
                               ),
                             ],
                           ),

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:everyday_chronicles/src/features/core/controllers/sql_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -5,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../../../../constants/colors.dart';
 import 'bottom_navigation_bar_widget.dart';
+import 'package:http/http.dart' as http;
 
 class HomeAddScreen extends StatefulWidget {
   const HomeAddScreen({super.key});
@@ -20,6 +22,20 @@ class _HomeAddScreenState extends State<HomeAddScreen> {
 
   String thoughts = '';
   Future<String>? _fetch3amThoughts;
+
+  /// Text will send to server to fetch Mood
+  Future<String> sendTextToSummarize(String text) async {
+    var url = 'http://192.168.0.113:5001/summarize-text';
+    var response = await http.post(Uri.parse(url),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({"text": text}));
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body)['summary'];
+    } else {
+      throw Exception('Failed to send text to Flask');
+    }
+  }
 
   @override
   void initState() {
@@ -94,15 +110,23 @@ class _HomeAddScreenState extends State<HomeAddScreen> {
           IconButton(
             onPressed: () async {
               // on check button clicked following operations will be performed
+
+              String textToSend = "$subtitle. $thoughts";
+              String summarizeText = await sendTextToSummarize(textToSend);
+              print(
+                  "=====================\nSummary: $summarizeText\n=================================");
+
               final existingItem = await SQLHelper.getItemByDate(presentDate);
               if (existingItem.isNotEmpty) {
                 await SQLHelper.updateItemByDate(
-                    presentDate,
-                    selectedMood.toString(),
-                    "true",
-                    subtitle.substring(0, 10),
-                    subtitle.toString(),
-                    thoughts.toString());
+                  presentDate,
+                  selectedMood.toString(),
+                  "true",
+                  subtitle.substring(0, 10),
+                  subtitle.toString(),
+                  thoughts.toString(),
+                  summarizeText.toString(),
+                );
               } else {
                 await SQLHelper.createItem(
                   presentDate,
@@ -111,6 +135,7 @@ class _HomeAddScreenState extends State<HomeAddScreen> {
                   subtitle.substring(0, 10),
                   subtitle.toString(),
                   thoughts.toString(),
+                  summarizeText.toString(),
                 );
               }
               Get.offAll(() => const BottomNavigationBarWidget());

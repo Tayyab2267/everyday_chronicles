@@ -1,6 +1,7 @@
+import 'dart:async';
+import 'package:carp_background_location/carp_background_location.dart';
 import 'package:everyday_chronicles/src/features/core/controllers/sql_helper.dart';
 import 'package:everyday_chronicles/src/features/core/screens/home/bottom_navigation_bar_widget.dart';
-import 'package:everyday_chronicles/src/features/core/screens/home/notification_screen.dart';
 import 'package:everyday_chronicles/src/features/core/screens/profile/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -12,6 +13,7 @@ import '../../../../constants/colors.dart';
 import '../../controllers/selected_tags_controller.dart';
 import '../../controllers/weather_controller.dart';
 import '../card/card_screen.dart';
+import 'notification_screen.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -188,6 +190,7 @@ class _HomeState extends State<Home> {
                     cardDate: record['date'],
                     cardTitle: record['title'],
                     cardSubTitle: record['subtitle'],
+                    cardSummary: record['summary'] ?? "",
                     color: record['icon'] == "fantastic"
                         ? Colors.green
                         : record['icon'] == "happy"
