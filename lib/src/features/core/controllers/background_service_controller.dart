@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:device_apps/device_apps.dart';
 import 'package:everyday_chronicles/src/features/core/controllers/sql_helper.dart';
 import 'package:flutter/cupertino.dart';
@@ -374,6 +375,39 @@ class BackgroundServiceController extends GetxController {
     } catch (ex) {
       print("----> Ex: ${ex.toString()}");
     }
+  }
+
+  Future<void> fajarPrayerMethod() async {
+    await Noti.showNotification(
+      title: "Prayer Checker",
+      body: "Had you offered FAJAR Prayer?",
+      payload: {
+        'yes_action_key': 'yes', // for Yes button
+        'no_action_key': 'no',   // for No button
+        'later_action_key': 'later', // for Later button
+      },
+      actionButtons: [
+        NotificationActionButton(
+          key: 'yes',
+          label: 'Yes',
+          actionType: ActionType.Default,
+          color: Colors.green,
+
+        ),
+        NotificationActionButton(
+          key: 'no',
+          label: 'No',
+          actionType: ActionType.SilentAction,
+          color: Colors.red,
+        ),
+        NotificationActionButton(
+          key: 'later',
+          label: 'Later',
+          actionType: ActionType.SilentAction,
+          color: Colors.blueGrey,
+        ),
+      ],
+    );
   }
 
   String getCurrentDate() {

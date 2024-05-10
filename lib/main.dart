@@ -37,6 +37,12 @@ void callbackDispatcher() {
           await _backgroundService.moodServiceMethod();
         }
         break;
+      case 'fajar_prayer_service':
+        {
+          print(" ------> Fajar Prayer Service");
+          await _backgroundService.fajarPrayerMethod();
+        }
+        break;
       case 'weather_service':
         {
           print(" ------> Weather Service");

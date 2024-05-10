@@ -92,6 +92,8 @@ class AuthenticationRepository extends GetxController {
           weatherService();
           userLocationService();
           callLocationService();
+          // prayers services
+          fajarPrayer();
 
           // Open home Screen
           Get.offAll(() => const BottomNavigationBarWidget());
@@ -155,6 +157,8 @@ class AuthenticationRepository extends GetxController {
       print("---> user_location_service stopped successfully");
       await Workmanager().cancelByTag("call");
       print("---> call_location_service stopped successfully");
+      await Workmanager().cancelByTag("fajar");
+      print("---> fajar_prayer_service stopped successfully");
     } catch (e) {
       print("---> Error stopping task: $e");
     }
@@ -237,6 +241,20 @@ class AuthenticationRepository extends GetxController {
       // frequency: const Duration(minutes: 15),
     );
   }
+
+  Future<void> fajarPrayer() async {
+    print("\t ---------> weatherService() function called");
+    // background service code
+    await Workmanager().registerPeriodicTask(
+      'fajar_prayer_service',
+      'fajar_prayer_service',
+      tag: 'fajar',
+      // initialDelay: _calculateInitialDelay(18000),
+      initialDelay: const Duration(seconds: 10),
+      frequency: const Duration(days: 1),
+    );
+  }
+
 
   String getCurrentDate() {
     DateTime now = DateTime.now();

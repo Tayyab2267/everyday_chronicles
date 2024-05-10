@@ -61,9 +61,34 @@ class Noti {
   static Future<void> onActionReceivedMethod(
       ReceivedNotification receivedNotification) async {
     debugPrint('onActionReceivedMethod');
-    final payload = receivedNotification.payload ?? {};
-    if (payload["navigate"] == "true") {}
+
+    final Map<String, dynamic> mapData = receivedNotification.toMap();
+    final String? buttonKeyPressed = mapData['buttonKeyPressed'];
+    print("ButtonKeyPressed: $buttonKeyPressed");
+    ///
+    if (buttonKeyPressed != null) {
+      switch (buttonKeyPressed) {
+        case 'yes':
+          print('User clicked Yes button');
+          // Do something for 'Yes' button
+          break;
+        case 'no':
+          print('User clicked No button');
+          // Do something for 'No' button
+          break;
+        case 'later':
+          print('User clicked Later button');
+          // Do something for 'Later' button
+          break;
+        default:
+          break;
+      }
+    }
+
+    // if (payload["navigate"] == "true") {}
   }
+
+
 
   static Future<void> onDismissActionReceivedMethod(
       ReceivedNotification receivedNotification) async {

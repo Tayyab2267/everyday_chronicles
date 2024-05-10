@@ -61,24 +61,43 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       body: "Body of Notification");
                 },
               ),
+              // Button Notification
               NotificationButton(
                 text: "Button Notification",
                 onPressed: () async {
                   await Noti.showNotification(
-                    title: "Title of Notification",
-                    body: "Body of Notification",
-                    payload: {},
+                    title: "Prayer Reminder",
+                    body: "Have you offered Isha Prayer?",
+                    payload: {
+                      'yes_action_key': 'yes', // for Yes button
+                      'no_action_key': 'no',   // for No button
+                      'later_action_key': 'later', // for Later button
+                    },
                     actionButtons: [
                       NotificationActionButton(
-                        key: 'Check',
-                        label: 'check it out',
-                        actionType: ActionType.SilentAction,
+                        key: 'yes',
+                        label: 'Yes',
+                        actionType: ActionType.Default,
                         color: Colors.green,
-                      )
+
+                      ),
+                      NotificationActionButton(
+                        key: 'no',
+                        label: 'No',
+                        actionType: ActionType.SilentAction,
+                        color: Colors.red,
+                      ),
+                      NotificationActionButton(
+                        key: 'later',
+                        label: 'Later',
+                        actionType: ActionType.SilentAction,
+                        color: Colors.blueGrey,
+                      ),
                     ],
                   );
                 },
               ),
+
             ],
           ),
         ),
