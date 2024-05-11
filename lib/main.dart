@@ -43,6 +43,30 @@ void callbackDispatcher() {
           await _backgroundService.fajarPrayerMethod();
         }
         break;
+      case 'zuhar_prayer_service':
+        {
+          print(" ------> zuhar Prayer Service");
+          await _backgroundService.zuharPrayerMethod();
+        }
+        break;
+      case 'asar_prayer_service':
+        {
+          print(" ------> Asar Prayer Service");
+          await _backgroundService.asarPrayerMethod();
+        }
+        break;
+      case 'maghrib_prayer_service':
+        {
+          print(" ------> Maghrib Prayer Service");
+          await _backgroundService.maghribPrayerMethod();
+        }
+        break;
+      case 'isha_prayer_service':
+        {
+          print(" ------> Isha Prayer Service");
+          await _backgroundService.ishaPrayerMethod();
+        }
+        break;
       case 'weather_service':
         {
           print(" ------> Weather Service");
@@ -179,9 +203,9 @@ void callbackDispatcher() {
 
             double distanceInMeters = Geolocator.distanceBetween(
                 prevLat, prevLong, location.latitude, location.longitude);
-            print("-----> DIstance in meters$distanceInMeters");
+            print("-----> Distance in meters$distanceInMeters");
             // Define a radius (in meters) within which a location change is considered insignificant
-            double radius = 150; // Adjust this value as needed
+            double radius = 300; // Adjust this value as needed
 
             if (distanceInMeters > radius) {
               // Location has changed significantly, add the new location data

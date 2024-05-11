@@ -24,17 +24,23 @@ class _HomeAddScreenState extends State<HomeAddScreen> {
   Future<String>? _fetch3amThoughts;
 
   /// Text will send to server to fetch Mood
-  Future<String> sendTextToSummarize(String text) async {
+  Future<String?> sendTextToSummarize(String text) async {
     var url = 'http://192.168.0.113:5001/summarize-text';
-    var response = await http.post(Uri.parse(url),
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode({"text": text}));
+    try{
+      var response = await http.post(Uri.parse(url),
+          headers: {"Content-Type": "application/json"},
+          body: jsonEncode({"text": text}));
 
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body)['summary'];
-    } else {
-      throw Exception('Failed to send text to Flask');
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body)['summary'];
+      } else {
+        throw Exception('Failed to send text to Flask');
+      }
+    } catch(e){
+      print(e.toString());
     }
+
+    return "$subtitle $thoughts";
   }
 
   @override
@@ -112,9 +118,7 @@ class _HomeAddScreenState extends State<HomeAddScreen> {
               // on check button clicked following operations will be performed
 
               String textToSend = "$subtitle. $thoughts";
-              String summarizeText = await sendTextToSummarize(textToSend);
-              print(
-                  "=====================\nSummary: $summarizeText\n=================================");
+              String? summarizeText = await sendTextToSummarize(textToSend);
 
               final existingItem = await SQLHelper.getItemByDate(presentDate);
               if (existingItem.isNotEmpty) {

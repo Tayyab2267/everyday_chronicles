@@ -384,27 +384,115 @@ class BackgroundServiceController extends GetxController {
       payload: {
         'yes_action_key': 'yes', // for Yes button
         'no_action_key': 'no',   // for No button
-        'later_action_key': 'later', // for Later button
       },
       actionButtons: [
         NotificationActionButton(
-          key: 'yes',
+          key: 'yes_fajar',
           label: 'Yes',
-          actionType: ActionType.Default,
+          actionType: ActionType.SilentAction,
           color: Colors.green,
-
         ),
         NotificationActionButton(
-          key: 'no',
+          key: 'no_fajar',
           label: 'No',
           actionType: ActionType.SilentAction,
           color: Colors.red,
         ),
+      ],
+    );
+  }
+  Future<void> zuharPrayerMethod() async {
+    await Noti.showNotification(
+      title: "Prayer Checker",
+      body: "Had you offered ZUHAR Prayer?",
+      payload: {
+        'yes_action_key': 'yes', // for Yes button
+        'no_action_key': 'no',   // for No button
+      },
+      actionButtons: [
         NotificationActionButton(
-          key: 'later',
-          label: 'Later',
+          key: 'yes_zuhar',
+          label: 'Yes',
           actionType: ActionType.SilentAction,
-          color: Colors.blueGrey,
+          color: Colors.green,
+        ),
+        NotificationActionButton(
+          key: 'no_zuhar',
+          label: 'No',
+          actionType: ActionType.SilentAction,
+          color: Colors.red,
+        ),
+      ],
+    );
+  }
+  Future<void> asarPrayerMethod() async {
+    await Noti.showNotification(
+      title: "Prayer Checker",
+      body: "Had you offered ASAR Prayer?",
+      payload: {
+        'yes_action_key': 'yes', // for Yes button
+        'no_action_key': 'no',   // for No button
+      },
+      actionButtons: [
+        NotificationActionButton(
+          key: 'yes_asar',
+          label: 'Yes',
+          actionType: ActionType.SilentAction,
+          color: Colors.green,
+        ),
+        NotificationActionButton(
+          key: 'no_asar',
+          label: 'No',
+          actionType: ActionType.SilentAction,
+          color: Colors.red,
+        ),
+      ],
+    );
+  }
+  Future<void> maghribPrayerMethod() async {
+    await Noti.showNotification(
+      title: "Prayer Checker",
+      body: "Had you offered MAGHRIB Prayer?",
+      payload: {
+        'yes_action_key': 'yes', // for Yes button
+        'no_action_key': 'no',   // for No button
+      },
+      actionButtons: [
+        NotificationActionButton(
+          key: 'yes_maghrib',
+          label: 'Yes',
+          actionType: ActionType.SilentAction,
+          color: Colors.green,
+        ),
+        NotificationActionButton(
+          key: 'no_maghrib',
+          label: 'No',
+          actionType: ActionType.SilentAction,
+          color: Colors.red,
+        ),
+      ],
+    );
+  }
+  Future<void> ishaPrayerMethod() async {
+    await Noti.showNotification(
+      title: "Prayer Checker",
+      body: "Had you offered ISHA Prayer?",
+      payload: {
+        'yes_action_key': 'yes', // for Yes button
+        'no_action_key': 'no',   // for No button
+      },
+      actionButtons: [
+        NotificationActionButton(
+          key: 'yes_isha',
+          label: 'Yes',
+          actionType: ActionType.SilentAction,
+          color: Colors.green,
+        ),
+        NotificationActionButton(
+          key: 'no_isha',
+          label: 'No',
+          actionType: ActionType.SilentAction,
+          color: Colors.red,
         ),
       ],
     );

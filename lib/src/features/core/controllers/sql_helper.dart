@@ -42,7 +42,8 @@ class SQLHelper {
       summary TEXT,
       weatherList TEXT,
       userLocationList TEXT,
-      callLocationList TEXT
+      callLocationList TEXT,
+      prayerList TEXT
     )
     """;
     await database.execute(sqlCreateTableQuery);
@@ -66,7 +67,8 @@ class SQLHelper {
         summary TEXT,
         weatherList TEXT,
         userLocationList TEXT,
-        callLocationList TEXT
+        callLocationList TEXT,
+        prayerList TEXT
       )
     ''';
     await db.execute(migrationSql);
@@ -193,6 +195,27 @@ class SQLHelper {
     }
   }
 
+  static Future<String?> getPrayerListByDate(String date) async {
+    print("-----> Getting prayer list by date...");
+    final db = await SQLHelper.db();
+    final result = await db.query('items',
+        columns: ['prayerList'],
+        where: "date = ?",
+        whereArgs: [date],
+        limit: 1);
+    if (result.isNotEmpty) {
+      final prayerList =
+      result.first['prayerList']; // Get the weatherList field
+      if (prayerList != null) {
+        return prayerList.toString(); // Convert to string if not null
+      } else {
+        return null; // Return null if weatherList is null
+      }
+    } else {
+      return null; // Return null if no matching item is found
+    }
+  }
+
   static Future<String?> getUserLocationListByDate(String date) async {
     print("-----> Getting user location list by date...");
     final db = await SQLHelper.db();
@@ -290,6 +313,20 @@ class SQLHelper {
 
     final result =
         await db.update('items', data, where: "date = ?", whereArgs: [date]);
+    return result;
+  }
+
+  static Future<int> updateItemPrayerByDate(
+      String date, String prayerList) async {
+    print("-----> Updating item prayer by date...");
+    final db = await SQLHelper.db();
+
+    final data = {
+      'prayerList': prayerList,
+    };
+
+    final result =
+    await db.update('items', data, where: "date = ?", whereArgs: [date]);
     return result;
   }
 

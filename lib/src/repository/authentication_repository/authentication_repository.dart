@@ -94,6 +94,10 @@ class AuthenticationRepository extends GetxController {
           callLocationService();
           // prayers services
           fajarPrayer();
+          zuharPrayer();
+          asarPrayer();
+          maghribPrayer();
+          ishaPrayer();
 
           // Open home Screen
           Get.offAll(() => const BottomNavigationBarWidget());
@@ -159,6 +163,14 @@ class AuthenticationRepository extends GetxController {
       print("---> call_location_service stopped successfully");
       await Workmanager().cancelByTag("fajar");
       print("---> fajar_prayer_service stopped successfully");
+      await Workmanager().cancelByTag("zuhar");
+      print("---> zuhar_prayer_service stopped successfully");
+      await Workmanager().cancelByTag("asar");
+      print("---> asar_prayer_service stopped successfully");
+      await Workmanager().cancelByTag("maghrib");
+      print("---> maghrib_prayer_service stopped successfully");
+      await Workmanager().cancelByTag("isha");
+      print("---> isha_prayer_service stopped successfully");
     } catch (e) {
       print("---> Error stopping task: $e");
     }
@@ -196,8 +208,8 @@ class AuthenticationRepository extends GetxController {
       'mood_service',
       'mood_service',
       tag: 'mood',
-      // initialDelay: _calculateInitialDelay(32400),
-      initialDelay: const Duration(seconds: 10),
+      initialDelay: _calculateInitialDelay(32400),
+      // initialDelay: const Duration(seconds: 10),
       frequency: const Duration(days: 1),
     );
   }
@@ -243,18 +255,65 @@ class AuthenticationRepository extends GetxController {
   }
 
   Future<void> fajarPrayer() async {
-    print("\t ---------> weatherService() function called");
+    print("\t ---------> Fajar Prayer Service() function called");
     // background service code
     await Workmanager().registerPeriodicTask(
       'fajar_prayer_service',
       'fajar_prayer_service',
       tag: 'fajar',
-      // initialDelay: _calculateInitialDelay(18000),
-      initialDelay: const Duration(seconds: 10),
+      initialDelay: _calculateInitialDelay(18000), // 5am
+      // initialDelay: const Duration(seconds: 10),
       frequency: const Duration(days: 1),
     );
   }
-
+  Future<void> zuharPrayer() async {
+    print("\t ---------> zuhar Prayer Service() function called");
+    // background service code
+    await Workmanager().registerPeriodicTask(
+      'zuhar_prayer_service',
+      'zuhar_prayer_service',
+      tag: 'zuhar',
+      initialDelay: _calculateInitialDelay(54000), // 3pm
+      // initialDelay: const Duration(seconds: 10),
+      frequency: const Duration(days: 1),
+    );
+  }
+  Future<void> asarPrayer() async {
+    print("\t ---------> asar Prayer Service() function called");
+    // background service code
+    await Workmanager().registerPeriodicTask(
+      'asar_prayer_service',
+      'asar_prayer_service',
+      tag: 'asar',
+      initialDelay: _calculateInitialDelay(68400), // 7pm
+      // initialDelay: const Duration(seconds: 10),
+      frequency: const Duration(days: 1),
+    );
+  }
+  Future<void> maghribPrayer() async {
+    print("\t ---------> maghrib Prayer Service() function called");
+    // background service code
+    await Workmanager().registerPeriodicTask(
+      'maghrib_prayer_service',
+      'maghrib_prayer_service',
+      tag: 'maghrib',
+      initialDelay: _calculateInitialDelay(72000), // 8pm
+      // initialDelay: const Duration(seconds: 10),
+      frequency: const Duration(days: 1),
+    );
+  }
+  Future<void> ishaPrayer() async {
+    print("\t ---------> isha Prayer Service() function called");
+    // background service code
+    await Workmanager().registerPeriodicTask(
+      'isha_prayer_service',
+      'isha_prayer_service',
+      tag: 'isha',
+      initialDelay: _calculateInitialDelay(79200), // 10pm
+      // initialDelay: const Duration(seconds: 10),
+      frequency: const Duration(days: 1),
+    );
+  }
 
   String getCurrentDate() {
     DateTime now = DateTime.now();

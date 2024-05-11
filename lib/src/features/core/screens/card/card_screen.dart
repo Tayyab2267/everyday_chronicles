@@ -371,6 +371,41 @@ class _CardScreenState extends State<CardScreen> {
     }
   }
 
+  Future<void> fetchPrayerData() async {
+    String? requiredPrayerList =
+    await SQLHelper.getPrayerListByDate(widget.cardDate);
+
+    if (requiredPrayerList != null &&
+        requiredPrayerList.isNotEmpty) {
+      List<dynamic> prayerDataList = jsonDecode(requiredPrayerList);
+      // Loop through the weather data list in steps of 4 to process each weather entry
+      for (int i = 0; i < prayerDataList.length; i += 2) {
+        String prayerTime = prayerDataList[i];
+        String prayerName = prayerDataList[i + 1];
+
+        print("Prayer Time = $prayerTime");
+        print("Prayer Name = $prayerName");
+        print("================================");
+
+        // Add user location data to rowData list
+        addNewMessageData(
+          FontAwesomeIcons.mosque, // Weather icon based on condition
+          prayerTime, // Time
+          prayerName, // address
+          "body", // Body
+          'prayer',
+              () {},
+        );
+
+        String text = 'You have offered "$prayerName Prayer" at "$prayerTime".';
+        addNewString(
+          prayerTime, // Time
+          text, // Text
+        );
+      }
+    }
+  }
+
   Future<void> fetchCallLocationData() async {
     print("fetching Call Location Data .........");
     String? requiredCallLocationList =
@@ -435,6 +470,7 @@ class _CardScreenState extends State<CardScreen> {
     fetchMobileUsageTime();
     fetchUserLocationData();
     fetchCallLocationData();
+    fetchPrayerData();
     super.initState();
   }
 
@@ -512,28 +548,8 @@ class _CardScreenState extends State<CardScreen> {
               padding: const EdgeInsets.all(20),
               child: Column(
                 children: [
-                  //subtitle and 3am thoughts code
                   Column(
                     children: [
-
-                      // ElevatedButton.icon(
-                      //   onPressed: () async {
-                      //     String text = "I feel sad today because I have not done my homework that's why it give me zero marks today";
-                      //     String mood = await sendTextToPredictEmotion(text);
-                      //     String summaryText = await sendTextToSummary(text);
-                      //     print("====> Predicted Mood: $mood ===========");
-                      //     print("====> Summary Text : $summaryText ===========");
-                      //   },
-                      //
-                      //   icon: const Icon(FontAwesomeIcons.wandMagicSparkles),
-                      //   label: const Text("Analyze Mood"),
-                      //   style: ButtonStyle(
-                      //     padding: MaterialStateProperty.all(const EdgeInsets.only(left: 30, right: 30, top: 10, bottom: 10)),
-                      //     backgroundColor:
-                      //         MaterialStateProperty.all(Colors.blue),
-                      //   ),
-                      // ),
-                      // const SizedBox(height: 10),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -891,6 +907,19 @@ class _CardScreenState extends State<CardScreen> {
                         );
                       }
                     },
+                  );
+                } else if (msgOrWeather == 'prayer') {
+                  return AlertDialog(
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text("Close"),
+                      ),
+                    ],
+                    title: Center(child: Text("$address Prayer\nTime: $time")),
+                    contentPadding: const EdgeInsets.all(20.0),
                   );
                 }
                 // Default return statement
