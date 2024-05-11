@@ -1,11 +1,13 @@
 import 'package:everyday_chronicles/src/features/core/screens/profile/profile_screen.dart';
 import 'package:everyday_chronicles/src/features/core/screens/setting/privacy_policy_screen.dart';
+import 'package:everyday_chronicles/src/features/core/screens/setting/reminder_screen.dart';
 import 'package:everyday_chronicles/src/features/core/screens/setting/terms_screen.dart';
 import 'package:everyday_chronicles/src/repository/authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:workmanager/workmanager.dart';
 import '../../../../constants/image_strings.dart';
 import '../../../authentication/models/user_model.dart';
@@ -22,6 +24,12 @@ class SettingScreen extends StatefulWidget {
 class _SettingScreenState extends State<SettingScreen> {
   bool isMuslimVisible = false;
 
+  // Function to save the current theme mode to shared preferences
+  Future<void> _saveThemeMode(ThemeMode themeMode) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('themeMode', themeMode.index);
+  }
+
   @override
   Widget build(BuildContext context) {
     final profileController = Get.put(ProfileController());
@@ -35,14 +43,18 @@ class _SettingScreenState extends State<SettingScreen> {
         centerTitle: true,
         actions: [
           IconButton(
-            onPressed: () {
-              Get.changeThemeMode(
-                Get.isDarkMode ? ThemeMode.light : ThemeMode.dark,
-              );
+            onPressed: () async {
+              ThemeMode newThemeMode =
+              Get.isDarkMode ? ThemeMode.light : ThemeMode.dark;
+              await _saveThemeMode(newThemeMode);
+              Get.changeThemeMode(newThemeMode);
             },
-            icon: Icon(
-                Get.isDarkMode ? Icons.light_mode : Icons.dark_mode_outlined,
-                size: 20),
+            icon: Tooltip(
+              message: Get.isDarkMode ? 'Switch to Light Theme' : 'Switch to Dark Theme',
+              child: Icon(
+                  Get.isDarkMode ? Icons.light_mode : Icons.dark_mode_outlined,
+                  size: 30),
+            ),
           ),
         ],
       ),
@@ -137,22 +149,24 @@ class _SettingScreenState extends State<SettingScreen> {
               ProfileMenuWidget(
                 title: "Reminder",
                 icon: LineAwesomeIcons.bell,
-                onPress: () {},
-              ),
-              ProfileMenuWidget(
-                title: "Change theme",
-                icon: LineAwesomeIcons.image,
-                onPress: () {},
-              ),
-              ProfileMenuWidget(
-                title: "Muslim",
-                icon: LineAwesomeIcons.mosque,
                 onPress: () {
-                  setState(() {
-                    isMuslimVisible = !isMuslimVisible;
-                  });
+                  Get.to(() => ReminderScreen());
                 },
               ),
+              // ProfileMenuWidget(
+              //   title: "Change theme",
+              //   icon: LineAwesomeIcons.image,
+              //   onPress: () {},
+              // ),
+              // ProfileMenuWidget(
+              //   title: "Muslim",
+              //   icon: LineAwesomeIcons.mosque,
+              //   onPress: () {
+              //     setState(() {
+              //       isMuslimVisible = !isMuslimVisible;
+              //     });
+              //   },
+              // ),
               Visibility(
                 visible: isMuslimVisible,
                 child: const MuslimWidget(),

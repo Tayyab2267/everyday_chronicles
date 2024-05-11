@@ -15,6 +15,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:workmanager/workmanager.dart';
 import 'firebase_options.dart';
 
@@ -363,6 +364,17 @@ void callbackDispatcher() {
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 FlutterLocalNotificationsPlugin();
 
+// Function to retrieve the saved theme mode from shared preferences
+Future<ThemeMode> _getSavedThemeMode() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  int? themeModeIndex = prefs.getInt('themeMode');
+  if (themeModeIndex != null) {
+    return ThemeMode.values[themeModeIndex];
+  }
+  // Return light theme mode if no theme mode is saved
+  return ThemeMode.light;
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // Initialize Firebase and AuthenticationRepository
@@ -385,15 +397,22 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      themeMode: ThemeMode.system,
-      theme: MyAppTheme.lightTheme,
-      darkTheme: MyAppTheme.darkTheme,
-      defaultTransition: Transition.rightToLeft,
-      transitionDuration: const Duration(milliseconds: 400),
-      debugShowCheckedModeBanner: false,
-      //home: SplashScreen(),
-      home: const Scaffold(body: Center(child: CircularProgressIndicator())),
+    return FutureBuilder<ThemeMode>(
+      future: _getSavedThemeMode(),
+      builder: (context, snapshot) {
+        ThemeMode themeMode = snapshot.data ?? ThemeMode.light;
+        return GetMaterialApp(
+          themeMode: themeMode,
+          theme: MyAppTheme.lightTheme,
+          darkTheme: MyAppTheme.darkTheme,
+          defaultTransition: Transition.rightToLeft,
+          transitionDuration: const Duration(milliseconds: 400),
+          debugShowCheckedModeBanner: false,
+          //home: SplashScreen(),
+          home: const Scaffold(body: Center(child: CircularProgressIndicator())),
+        );
+      },
     );
+
   }
 }

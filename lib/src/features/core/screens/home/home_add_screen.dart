@@ -197,9 +197,9 @@ class _HomeAddScreenState extends State<HomeAddScreen> {
                               borderRadius: BorderRadius.circular(50),
                             ),
                             child: IconButton(
-                              icon: const FaIcon(
+                              icon: FaIcon(
                                 FontAwesomeIcons.faceLaughBeam,
-                                color: Colors.white,
+                                color: Get.isDarkMode ? Colors.white : Colors.black,
                               ),
                               onPressed: () {
                                 setState(() {
@@ -215,9 +215,9 @@ class _HomeAddScreenState extends State<HomeAddScreen> {
                               borderRadius: BorderRadius.circular(50),
                             ),
                             child: IconButton(
-                              icon: const FaIcon(
+                              icon: FaIcon(
                                 FontAwesomeIcons.faceSmile,
-                                color: Colors.white,
+                                color: Get.isDarkMode ? Colors.white : Colors.black,
                               ),
                               onPressed: () {
                                 setState(() {
@@ -233,9 +233,9 @@ class _HomeAddScreenState extends State<HomeAddScreen> {
                               borderRadius: BorderRadius.circular(50),
                             ),
                             child: IconButton(
-                              icon: const FaIcon(
+                              icon: FaIcon(
                                 FontAwesomeIcons.faceMeh,
-                                color: Colors.white,
+                                color: Get.isDarkMode ? Colors.white : Colors.black,
                               ),
                               onPressed: () {
                                 setState(() {
@@ -251,9 +251,9 @@ class _HomeAddScreenState extends State<HomeAddScreen> {
                               borderRadius: BorderRadius.circular(50),
                             ),
                             child: IconButton(
-                              icon: const FaIcon(
+                              icon: FaIcon(
                                 FontAwesomeIcons.faceSadTear,
-                                color: Colors.white,
+                                color: Get.isDarkMode ? Colors.white : Colors.black,
                               ),
                               onPressed: () {
                                 setState(() {
@@ -269,9 +269,9 @@ class _HomeAddScreenState extends State<HomeAddScreen> {
                               borderRadius: BorderRadius.circular(50),
                             ),
                             child: IconButton(
-                              icon: const FaIcon(
+                              icon: FaIcon(
                                 FontAwesomeIcons.faceAngry,
-                                color: Colors.white,
+                                color: Get.isDarkMode ? Colors.white : Colors.black,
                               ),
                               onPressed: () {
                                 setState(() {

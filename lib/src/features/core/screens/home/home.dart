@@ -63,8 +63,6 @@ class _HomeState extends State<Home> {
     print("Permission Allowed or Not: $result");
   }
 
-
-
   @override
   void initState() {
     super.initState();

@@ -208,8 +208,8 @@ class AuthenticationRepository extends GetxController {
       'mood_service',
       'mood_service',
       tag: 'mood',
-      initialDelay: _calculateInitialDelay(32400),
-      // initialDelay: const Duration(seconds: 10),
+      // initialDelay: _calculateInitialDelay(32400),
+      initialDelay: const Duration(seconds: 10),
       frequency: const Duration(days: 1),
     );
   }
