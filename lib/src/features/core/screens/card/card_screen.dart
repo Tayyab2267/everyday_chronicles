@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:device_apps/device_apps.dart';
+import 'package:everyday_chronicles/src/features/core/screens/card/card_edit_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geocoding/geocoding.dart';
@@ -118,6 +119,7 @@ class _CardScreenState extends State<CardScreen> {
   // message code start
   final Telephony telephony = Telephony.instance;
   List<SmsMessage> inboxMessages = [];
+
   Future<void> fetchInboxMessages() async {
     DateTime cardDate = DateFormat('MMM dd, yyyy').parse(widget.cardDate);
     DateTime startDate = DateTime(cardDate.year, cardDate.month, cardDate.day);
@@ -304,6 +306,7 @@ class _CardScreenState extends State<CardScreen> {
       }
     }
   }
+
   IconData getWeatherIcon(String condition) {
     // Map weather conditions to appropriate icons
     switch (condition.toLowerCase()) {
@@ -373,10 +376,9 @@ class _CardScreenState extends State<CardScreen> {
 
   Future<void> fetchPrayerData() async {
     String? requiredPrayerList =
-    await SQLHelper.getPrayerListByDate(widget.cardDate);
+        await SQLHelper.getPrayerListByDate(widget.cardDate);
 
-    if (requiredPrayerList != null &&
-        requiredPrayerList.isNotEmpty) {
+    if (requiredPrayerList != null && requiredPrayerList.isNotEmpty) {
       List<dynamic> prayerDataList = jsonDecode(requiredPrayerList);
       // Loop through the weather data list in steps of 4 to process each weather entry
       for (int i = 0; i < prayerDataList.length; i += 2) {
@@ -394,7 +396,7 @@ class _CardScreenState extends State<CardScreen> {
           prayerName, // address
           "body", // Body
           'prayer',
-              () {},
+          () {},
         );
 
         String text = 'You have offered "$prayerName Prayer" at "$prayerTime".';
@@ -507,7 +509,26 @@ class _CardScreenState extends State<CardScreen> {
           ),
           child: Icon(widget.cardIcon, color: Colors.black),
         ),
-        actions: [
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(
+              FontAwesomeIcons.pen,
+              color: Colors.blue,
+            ),
+            onPressed: () {
+              Get.to(
+                () => CardEditScreen(
+                  cardIcon: widget.cardIcon,
+                  cardDate: widget.cardDate,
+                  cardID: widget.cardID,
+                  cardTitle: widget.cardTitle,
+                  cardSubTitle: widget.cardSubTitle,
+                  cardThought: widget.cardThought,
+                  color: widget.color,
+                ),
+              );
+            },
+          ),
           IconButton(
             icon: const Icon(
               Icons.delete,

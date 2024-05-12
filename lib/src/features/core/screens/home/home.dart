@@ -6,6 +6,7 @@ import 'package:everyday_chronicles/src/features/core/screens/home/bottom_naviga
 import 'package:everyday_chronicles/src/features/core/screens/home/fingerprint_screen.dart';
 import 'package:everyday_chronicles/src/features/core/screens/profile/profile_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
@@ -90,17 +91,19 @@ class _HomeState extends State<Home> {
         ),
         centerTitle: true,
         actions: <Widget>[
-          IconButton(
-            onPressed: () async {
-              Get.to(() => const FingerprintScreen());
-              // final BackgroundServiceController background = BackgroundServiceController();
-              // background.zuharPrayerMethod();
-              // Get.to(() => const NotificationScreen());
-              // Get.to(() => GalleryScreen());
-              // await SQLHelper.updateTable();
-            },
-            icon: const Icon(FontAwesomeIcons.magnifyingGlass, size: 16),
-          ),
+          // IconButton(
+          //   onPressed: () async {
+          //     // await flutterLocalNotificationsPlugin.cancelAll();
+          //     // print('Notifications cleared.');
+          //     // Get.to(() => const FingerprintScreen());
+          //     // final BackgroundServiceController background = BackgroundServiceController();
+          //     // background.zuharPrayerMethod();
+          //     // Get.to(() => const NotificationScreen());
+          //     // Get.to(() => GalleryScreen());
+          //     // await SQLHelper.updateTable();
+          //   },
+          //   icon: const Icon(FontAwesomeIcons.magnifyingGlass, size: 16),
+          // ),
           IconButton(
             onPressed: () async {
               Get.offAll(() => const BottomNavigationBarWidget());

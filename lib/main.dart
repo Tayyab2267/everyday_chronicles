@@ -10,6 +10,7 @@ import 'package:everyday_chronicles/src/repository/authentication_repository/aut
 import 'package:everyday_chronicles/src/utils/theme/theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
@@ -397,6 +398,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return FutureBuilder<ThemeMode>(
       future: _getSavedThemeMode(),
       builder: (context, snapshot) {
