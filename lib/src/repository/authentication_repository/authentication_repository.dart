@@ -7,7 +7,10 @@ import 'package:everyday_chronicles/src/repository/authentication_repository/exc
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:local_auth/local_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:workmanager/workmanager.dart';
 
 class AuthenticationRepository extends GetxController {
@@ -26,12 +29,42 @@ class AuthenticationRepository extends GetxController {
     //ever(firebaseUser, _setInitialScreen);
   }
 
+  Future<String> _authenticate() async {
+    try {
+      final LocalAuthentication auth = LocalAuthentication();
+      bool authenticated = await auth.authenticate(
+        localizedReason: "Subscribe or you will never find any stack overflow error",
+        options: const AuthenticationOptions(
+          stickyAuth: true,
+          biometricOnly: false,
+        ),
+      );
+      print("Authenticated: $authenticated");
+      return authenticated.toString();
+    } on PlatformException catch (e) {
+      print(e);
+    }
+    return "false";
+  }
+
   setInitialScreen(User? user) async {
     if (user == null) {
       Get.offAll(() => const WelcomeScreen());
     } else {
       if (user.emailVerified) {
-        Get.offAll(() => const BottomNavigationBarWidget());
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        bool passcodeEnabled = prefs.getBool('passcodeEnabled') ?? false;
+        if(passcodeEnabled == true){
+          String result = await _authenticate();
+          print("Result: $result");
+          if(result == "true"){
+            Get.offAll(() => const BottomNavigationBarWidget());
+          } else {
+            Get.offAll(() => const WelcomeScreen());
+          }
+        } else {
+          Get.offAll(() => const BottomNavigationBarWidget());
+        }
       } else {
         Get.offAll(() => const MailVerificationScreen());
       }
@@ -177,6 +210,8 @@ class AuthenticationRepository extends GetxController {
 
     await _auth.signOut();
     LocationManager().stop();
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
+    await _prefs.setBool('passcodeEnabled', false);
     Get.offAll(() => const LoginScreen());
   }
 
@@ -208,8 +243,8 @@ class AuthenticationRepository extends GetxController {
       'mood_service',
       'mood_service',
       tag: 'mood',
-      // initialDelay: _calculateInitialDelay(32400),
-      initialDelay: const Duration(seconds: 10),
+      initialDelay: _calculateInitialDelay(32400),
+      // initialDelay: const Duration(seconds: 10),
       frequency: const Duration(days: 1),
     );
   }

@@ -319,6 +319,31 @@ class BackgroundServiceController extends GetxController {
     }
   }
 
+  Future<void> fetchPrayerData() async {
+    String? requiredPrayerList =
+    await SQLHelper.getPrayerListByDate(getCurrentDate());
+
+    if (requiredPrayerList != null &&
+        requiredPrayerList.isNotEmpty) {
+      List<dynamic> prayerDataList = jsonDecode(requiredPrayerList);
+      // Loop through the weather data list in steps of 4 to process each weather entry
+      for (int i = 0; i < prayerDataList.length; i += 2) {
+        String prayerTime = prayerDataList[i];
+        String prayerName = prayerDataList[i + 1];
+
+        print("Prayer Time = $prayerTime");
+        print("Prayer Name = $prayerName");
+        print("================================");
+
+        String text = 'You have offered "$prayerName Prayer" at "$prayerTime".';
+        addNewString(
+          prayerTime, // Time
+          text, // Text
+        );
+      }
+    }
+  }
+
   Future<void> moodServiceMethod() async {
     print("-----> Fetching Mood here");
 
@@ -331,6 +356,7 @@ class BackgroundServiceController extends GetxController {
       await fetchWeatherData();
       await fetchUserLocationData();
       await fetchCallLocationData();
+      await fetchPrayerData();
 
       sortRowDataByTime();
 

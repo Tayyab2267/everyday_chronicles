@@ -3,6 +3,7 @@ import 'package:carp_background_location/carp_background_location.dart';
 import 'package:everyday_chronicles/src/features/core/controllers/background_service_controller.dart';
 import 'package:everyday_chronicles/src/features/core/controllers/sql_helper.dart';
 import 'package:everyday_chronicles/src/features/core/screens/home/bottom_navigation_bar_widget.dart';
+import 'package:everyday_chronicles/src/features/core/screens/home/fingerprint_screen.dart';
 import 'package:everyday_chronicles/src/features/core/screens/profile/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -91,8 +92,9 @@ class _HomeState extends State<Home> {
         actions: <Widget>[
           IconButton(
             onPressed: () async {
-              final BackgroundServiceController background = BackgroundServiceController();
-              background.fajarPrayerMethod();
+              Get.to(() => const FingerprintScreen());
+              // final BackgroundServiceController background = BackgroundServiceController();
+              // background.zuharPrayerMethod();
               // Get.to(() => const NotificationScreen());
               // Get.to(() => GalleryScreen());
               // await SQLHelper.updateTable();

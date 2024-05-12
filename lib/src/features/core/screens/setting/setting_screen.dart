@@ -1,3 +1,4 @@
+import 'package:everyday_chronicles/src/features/core/screens/home/fingerprint_screen.dart';
 import 'package:everyday_chronicles/src/features/core/screens/profile/profile_screen.dart';
 import 'package:everyday_chronicles/src/features/core/screens/setting/privacy_policy_screen.dart';
 import 'package:everyday_chronicles/src/features/core/screens/setting/reminder_screen.dart';
@@ -139,7 +140,9 @@ class _SettingScreenState extends State<SettingScreen> {
               ProfileMenuWidget(
                 title: "Passcode",
                 icon: LineAwesomeIcons.lock,
-                onPress: () {},
+                onPress: () {
+                  Get.to(() => const FingerprintScreen());
+                },
               ),
               ProfileMenuWidget(
                 title: "Backup & restore",
