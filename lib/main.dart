@@ -383,7 +383,7 @@ void main() async {
   Get.put(AuthenticationRepository());
 
   // Initialize Work manager (background services package)
-  await Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
+  await Workmanager().initialize(callbackDispatcher, isInDebugMode: false);
 
   Noti.initialize(flutterLocalNotificationsPlugin);
 
@@ -399,21 +399,15 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    return FutureBuilder<ThemeMode>(
-      future: _getSavedThemeMode(),
-      builder: (context, snapshot) {
-        ThemeMode themeMode = snapshot.data ?? ThemeMode.light;
-        return GetMaterialApp(
-          themeMode: themeMode,
-          theme: MyAppTheme.lightTheme,
-          darkTheme: MyAppTheme.darkTheme,
-          defaultTransition: Transition.rightToLeft,
-          transitionDuration: const Duration(milliseconds: 400),
-          debugShowCheckedModeBanner: false,
-          //home: SplashScreen(),
-          home: const Scaffold(body: Center(child: CircularProgressIndicator())),
-        );
-      },
+    return GetMaterialApp(
+      themeMode: ThemeMode.system,
+      theme: MyAppTheme.lightTheme,
+      darkTheme: MyAppTheme.darkTheme,
+      defaultTransition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: 400),
+      debugShowCheckedModeBanner: false,
+      //home: SplashScreen(),
+      home: const Scaffold(body: Center(child: CircularProgressIndicator())),
     );
 
   }

@@ -119,18 +119,24 @@ class AuthenticationRepository extends GetxController {
       await _auth.signInWithEmailAndPassword(email: email, password: password);
       if (firebaseUser.value != null) {
         if (firebaseUser.value!.emailVerified) {
-          // services functions
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          // bool moodServiceEnabled = prefs.getBool('mobileUsageServiceEnabled') ?? false;
+          // bool weatherServiceEnabled = prefs.getBool('mobileUsageServiceEnabled') ?? false;
+          // bool locationServiceEnabled = prefs.getBool('mobileUsageServiceEnabled') ?? false;
+          // bool callLocationServiceEnabled = prefs.getBool('mobileUsageServiceEnabled') ?? false;
+          // bool prayerServiceEnabled = prefs.getBool('mobileUsageServiceEnabled') ?? false;
+
           createDummyDataService();
-          moodService();
-          weatherService();
-          userLocationService();
-          callLocationService();
+          // moodService();
+          // weatherService();
+          // userLocationService();
+          // callLocationService();
           // prayers services
-          fajarPrayer();
-          zuharPrayer();
-          asarPrayer();
-          maghribPrayer();
-          ishaPrayer();
+          // fajarPrayer();
+          // zuharPrayer();
+          // asarPrayer();
+          // maghribPrayer();
+          // ishaPrayer();
 
           // Open home Screen
           Get.offAll(() => const BottomNavigationBarWidget());
@@ -151,10 +157,26 @@ class AuthenticationRepository extends GetxController {
       }
     } on FirebaseAuthException catch (e) {
       final ex = SignUpWithEmailAndPasswordFailure.code(e.code);
+      Get.snackbar(
+        "ERROR",
+        e.code,
+        snackPosition: SnackPosition.BOTTOM,
+        duration: const Duration(seconds: 3),
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
       print("FIREBASE AUTH EXCEPTION -${ex.message}");
       throw ex;
     } catch (_) {
       var ex = SignUpWithEmailAndPasswordFailure();
+      Get.snackbar(
+        "ERROR",
+        ex.toString(),
+        snackPosition: SnackPosition.BOTTOM,
+        duration: const Duration(seconds: 3),
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
       print("EXCEPTION - ${ex.message}");
       throw ex;
     }
@@ -184,17 +206,23 @@ class AuthenticationRepository extends GetxController {
     //Workmanager().cancelAll();
 
     try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
       await Workmanager().cancelByTag("create");
       print("---> create_service stopped successfully");
       await Workmanager().cancelByTag("mood");
+      await prefs.setBool('moodServiceEnabled', false);
       print("---> mood_service stopped successfully");
       await Workmanager().cancelByTag("weather");
+      await prefs.setBool('weatherServiceEnabled', false);
       print("---> weather_service stopped successfully");
       await Workmanager().cancelByTag("user");
+      await prefs.setBool('locationServiceEnabled', false);
       print("---> user_location_service stopped successfully");
       await Workmanager().cancelByTag("call");
+      await prefs.setBool('callLocationServiceEnabled', false);
       print("---> call_location_service stopped successfully");
       await Workmanager().cancelByTag("fajar");
+      await prefs.setBool('prayerServiceEnabled', false);
       print("---> fajar_prayer_service stopped successfully");
       await Workmanager().cancelByTag("zuhar");
       print("---> zuhar_prayer_service stopped successfully");
@@ -216,13 +244,48 @@ class AuthenticationRepository extends GetxController {
   }
 
   // Function to calculate the initial delay until 12:00 AM of the next day
-  Duration _calculateInitialDelay(int seconds) {
+  // Duration _calculateInitialDelay(int seconds) {
+  //   final now = DateTime.now();
+  //   final nextDay = now.add(const Duration(days: 1));
+  //   final midnight = DateTime(nextDay.year, nextDay.month, nextDay.day);
+  //   final delay = midnight.difference(now) + Duration(seconds: seconds);
+  //   return delay;
+  // }
+
+  // Duration calculateInitialDelayWithHour(int hours) {
+  //   final now = DateTime.now();
+  //
+  //   // Add hours to the current date time
+  //   final nextHour = now.add(Duration(hours: hours));
+  //
+  //   // If the calculated date time is in the past, add the specified hours to the next day
+  //   if (nextHour.isBefore(now)) {
+  //     final nextDay = now.add(const Duration(days: 1));
+  //     return DateTime(nextDay.year, nextDay.month, nextDay.day, hours)
+  //         .difference(now);
+  //   } else {
+  //     return nextHour.difference(now);
+  //   }
+  // }
+
+  int calculateInitialDelayInSeconds(int hour) {
     final now = DateTime.now();
-    final nextDay = now.add(const Duration(days: 1));
-    final midnight = DateTime(nextDay.year, nextDay.month, nextDay.day);
-    final delay = midnight.difference(now) + Duration(seconds: seconds);
-    return delay;
+
+    // Create a DateTime object for the specified hour of the current day
+    final todayTargetTime = DateTime(now.year, now.month, now.day, hour);
+
+    // If the target time has already passed today, add 1 day to the date
+    if (now.isAfter(todayTargetTime)) {
+      final nextDay = now.add(Duration(days: 1));
+      return DateTime(nextDay.year, nextDay.month, nextDay.day, hour)
+          .difference(now)
+          .inSeconds;
+    } else {
+      // If the target time is in the future, calculate the delay in seconds
+      return todayTargetTime.difference(now).inSeconds;
+    }
   }
+
 
   Future<void> createDummyDataService() async {
     print("\t ---------> createDummyDataService() function called");
@@ -231,11 +294,10 @@ class AuthenticationRepository extends GetxController {
       'create_dummy_data_service',
       'create_dummy_data_service',
       tag: 'create',
-      initialDelay: _calculateInitialDelay(1),
+      initialDelay: Duration(seconds: calculateInitialDelayInSeconds(0)),
       frequency: const Duration(days: 1),
     );
   }
-
   Future<void> moodService() async {
     print("\t ---------> moodService() function called");
     // background service code
@@ -243,12 +305,11 @@ class AuthenticationRepository extends GetxController {
       'mood_service',
       'mood_service',
       tag: 'mood',
-      initialDelay: _calculateInitialDelay(32400),
+      initialDelay: Duration(seconds: calculateInitialDelayInSeconds(21)),
       // initialDelay: const Duration(seconds: 10),
       frequency: const Duration(days: 1),
     );
   }
-
   Future<void> callLocationService() async {
     print("\t ---------> callLocationService() function called");
     // background service code
@@ -261,7 +322,6 @@ class AuthenticationRepository extends GetxController {
       frequency: const Duration(minutes: 15),
     );
   }
-
   Future<void> userLocationService() async {
     print("\t ---------> userLocationService() function called");
     // background service code
@@ -274,7 +334,6 @@ class AuthenticationRepository extends GetxController {
       frequency: const Duration(minutes: 15),
     );
   }
-
   Future<void> weatherService() async {
     print("\t ---------> weatherService() function called");
     // background service code
@@ -282,10 +341,8 @@ class AuthenticationRepository extends GetxController {
       'weather_service',
       'weather_service',
       tag: 'weather',
-      initialDelay: _calculateInitialDelay(21600),
+      initialDelay: Duration(seconds: calculateInitialDelayInSeconds(6)),
       frequency: const Duration(hours: 8),
-      // initialDelay: const Duration(seconds: 100),
-      // frequency: const Duration(minutes: 15),
     );
   }
 
@@ -296,8 +353,7 @@ class AuthenticationRepository extends GetxController {
       'fajar_prayer_service',
       'fajar_prayer_service',
       tag: 'fajar',
-      initialDelay: _calculateInitialDelay(18000), // 5am
-      // initialDelay: const Duration(seconds: 10),
+      initialDelay: Duration(seconds: calculateInitialDelayInSeconds(5)),
       frequency: const Duration(days: 1),
     );
   }
@@ -308,8 +364,7 @@ class AuthenticationRepository extends GetxController {
       'zuhar_prayer_service',
       'zuhar_prayer_service',
       tag: 'zuhar',
-      initialDelay: _calculateInitialDelay(54000), // 3pm
-      // initialDelay: const Duration(seconds: 10),
+      initialDelay: Duration(seconds: calculateInitialDelayInSeconds(2)),
       frequency: const Duration(days: 1),
     );
   }
@@ -320,8 +375,7 @@ class AuthenticationRepository extends GetxController {
       'asar_prayer_service',
       'asar_prayer_service',
       tag: 'asar',
-      initialDelay: _calculateInitialDelay(68400), // 7pm
-      // initialDelay: const Duration(seconds: 10),
+      initialDelay: Duration(seconds: calculateInitialDelayInSeconds(5)),
       frequency: const Duration(days: 1),
     );
   }
@@ -332,8 +386,7 @@ class AuthenticationRepository extends GetxController {
       'maghrib_prayer_service',
       'maghrib_prayer_service',
       tag: 'maghrib',
-      initialDelay: _calculateInitialDelay(72000), // 8pm
-      // initialDelay: const Duration(seconds: 10),
+      initialDelay: Duration(seconds: calculateInitialDelayInSeconds(7)),
       frequency: const Duration(days: 1),
     );
   }
@@ -344,8 +397,7 @@ class AuthenticationRepository extends GetxController {
       'isha_prayer_service',
       'isha_prayer_service',
       tag: 'isha',
-      initialDelay: _calculateInitialDelay(79200), // 10pm
-      // initialDelay: const Duration(seconds: 10),
+      initialDelay: Duration(seconds: calculateInitialDelayInSeconds(10)),
       frequency: const Duration(days: 1),
     );
   }

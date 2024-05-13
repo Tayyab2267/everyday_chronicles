@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:photo_gallery/photo_gallery.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:telephony/telephony.dart';
 import 'package:usage_stats/usage_stats.dart';
 import '../../../../constants/colors.dart';
@@ -121,149 +122,169 @@ class _CardScreenState extends State<CardScreen> {
   List<SmsMessage> inboxMessages = [];
 
   Future<void> fetchInboxMessages() async {
-    DateTime cardDate = DateFormat('MMM dd, yyyy').parse(widget.cardDate);
-    DateTime startDate = DateTime(cardDate.year, cardDate.month, cardDate.day);
-    DateTime endDate = startDate.add(const Duration(days: 1));
 
-    List<SmsMessage> messages = await telephony.getInboxSms(
-      columns: [SmsColumn.ADDRESS, SmsColumn.BODY, SmsColumn.DATE],
-      filter: SmsFilter.where(SmsColumn.DATE)
-          .greaterThan(startDate.millisecondsSinceEpoch.toString())
-          .and(SmsColumn.DATE)
-          .lessThan(endDate.millisecondsSinceEpoch.toString()),
-      sortOrder: [
-        OrderBy(SmsColumn.DATE, sort: Sort.ASC),
-        OrderBy(SmsColumn.BODY)
-      ],
-    );
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool messageServiceEnabled = prefs.getBool('messageServiceEnabled') ?? false;
+    print('Message Service Enabled: $messageServiceEnabled');
 
-    setState(() {
-      inboxMessages = messages;
-    });
+    if(messageServiceEnabled == true){
+      DateTime cardDate = DateFormat('MMM dd, yyyy').parse(widget.cardDate);
+      DateTime startDate = DateTime(cardDate.year, cardDate.month, cardDate.day);
+      DateTime endDate = startDate.add(const Duration(days: 1));
 
-    for (var message in inboxMessages) {
-      String messageTime = DateFormat('HH:mm').format(
-          DateTime.fromMillisecondsSinceEpoch(
-              int.parse(message.date.toString())));
-      String messageAddress = message.address!;
-      String messageBody = message.body!;
-      addNewMessageData(
-          Icons.message,
-          // Icon for SMS message
-          messageTime,
-          messageAddress,
-          // Format the date to display only time (HH:mm)
-          messageBody,
-          // Format the date to display only time (HH:mm)
-          "message",
-          () {});
-
-      // Text Code below
-      String messageText =
-          'You have received a message("$messageBody") at "$messageTime" from ($messageAddress).';
-      addNewString(
-        messageTime, // time
-        messageText, // text
+      List<SmsMessage> messages = await telephony.getInboxSms(
+        columns: [SmsColumn.ADDRESS, SmsColumn.BODY, SmsColumn.DATE],
+        filter: SmsFilter.where(SmsColumn.DATE)
+            .greaterThan(startDate.millisecondsSinceEpoch.toString())
+            .and(SmsColumn.DATE)
+            .lessThan(endDate.millisecondsSinceEpoch.toString()),
+        sortOrder: [
+          OrderBy(SmsColumn.DATE, sort: Sort.ASC),
+          OrderBy(SmsColumn.BODY)
+        ],
       );
+
+      setState(() {
+        inboxMessages = messages;
+      });
+
+      for (var message in inboxMessages) {
+        String messageTime = DateFormat('HH:mm').format(
+            DateTime.fromMillisecondsSinceEpoch(
+                int.parse(message.date.toString())));
+        String messageAddress = message.address!;
+        String messageBody = message.body!;
+        addNewMessageData(
+            Icons.message,
+            // Icon for SMS message
+            messageTime,
+            messageAddress,
+            // Format the date to display only time (HH:mm)
+            messageBody,
+            // Format the date to display only time (HH:mm)
+            "message",
+                () {});
+
+        // Text Code below
+        String messageText =
+            'You have received a message("$messageBody") at "$messageTime" from ($messageAddress).';
+        addNewString(
+          messageTime, // time
+          messageText, // text
+        );
+      }
+    }
+    else{
+      print("Message Service is not enabled from setting");
     }
   }
 
   Future<void> fetchMobileUsageTime() async {
-    List<UsageInfo> usageStats = [];
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool mobileUsageServiceEnabled = prefs.getBool('mobileUsageServiceEnabled') ?? false;
+    print('Mobile Usage Service Enabled: $mobileUsageServiceEnabled');
 
-    DateTime selectedDate = DateFormat('MMM dd, yyyy').parse(widget.cardDate);
-    DateTime startDate =
-        DateTime(selectedDate.year, selectedDate.month, selectedDate.day);
-    DateTime endDate = DateTime(
-        selectedDate.year, selectedDate.month, selectedDate.day, 23, 59, 0);
+    if(mobileUsageServiceEnabled == true){
+      List<UsageInfo> usageStats = [];
 
-    print("---> Selected Date: ${selectedDate.toString()}");
-    print("---> Start Date: ${startDate.toString()}");
-    print("---> End Date: ${endDate.toString()}");
+      DateTime selectedDate = DateFormat('MMM dd, yyyy').parse(widget.cardDate);
+      DateTime startDate =
+      DateTime(selectedDate.year, selectedDate.month, selectedDate.day);
+      DateTime endDate = DateTime(
+          selectedDate.year, selectedDate.month, selectedDate.day, 23, 59, 0);
 
-    // Grant usage permission
-    UsageStats.grantUsagePermission();
+      print("---> Selected Date: ${selectedDate.toString()}");
+      print("---> Start Date: ${startDate.toString()}");
+      print("---> End Date: ${endDate.toString()}");
 
-    // Check if permission is granted
-    bool? isPermission = await UsageStats.checkUsagePermission();
-
-    if (isPermission!) {
-      // Get apps with launch intents
-      List<Application> installedApps =
-          await DeviceApps.getInstalledApplications(
-        onlyAppsWithLaunchIntent: true,
-        includeSystemApps: true,
-      );
-      List<String> appPackageNames =
-          installedApps.map((app) => app.packageName!).toList();
-
-      // Query usage stats for all packages within the date range
-      List<UsageInfo> stats =
-          await UsageStats.queryUsageStats(startDate, endDate);
-
-      setState(() {
-        // Filter out apps with 0 minutes of usage time
-        List<UsageInfo> filteredStats = stats
-            .where((usage) => getMinutes(usage.totalTimeInForeground) > 0)
-            .toList();
-
-        // Filter by app package names (optional, if needed for additional security)
-        filteredStats = filteredStats
-            .where((usage) => appPackageNames.contains(usage.packageName!))
-            .toList();
-
-        // Group by package name and sum usage time
-        Map<String, int> usageMap = {};
-        for (UsageInfo usage in filteredStats) {
-          usageMap[usage.packageName!] = (usageMap[usage.packageName!] ?? 0) +
-              getMinutes(usage.totalTimeInForeground);
-        }
-
-        // Sort apps by usage time in descending order
-        List<MapEntry<String, int>> sortedMap = usageMap.entries.toList()
-          ..sort((a, b) => b.value.compareTo(a.value));
-
-        // Select top 3 packages and corresponding usage info
-        usageStats = sortedMap
-            .take(3)
-            .map((entry) => filteredStats
-                .firstWhere((usage) => usage.packageName == entry.key))
-            .toList();
-      });
-
-      // Call addNewMessageData for each of the top 3 apps
-      for (int i = 0; i < usageStats.length; i++) {
-        UsageInfo usage = usageStats[i];
-        String appName = '';
-        try {
-          Application? app = await DeviceApps.getApp(usage.packageName!);
-          appName = app!.appName;
-          print("---> App Name: $appName ...");
-        } catch (ex) {
-          print("--> ex: ${ex.toString()} ...");
-        }
-
-        addNewMessageData(
-          FontAwesomeIcons.mobileScreen, // Phone icon
-          '23:59', // Time
-          appName, // App name
-          '${getMinutes(usage.totalTimeInForeground)} min', // Usage time
-          'mobileUsage',
-          () {},
-        );
-        print("---> Inserted ...");
-
-        //Text code below
-        String usageTime = getMinutes(usage.totalTimeInForeground).toString();
-        String text = 'You have used $appName for around $usageTime min.';
-        addNewString(
-          '23:59', // Time
-          text, // text
-        );
-      }
-    } else {
+      // Grant usage permission
       UsageStats.grantUsagePermission();
+
+      // Check if permission is granted
+      bool? isPermission = await UsageStats.checkUsagePermission();
+
+      if (isPermission!) {
+        // Get apps with launch intents
+        List<Application> installedApps =
+        await DeviceApps.getInstalledApplications(
+          onlyAppsWithLaunchIntent: true,
+          includeSystemApps: true,
+        );
+        List<String> appPackageNames =
+        installedApps.map((app) => app.packageName!).toList();
+
+        // Query usage stats for all packages within the date range
+        List<UsageInfo> stats =
+        await UsageStats.queryUsageStats(startDate, endDate);
+
+        setState(() {
+          // Filter out apps with 0 minutes of usage time
+          List<UsageInfo> filteredStats = stats
+              .where((usage) => getMinutes(usage.totalTimeInForeground) > 0)
+              .toList();
+
+          // Filter by app package names (optional, if needed for additional security)
+          filteredStats = filteredStats
+              .where((usage) => appPackageNames.contains(usage.packageName!))
+              .toList();
+
+          // Group by package name and sum usage time
+          Map<String, int> usageMap = {};
+          for (UsageInfo usage in filteredStats) {
+            usageMap[usage.packageName!] = (usageMap[usage.packageName!] ?? 0) +
+                getMinutes(usage.totalTimeInForeground);
+          }
+
+          // Sort apps by usage time in descending order
+          List<MapEntry<String, int>> sortedMap = usageMap.entries.toList()
+            ..sort((a, b) => b.value.compareTo(a.value));
+
+          // Select top 3 packages and corresponding usage info
+          usageStats = sortedMap
+              .take(3)
+              .map((entry) => filteredStats
+              .firstWhere((usage) => usage.packageName == entry.key))
+              .toList();
+        });
+
+        // Call addNewMessageData for each of the top 3 apps
+        for (int i = 0; i < usageStats.length; i++) {
+          UsageInfo usage = usageStats[i];
+          String appName = '';
+          try {
+            Application? app = await DeviceApps.getApp(usage.packageName!);
+            appName = app!.appName;
+            print("---> App Name: $appName ...");
+          } catch (ex) {
+            print("--> ex: ${ex.toString()} ...");
+          }
+
+          addNewMessageData(
+            FontAwesomeIcons.mobileScreen, // Phone icon
+            '23:59', // Time
+            appName, // App name
+            '${getMinutes(usage.totalTimeInForeground)} min', // Usage time
+            'mobileUsage',
+                () {},
+          );
+          print("---> Inserted ...");
+
+          //Text code below
+          String usageTime = getMinutes(usage.totalTimeInForeground).toString();
+          String text = 'You have used $appName for around $usageTime min.';
+          addNewString(
+            '23:59', // Time
+            text, // text
+          );
+        }
+      } else {
+        UsageStats.grantUsagePermission();
+      }
     }
+    else {
+      print("Mobile Usage Service is Off");
+    }
+
   }
 
   int getMinutes(String? totalTimeInForeground) {

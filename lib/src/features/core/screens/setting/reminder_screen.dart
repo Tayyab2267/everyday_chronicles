@@ -10,9 +10,9 @@ class ReminderScreen extends StatefulWidget {
 
 class _ReminderScreenState extends State<ReminderScreen> {
   late SharedPreferences _prefs;
-  bool _prayerNotificationEnabled = true;
-  bool _moodNotificationEnabled = true;
-  bool _generalNotificationEnabled = true;
+  bool _prayerNotificationEnabled = false;
+  bool _moodNotificationEnabled = false;
+  bool _generalNotificationEnabled = false;
 
   @override
   void initState() {
@@ -23,9 +23,9 @@ class _ReminderScreenState extends State<ReminderScreen> {
   Future<void> _loadPreferences() async {
     _prefs = await SharedPreferences.getInstance();
     setState(() {
-      _prayerNotificationEnabled = _prefs.getBool('prayerNotificationEnabled') ?? true;
-      _moodNotificationEnabled = _prefs.getBool('moodNotificationEnabled') ?? true;
-      _generalNotificationEnabled = _prefs.getBool('generalNotificationEnabled') ?? true;
+      _prayerNotificationEnabled = _prefs.getBool('prayerNotificationEnabled') ?? false;
+      _moodNotificationEnabled = _prefs.getBool('moodNotificationEnabled') ?? false;
+      _generalNotificationEnabled = _prefs.getBool('generalNotificationEnabled') ?? false;
     });
   }
 

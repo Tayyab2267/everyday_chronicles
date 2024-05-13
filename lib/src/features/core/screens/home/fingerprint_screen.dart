@@ -17,7 +17,7 @@ class _FingerprintScreenState extends State<FingerprintScreen> {
   Future<void> _loadPreferences() async {
     _prefs = await SharedPreferences.getInstance();
     setState(() {
-      _passcodeEnabled = _prefs.getBool('passcodeEnabled') ?? true;
+      _passcodeEnabled = _prefs.getBool('passcodeEnabled') ?? false;
     });
   }
   Future<void> _togglePasscode(bool value) async {
@@ -131,7 +131,7 @@ class _FingerprintScreenState extends State<FingerprintScreen> {
   Future<String> _authenticate() async {
     try {
       bool authenticated = await auth.authenticate(
-        localizedReason: "Subscribe or you will never find any stack overflow error",
+        localizedReason: "Subscribe fingerprint or pin for a better privacy",
         options: const AuthenticationOptions(
           stickyAuth: true,
           biometricOnly: false,

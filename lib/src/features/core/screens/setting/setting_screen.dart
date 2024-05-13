@@ -13,6 +13,7 @@ import 'package:workmanager/workmanager.dart';
 import '../../../../constants/image_strings.dart';
 import '../../../authentication/models/user_model.dart';
 import '../../controllers/profile_controller.dart';
+import 'customize_screen.dart';
 import 'setting_menu_widget.dart';
 
 class SettingScreen extends StatefulWidget {
@@ -25,11 +26,17 @@ class SettingScreen extends StatefulWidget {
 class _SettingScreenState extends State<SettingScreen> {
   bool isMuslimVisible = false;
 
-  // Function to save the current theme mode to shared preferences
-  Future<void> _saveThemeMode(ThemeMode themeMode) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('themeMode', themeMode.index);
-  }
+  // // Function to save the current theme mode to shared preferences
+  // Future<void> _saveThemeMode(ThemeMode themeMode) async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   await prefs.setInt('themeMode', themeMode.index);
+  //   print("==============> ${themeMode.index}");
+  //   if(themeMode.index == 1){
+  //     await prefs.setBool('themeModeBool', false);// false mean lightMood
+  //   } else if(themeMode.index == 2){
+  //     await prefs.setBool('themeModeBool', true);// false mean lightMood
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +54,7 @@ class _SettingScreenState extends State<SettingScreen> {
             onPressed: () async {
               ThemeMode newThemeMode =
               Get.isDarkMode ? ThemeMode.light : ThemeMode.dark;
-              await _saveThemeMode(newThemeMode);
+              // await _saveThemeMode(newThemeMode);
               Get.changeThemeMode(newThemeMode);
             },
             icon: Tooltip(
@@ -154,6 +161,13 @@ class _SettingScreenState extends State<SettingScreen> {
                 icon: LineAwesomeIcons.bell,
                 onPress: () {
                   Get.to(() => ReminderScreen());
+                },
+              ),
+              ProfileMenuWidget(
+                title: "Customize Services",
+                icon: LineAwesomeIcons.screwdriver,
+                onPress: () {
+                  Get.to(() => CustomizeScreen());
                 },
               ),
               // ProfileMenuWidget(
