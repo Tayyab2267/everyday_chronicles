@@ -286,6 +286,39 @@ class AuthenticationRepository extends GetxController {
     }
   }
 
+  int calculateInitialDelayForWeatherInSeconds(int hour1, int hour2, int hour3) {
+    final now = DateTime.now();
+
+    // Create DateTime objects for the specified hours of the current day
+    final targetTimes = [
+      DateTime(now.year, now.month, now.day, hour1),
+      DateTime(now.year, now.month, now.day, hour2),
+      DateTime(now.year, now.month, now.day, hour3)
+    ];
+
+    // Calculate delays for each target time
+    final delays = targetTimes.map((targetTime) {
+      if (now.isAfter(targetTime)) {
+        final nextDay = now.add(const Duration(days: 1));
+        return DateTime(nextDay.year, nextDay.month, nextDay.day, targetTime.hour)
+            .difference(now)
+            .inSeconds;
+      } else {
+        return targetTime.difference(now).inSeconds;
+      }
+    }).toList();
+
+    // Find the minimum delay
+    int minDelay = delays[0];
+    for (int i = 1; i < delays.length; i++) {
+      if (delays[i] < minDelay) {
+        minDelay = delays[i];
+      }
+    }
+
+    return minDelay;
+  }
+
 
   Future<void> createDummyDataService() async {
     print("\t ---------> createDummyDataService() function called");
@@ -341,7 +374,7 @@ class AuthenticationRepository extends GetxController {
       'weather_service',
       'weather_service',
       tag: 'weather',
-      initialDelay: Duration(seconds: calculateInitialDelayInSeconds(6)),
+      initialDelay: Duration(seconds: calculateInitialDelayForWeatherInSeconds(6, 14, 22)),
       frequency: const Duration(hours: 8),
     );
   }

@@ -135,38 +135,38 @@ class ProfileScreen extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(height: myFormHeight),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text.rich(
-                                  TextSpan(
-                                    text: "Joined Since ",
-                                    style:
-                                        Theme.of(context).textTheme.bodySmall,
-                                    children: [
-                                      TextSpan(
-                                        text: "November 05, 2023",
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleLarge,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                ElevatedButton(
-                                  onPressed: () {},
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor:
-                                        Colors.redAccent.withOpacity(0.1),
-                                    elevation: 0,
-                                    foregroundColor: Colors.red,
-                                    shape: const StadiumBorder(),
-                                    side: BorderSide.none,
-                                  ),
-                                  child: const Text("Delete"),
-                                ),
-                              ],
-                            ),
+                            // Row(
+                            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            //   children: [
+                            //     Text.rich(
+                            //       TextSpan(
+                            //         text: "Joined Since ",
+                            //         style:
+                            //             Theme.of(context).textTheme.bodySmall,
+                            //         children: [
+                            //           TextSpan(
+                            //             text: "November 05, 2023",
+                            //             style: Theme.of(context)
+                            //                 .textTheme
+                            //                 .titleLarge,
+                            //           ),
+                            //         ],
+                            //       ),
+                            //     ),
+                            //     ElevatedButton(
+                            //       onPressed: () {},
+                            //       style: ElevatedButton.styleFrom(
+                            //         backgroundColor:
+                            //             Colors.redAccent.withOpacity(0.1),
+                            //         elevation: 0,
+                            //         foregroundColor: Colors.red,
+                            //         shape: const StadiumBorder(),
+                            //         side: BorderSide.none,
+                            //       ),
+                            //       child: const Text("Delete"),
+                            //     ),
+                            //   ],
+                            // ),
                           ],
                         ),
                       ),

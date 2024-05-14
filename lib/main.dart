@@ -390,6 +390,12 @@ void main() async {
   /// awesome_notification
   await Noti.initializeNotification();
 
+  // Lock the orientation to portrait
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+
   runApp(const MyApp());
 }
 
