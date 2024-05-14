@@ -383,7 +383,7 @@ void main() async {
   Get.put(AuthenticationRepository());
 
   // Initialize Work manager (background services package)
-  await Workmanager().initialize(callbackDispatcher, isInDebugMode: false);
+  await Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
 
   Noti.initialize(flutterLocalNotificationsPlugin);
 

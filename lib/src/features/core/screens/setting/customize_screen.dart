@@ -1,6 +1,9 @@
 import 'package:everyday_chronicles/src/repository/authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:usage_stats/usage_stats.dart';
 import 'package:workmanager/workmanager.dart';
 
 class CustomizeScreen extends StatefulWidget {
@@ -9,6 +12,32 @@ class CustomizeScreen extends StatefulWidget {
 }
 
 class _CustomizeScreenState extends State<CustomizeScreen> {
+
+
+
+  Future<void> requestLocationPermission() async {
+    PermissionStatus status = await Permission.locationAlways.request();
+    if (status == PermissionStatus.granted) {
+      // Permission granted, proceed with your app logic
+      print('Location permission allowed all the time');
+    } else if (status == PermissionStatus.denied) {
+      // Permission denied, handle accordingly
+      print('Location permission denied');
+    } else if (status == PermissionStatus.permanentlyDenied) {
+      // Permission permanently denied, request users to enable it from settings
+      print('Location permission permanently denied');
+      openAppSettings();
+    }
+
+    // For local notifications permission, you might need to handle it separately
+    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+    bool? notificationsResult = await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+        ?.requestPermission();
+    print("Notification Permission Allowed or Not: $notificationsResult");
+  }
+
   late SharedPreferences _prefs;
   bool _moodServiceEnabled = false;
   bool _weatherServiceEnabled = false;
@@ -22,6 +51,7 @@ class _CustomizeScreenState extends State<CustomizeScreen> {
   void initState() {
     _loadPreferences();
     super.initState();
+    requestLocationPermission();
   }
 
   Future<void> _loadPreferences() async {
@@ -83,6 +113,8 @@ class _CustomizeScreenState extends State<CustomizeScreen> {
     await _prefs.setBool('mobileUsageServiceEnabled', value);
     if (value) {
       print('Mobile Usage Service turned ON');
+      // Grant usage permission
+      UsageStats.grantUsagePermission();
       await _prefs.setBool('mobileUsageServiceEnabled', true);
     } else {
       print('Mobile Usage Service turned OFF');

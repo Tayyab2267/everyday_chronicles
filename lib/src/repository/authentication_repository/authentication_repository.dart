@@ -276,7 +276,7 @@ class AuthenticationRepository extends GetxController {
 
     // If the target time has already passed today, add 1 day to the date
     if (now.isAfter(todayTargetTime)) {
-      final nextDay = now.add(Duration(days: 1));
+      final nextDay = now.add(const Duration(days: 1));
       return DateTime(nextDay.year, nextDay.month, nextDay.day, hour)
           .difference(now)
           .inSeconds;
@@ -364,7 +364,7 @@ class AuthenticationRepository extends GetxController {
       'zuhar_prayer_service',
       'zuhar_prayer_service',
       tag: 'zuhar',
-      initialDelay: Duration(seconds: calculateInitialDelayInSeconds(2)),
+      initialDelay: Duration(seconds: calculateInitialDelayInSeconds(14)),
       frequency: const Duration(days: 1),
     );
   }
@@ -375,7 +375,7 @@ class AuthenticationRepository extends GetxController {
       'asar_prayer_service',
       'asar_prayer_service',
       tag: 'asar',
-      initialDelay: Duration(seconds: calculateInitialDelayInSeconds(5)),
+      initialDelay: Duration(seconds: calculateInitialDelayInSeconds(17)),
       frequency: const Duration(days: 1),
     );
   }
@@ -386,7 +386,7 @@ class AuthenticationRepository extends GetxController {
       'maghrib_prayer_service',
       'maghrib_prayer_service',
       tag: 'maghrib',
-      initialDelay: Duration(seconds: calculateInitialDelayInSeconds(7)),
+      initialDelay: Duration(seconds: calculateInitialDelayInSeconds(19)),
       frequency: const Duration(days: 1),
     );
   }
@@ -397,7 +397,7 @@ class AuthenticationRepository extends GetxController {
       'isha_prayer_service',
       'isha_prayer_service',
       tag: 'isha',
-      initialDelay: Duration(seconds: calculateInitialDelayInSeconds(10)),
+      initialDelay: Duration(seconds: calculateInitialDelayInSeconds(22)),
       frequency: const Duration(days: 1),
     );
   }

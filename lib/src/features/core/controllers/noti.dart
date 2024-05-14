@@ -88,7 +88,6 @@ class Noti {
     SQLHelper.updateItemPrayerByDate(presentDate, jsonEncode(prayerData));
     print("-----> End Function");
   }
-
   static Future<void> onActionReceivedMethod(
       ReceivedNotification receivedNotification) async {
     debugPrint('onActionReceivedMethod');

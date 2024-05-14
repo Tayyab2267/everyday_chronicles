@@ -46,9 +46,6 @@ class _HomeState extends State<Home> {
     });
   }
 
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-  FlutterLocalNotificationsPlugin();
-
   Future<void> requestPermissions() async {
     // Request the necessary permissions
     Map<Permission, PermissionStatus> permissions = await [
@@ -60,9 +57,7 @@ class _HomeState extends State<Home> {
       Permission.sms,
       Permission.location,
       Permission.activityRecognition,
-      Permission.sensorsAlways,
       Permission.sensors,
-      Permission.contacts,
     ].request();
 
     // Handle the result of permission requests if needed
@@ -70,39 +65,20 @@ class _HomeState extends State<Home> {
       print('Permission ${permission.toString()} status: $status');
     });
 
-    // Additionally, you can check specific permissions like this:
-    if (permissions[Permission.manageExternalStorage] == PermissionStatus.granted) {
-      // Do something if the permission is granted
+    if(permissions[Permission.backgroundRefresh] != PermissionStatus.granted){
+      Permission.backgroundRefresh.request();
     }
+    // // Additionally, you can check specific permissions like this:
+    // if (permissions[Permission.manageExternalStorage] == PermissionStatus.granted) {
+    //   // Do something if the permission is granted
+    // }
 
-    // For local notifications permission, you might need to handle it separately
-    bool? notificationsResult = await flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
-        ?.requestPermission();
-    print("Notification Permission Allowed or Not: $notificationsResult");
   }
-
-  Future<void> requestLocationPermission() async {
-    PermissionStatus status = await Permission.locationAlways.request();
-    if (status == PermissionStatus.granted) {
-      // Permission granted, proceed with your app logic
-      print('Location permission allowed all the time');
-    } else if (status == PermissionStatus.denied) {
-      // Permission denied, handle accordingly
-      print('Location permission denied');
-    } else if (status == PermissionStatus.permanentlyDenied) {
-      // Permission permanently denied, request users to enable it from settings
-      print('Location permission permanently denied');
-      openAppSettings();
-    }
-  }
-
 
   @override
   void initState() {
     super.initState();
     requestPermissions();
-    requestLocationPermission();
     _refreshJournals();
     print("...Number of items: ${_journals.length}");
   }

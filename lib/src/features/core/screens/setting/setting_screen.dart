@@ -151,11 +151,11 @@ class _SettingScreenState extends State<SettingScreen> {
                   Get.to(() => const FingerprintScreen());
                 },
               ),
-              ProfileMenuWidget(
-                title: "Backup & restore",
-                icon: LineAwesomeIcons.database,
-                onPress: () {},
-              ),
+              // ProfileMenuWidget(
+              //   title: "Backup & restore",
+              //   icon: LineAwesomeIcons.database,
+              //   onPress: () {},
+              // ),
               ProfileMenuWidget(
                 title: "Reminder",
                 icon: LineAwesomeIcons.bell,

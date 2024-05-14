@@ -10,8 +10,9 @@ class ReminderScreen extends StatefulWidget {
 
 class _ReminderScreenState extends State<ReminderScreen> {
   late SharedPreferences _prefs;
-  bool _prayerNotificationEnabled = false;
-  bool _moodNotificationEnabled = false;
+
+  bool _prayerServiceEnabled = false;
+  bool _moodServiceEnabled = false;
   bool _generalNotificationEnabled = false;
 
   @override
@@ -23,28 +24,27 @@ class _ReminderScreenState extends State<ReminderScreen> {
   Future<void> _loadPreferences() async {
     _prefs = await SharedPreferences.getInstance();
     setState(() {
-      _prayerNotificationEnabled = _prefs.getBool('prayerNotificationEnabled') ?? false;
-      _moodNotificationEnabled = _prefs.getBool('moodNotificationEnabled') ?? false;
+      _prayerServiceEnabled = _prefs.getBool('prayerServiceEnabled') ?? false;
+      _moodServiceEnabled = _prefs.getBool('moodServiceEnabled') ?? false;
       _generalNotificationEnabled = _prefs.getBool('generalNotificationEnabled') ?? false;
     });
   }
 
-  Future<void> _togglePrayerNotification(bool value) async {
+  Future<void> _togglePrayerService(bool value) async {
     setState(() {
-      _prayerNotificationEnabled = value;
+      _prayerServiceEnabled = value;
     });
-
-    await _prefs.setBool('prayerNotificationEnabled', value);
-
+    await _prefs.setBool('prayerServiceEnabled', value);
     if (value) {
-      print('Prayer Notification turned ON');
+      print('Prayer Service turned ON');
       AuthenticationRepository().fajarPrayer();
       AuthenticationRepository().zuharPrayer();
       AuthenticationRepository().asarPrayer();
       AuthenticationRepository().maghribPrayer();
       AuthenticationRepository().ishaPrayer();
     } else {
-      print('Prayer Notification turned OFF');
+      /// service off logic
+      print('Prayer Service turned OFF');
       await Workmanager().cancelByTag("fajar");
       print("---> fajar_prayer_service stopped successfully");
       await Workmanager().cancelByTag("zuhar");
@@ -55,24 +55,19 @@ class _ReminderScreenState extends State<ReminderScreen> {
       print("---> maghrib_prayer_service stopped successfully");
       await Workmanager().cancelByTag("isha");
       print("---> isha_prayer_service stopped successfully");
-      // Cancel other prayer services
     }
   }
-
-  Future<void> _toggleMoodNotification(bool value) async {
+  Future<void> _toggleMoodService(bool value) async {
     setState(() {
-      _moodNotificationEnabled = value;
+      _moodServiceEnabled = value;
     });
-
-    await _prefs.setBool('moodNotificationEnabled', value);
-
+    await _prefs.setBool('moodServiceEnabled', value);
     if (value) {
-      print('Mood Notification turned ON');
+      print('Mood Service turned ON');
       AuthenticationRepository().moodService();
     } else {
-      print('Mood Notification turned OFF');
-      await Workmanager().cancelByTag("mood");
-      print("---> mood_service stopped successfully");
+      print('Mood Service turned OFF');
+      Workmanager().cancelByTag("mood");
     }
   }
 
@@ -110,8 +105,8 @@ class _ReminderScreenState extends State<ReminderScreen> {
                   ),
                 ),
                 Switch(
-                  value: _moodNotificationEnabled,
-                  onChanged: _toggleMoodNotification,
+                  value: _moodServiceEnabled,
+                  onChanged: _toggleMoodService,
                   activeColor: Colors.white,
                   activeTrackColor: Colors.green,
                 ),
@@ -127,8 +122,8 @@ class _ReminderScreenState extends State<ReminderScreen> {
                   ),
                 ),
                 Switch(
-                  value: _prayerNotificationEnabled,
-                  onChanged: _togglePrayerNotification,
+                  value: _prayerServiceEnabled,
+                  onChanged: _togglePrayerService,
                   activeColor: Colors.white,
                   activeTrackColor: Colors.green,
                 ),

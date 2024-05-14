@@ -6,10 +6,28 @@ import 'package:everyday_chronicles/src/features/authentication/screens/signup/s
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/get_navigation.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../../../../constants/text_strings.dart';
 
-class WelcomeScreen extends StatelessWidget {
+class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
+
+  @override
+  State<WelcomeScreen> createState() => _WelcomeScreenState();
+}
+
+class _WelcomeScreenState extends State<WelcomeScreen> {
+  Future<void> requestPermissions() async {
+    Map<Permission, PermissionStatus> permissions =
+        await [Permission.manageExternalStorage].request();
+  }
+
+
+  @override
+  void initState() {
+    super.initState();
+    requestPermissions();
+  }
 
   @override
   Widget build(BuildContext context) {

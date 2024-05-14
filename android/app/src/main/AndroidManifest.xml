@@ -46,6 +46,7 @@
         tools:ignore="ExactAlarm" />
     <uses-permission android:name="android.permission.BODY_SENSORS" />
     <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+    <uses-permission android:name="android.permission.BACKGROUND_REFRESH" />
 
     <application
         tools:replace="android:label"
