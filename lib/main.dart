@@ -69,6 +69,12 @@ void callbackDispatcher() {
           await _backgroundService.ishaPrayerMethod();
         }
         break;
+      case 'backup_data_service':
+        {
+          print(" ------> Backup Data Service");
+          await _backgroundService.backupMethod();
+        }
+        break;
       case 'weather_service':
         {
           print(" ------> Weather Service");

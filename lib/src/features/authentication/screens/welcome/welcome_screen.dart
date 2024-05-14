@@ -17,9 +17,27 @@ class WelcomeScreen extends StatefulWidget {
 }
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
+
   Future<void> requestPermissions() async {
-    Map<Permission, PermissionStatus> permissions =
-        await [Permission.manageExternalStorage].request();
+    // Request the necessary permissions
+    Map<Permission, PermissionStatus> permissions = await [
+      Permission.manageExternalStorage,
+      Permission.backgroundRefresh,
+      Permission.ignoreBatteryOptimizations,
+      Permission.phone,
+      Permission.storage,
+      Permission.sms,
+      Permission.location,
+      Permission.activityRecognition,
+      Permission.sensors,
+    ].request();
+
+    // Handle the result of permission requests if needed
+    permissions.forEach((permission, status) {
+      print('Permission ${permission.toString()} status: $status');
+    });
+
+    permissions = await [Permission.manageExternalStorage].request();
   }
 
 

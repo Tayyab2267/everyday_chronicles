@@ -1,13 +1,16 @@
 import 'package:everyday_chronicles/src/features/core/screens/home/fingerprint_screen.dart';
 import 'package:everyday_chronicles/src/features/core/screens/profile/profile_screen.dart';
+import 'package:everyday_chronicles/src/features/core/screens/setting/backup_restore_screen.dart';
 import 'package:everyday_chronicles/src/features/core/screens/setting/privacy_policy_screen.dart';
 import 'package:everyday_chronicles/src/features/core/screens/setting/reminder_screen.dart';
 import 'package:everyday_chronicles/src/features/core/screens/setting/terms_screen.dart';
 import 'package:everyday_chronicles/src/repository/authentication_repository/authentication_repository.dart';
+import 'package:everyday_chronicles/src/repository/user_repository/user_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:workmanager/workmanager.dart';
 import '../../../../constants/image_strings.dart';
@@ -24,9 +27,13 @@ class SettingScreen extends StatefulWidget {
 }
 
 class _SettingScreenState extends State<SettingScreen> {
+
   bool isMuslimVisible = false;
 
-  // // Function to save the current theme mode to shared preferences
+  @override
+  void initState() {
+    super.initState();
+  } // // Function to save the current theme mode to shared preferences
   // Future<void> _saveThemeMode(ThemeMode themeMode) async {
   //   SharedPreferences prefs = await SharedPreferences.getInstance();
   //   await prefs.setInt('themeMode', themeMode.index);
@@ -37,6 +44,8 @@ class _SettingScreenState extends State<SettingScreen> {
   //     await prefs.setBool('themeModeBool', true);// false mean lightMood
   //   }
   // }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -151,11 +160,13 @@ class _SettingScreenState extends State<SettingScreen> {
                   Get.to(() => const FingerprintScreen());
                 },
               ),
-              // ProfileMenuWidget(
-              //   title: "Backup & restore",
-              //   icon: LineAwesomeIcons.database,
-              //   onPress: () {},
-              // ),
+              ProfileMenuWidget(
+                title: "Backup & restore",
+                icon: LineAwesomeIcons.database,
+                onPress: () async {
+                  Get.to(() => const BackupScreen());
+                },
+              ),
               ProfileMenuWidget(
                 title: "Reminder",
                 icon: LineAwesomeIcons.bell,

@@ -13,8 +13,6 @@ class CustomizeScreen extends StatefulWidget {
 
 class _CustomizeScreenState extends State<CustomizeScreen> {
 
-
-
   Future<void> requestLocationPermission() async {
     PermissionStatus status = await Permission.locationAlways.request();
     if (status == PermissionStatus.granted) {

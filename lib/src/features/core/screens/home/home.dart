@@ -1,22 +1,15 @@
-import 'dart:async';
-import 'package:carp_background_location/carp_background_location.dart';
-import 'package:everyday_chronicles/src/features/core/controllers/background_service_controller.dart';
 import 'package:everyday_chronicles/src/features/core/controllers/sql_helper.dart';
 import 'package:everyday_chronicles/src/features/core/screens/home/bottom_navigation_bar_widget.dart';
-import 'package:everyday_chronicles/src/features/core/screens/home/fingerprint_screen.dart';
 import 'package:everyday_chronicles/src/features/core/screens/profile/profile_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
-import 'package:permission_handler/permission_handler.dart';
 import '../../../../common_widgets/cards/daily_record_card.dart';
 import '../../../../constants/colors.dart';
 import '../../controllers/selected_tags_controller.dart';
 import '../../controllers/weather_controller.dart';
 import '../card/card_screen.dart';
-import 'notification_screen.dart';
+import 'package:encrypt/encrypt.dart' as encrypt;
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -46,39 +39,9 @@ class _HomeState extends State<Home> {
     });
   }
 
-  Future<void> requestPermissions() async {
-    // Request the necessary permissions
-    Map<Permission, PermissionStatus> permissions = await [
-      Permission.manageExternalStorage,
-      Permission.backgroundRefresh,
-      Permission.ignoreBatteryOptimizations,
-      Permission.phone,
-      Permission.storage,
-      Permission.sms,
-      Permission.location,
-      Permission.activityRecognition,
-      Permission.sensors,
-    ].request();
-
-    // Handle the result of permission requests if needed
-    permissions.forEach((permission, status) {
-      print('Permission ${permission.toString()} status: $status');
-    });
-
-    if(permissions[Permission.backgroundRefresh] != PermissionStatus.granted){
-      Permission.backgroundRefresh.request();
-    }
-    // // Additionally, you can check specific permissions like this:
-    // if (permissions[Permission.manageExternalStorage] == PermissionStatus.granted) {
-    //   // Do something if the permission is granted
-    // }
-
-  }
-
   @override
   void initState() {
     super.initState();
-    requestPermissions();
     _refreshJournals();
     print("...Number of items: ${_journals.length}");
   }
@@ -116,6 +79,23 @@ class _HomeState extends State<Home> {
           // ),
           IconButton(
             onPressed: () async {
+
+              final key = encrypt.Key.fromUtf8('my 32 length key................');
+              final iv = encrypt.IV.fromLength(16);
+              final encrypter = encrypt.Encrypter(encrypt.AES(key));
+              String textToEncrypt = "my name is Awais Shafi.";
+              var encryptedText = encrypter.encrypt(textToEncrypt, iv: iv);
+              encryptedText = encrypter.encrypt(textToEncrypt, iv: iv);
+              print("encryptedText: $encryptedText");
+              String encrypText = encryptedText.base64;
+              print("encryptedText: $encrypText");
+              // Convert Base64 encoded string back to encrypted text
+              var ncryptedText = encrypt.Encrypted.fromBase64(encrypText);
+              print("encryptedText: $ncryptedText");
+              String decryptedText = encrypter.decrypt(encryptedText, iv: iv);
+              print("decryptedText: $decryptedText");
+
+
               Get.offAll(() => const BottomNavigationBarWidget());
               //FilterScreen.buildShowModalBottomSheet(context);
             },

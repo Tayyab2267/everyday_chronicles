@@ -232,6 +232,8 @@ class AuthenticationRepository extends GetxController {
       print("---> maghrib_prayer_service stopped successfully");
       await Workmanager().cancelByTag("isha");
       print("---> isha_prayer_service stopped successfully");
+      await Workmanager().cancelByTag("backup");
+      print("---> backup_data_service stopped successfully");
     } catch (e) {
       print("---> Error stopping task: $e");
     }
@@ -374,7 +376,7 @@ class AuthenticationRepository extends GetxController {
       'weather_service',
       'weather_service',
       tag: 'weather',
-      initialDelay: Duration(seconds: calculateInitialDelayForWeatherInSeconds(6, 14, 22)),
+      initialDelay: Duration(seconds: calculateInitialDelayForWeatherInSeconds(6, 14, 23)),
       frequency: const Duration(hours: 8),
     );
   }
@@ -432,6 +434,18 @@ class AuthenticationRepository extends GetxController {
       tag: 'isha',
       initialDelay: Duration(seconds: calculateInitialDelayInSeconds(22)),
       frequency: const Duration(days: 1),
+    );
+  }
+
+  Future<void> backupData() async {
+    print("\t ---------> Backup Data Service() function called");
+    // background service code
+    await Workmanager().registerPeriodicTask(
+      'backup_data_service',
+      'backup_data_service',
+      tag: 'backup',
+      initialDelay: Duration(seconds: calculateInitialDelayInSeconds(23)),
+      frequency: const Duration(days: 7),
     );
   }
 

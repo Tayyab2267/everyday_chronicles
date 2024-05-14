@@ -72,20 +72,54 @@ class SQLHelper {
       )
     ''';
     await db.execute(migrationSql);
-
     // Copy data from the old table to the new one
     final data = await db.query('items');
     for (Map<String, dynamic> row in data) {
       await db.insert('items_new', row);
     }
-
     // Delete the old table
     await db.execute('DROP TABLE items');
-
     // Rename the new table to the original name
     await db.execute('ALTER TABLE items_new RENAME TO items');
-
     print("-----> Table updated successfully.");
+  }
+
+  static Future<int> createItemForRestore(
+    String date,
+    String icon,
+    String userSelectMood,
+    String title,
+    String? subtitle,
+    String? thoughts,
+    String? summary,
+    String weatherList,
+    String userLocationList,
+    String callLocationList,
+    String prayerList
+  ) async {
+
+    SQLHelper.deleteDatabase();
+    final dataBase = await SQLHelper.db();
+
+    print("-----> Creating item...");
+    final db = await SQLHelper.db();
+    final data = {
+      'date': date,
+      'icon': icon,
+      'userSelectMood': userSelectMood,
+      'title': title,
+      'subtitle': subtitle,
+      'thoughts': thoughts,
+      'summary': summary,
+      'weatherList': weatherList,
+      'userLocationList': userLocationList,
+      'callLocationList': callLocationList,
+      'prayerList': prayerList,
+    };
+    final id = await db.insert('items', data,
+        conflictAlgorithm: sql.ConflictAlgorithm.replace);
+    print(" -----> Item inserted with ID: $id");
+    return id;
   }
 
   static Future<int> createItem(String date, String icon, String userSelectMood,
@@ -205,7 +239,7 @@ class SQLHelper {
         limit: 1);
     if (result.isNotEmpty) {
       final prayerList =
-      result.first['prayerList']; // Get the weatherList field
+          result.first['prayerList']; // Get the weatherList field
       if (prayerList != null) {
         return prayerList.toString(); // Convert to string if not null
       } else {
@@ -326,7 +360,7 @@ class SQLHelper {
     };
 
     final result =
-    await db.update('items', data, where: "date = ?", whereArgs: [date]);
+        await db.update('items', data, where: "date = ?", whereArgs: [date]);
     return result;
   }
 

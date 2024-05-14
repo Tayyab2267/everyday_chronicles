@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:device_apps/device_apps.dart';
 import 'package:everyday_chronicles/src/features/core/controllers/sql_helper.dart';
+import 'package:everyday_chronicles/src/repository/user_repository/user_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -20,7 +21,7 @@ class BackgroundServiceController extends GetxController {
   static BackgroundServiceController get instance => Get.find();
 
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-  FlutterLocalNotificationsPlugin();
+      FlutterLocalNotificationsPlugin();
 
   final List<Map<String, dynamic>> rowDataText = [];
 
@@ -321,10 +322,9 @@ class BackgroundServiceController extends GetxController {
 
   Future<void> fetchPrayerData() async {
     String? requiredPrayerList =
-    await SQLHelper.getPrayerListByDate(getCurrentDate());
+        await SQLHelper.getPrayerListByDate(getCurrentDate());
 
-    if (requiredPrayerList != null &&
-        requiredPrayerList.isNotEmpty) {
+    if (requiredPrayerList != null && requiredPrayerList.isNotEmpty) {
       List<dynamic> prayerDataList = jsonDecode(requiredPrayerList);
       // Loop through the weather data list in steps of 4 to process each weather entry
       for (int i = 0; i < prayerDataList.length; i += 2) {
@@ -347,10 +347,12 @@ class BackgroundServiceController extends GetxController {
   Future<void> moodServiceMethod() async {
     print("-----> Fetching Mood here");
 
-    String? userSelectMood = await SQLHelper.getUserSelectMoodByDate(getCurrentDate());
+    String? userSelectMood =
+        await SQLHelper.getUserSelectMoodByDate(getCurrentDate());
+
     ///Mood Logic here
 
-    if(userSelectMood != "true"){
+    if (userSelectMood != "true") {
       await fetchInboxMessages();
       await fetchMobileUsageTime();
       await fetchWeatherData();
@@ -367,7 +369,7 @@ class BackgroundServiceController extends GetxController {
       print("Thoughts: $thoughts");
 
       String rowDataTextText =
-      rowDataText.map((data) => "${data['text']}").join(' ');
+          rowDataText.map((data) => "${data['text']}").join(' ');
       rowDataTextText += " $subtitle $thoughts";
 
       print("=====> TEXT: $rowDataTextText ==============");
@@ -376,12 +378,13 @@ class BackgroundServiceController extends GetxController {
       SQLHelper.updateMoodIconByDate(getCurrentDate(), moodFromText);
 
       //Show notification here
-      Noti.showBigTextNotification(title: moodFromText, body: "Your today's mood is '$moodFromText'", fln: flutterLocalNotificationsPlugin);
-
+      Noti.showBigTextNotification(
+          title: moodFromText,
+          body: "Your today's mood is '$moodFromText'",
+          fln: flutterLocalNotificationsPlugin);
     } else {
       print("user has select Mood don't need to analyze mood");
     }
-
   }
 
   Future<void> taskOneCreateDummyDayDataService() async {
@@ -409,7 +412,7 @@ class BackgroundServiceController extends GetxController {
       body: "Had you offered FAJAR Prayer?",
       payload: {
         'yes_action_key': 'yes', // for Yes button
-        'no_action_key': 'no',   // for No button
+        'no_action_key': 'no', // for No button
       },
       actionButtons: [
         NotificationActionButton(
@@ -427,13 +430,14 @@ class BackgroundServiceController extends GetxController {
       ],
     );
   }
+
   Future<void> zuharPrayerMethod() async {
     await Noti.showNotification(
       title: "Prayer Checker",
       body: "Had you offered ZUHAR Prayer?",
       payload: {
         'yes_action_key': 'yes', // for Yes button
-        'no_action_key': 'no',   // for No button
+        'no_action_key': 'no', // for No button
       },
       actionButtons: [
         NotificationActionButton(
@@ -451,13 +455,14 @@ class BackgroundServiceController extends GetxController {
       ],
     );
   }
+
   Future<void> asarPrayerMethod() async {
     await Noti.showNotification(
       title: "Prayer Checker",
       body: "Had you offered ASAR Prayer?",
       payload: {
         'yes_action_key': 'yes', // for Yes button
-        'no_action_key': 'no',   // for No button
+        'no_action_key': 'no', // for No button
       },
       actionButtons: [
         NotificationActionButton(
@@ -475,13 +480,14 @@ class BackgroundServiceController extends GetxController {
       ],
     );
   }
+
   Future<void> maghribPrayerMethod() async {
     await Noti.showNotification(
       title: "Prayer Checker",
       body: "Had you offered MAGHRIB Prayer?",
       payload: {
         'yes_action_key': 'yes', // for Yes button
-        'no_action_key': 'no',   // for No button
+        'no_action_key': 'no', // for No button
       },
       actionButtons: [
         NotificationActionButton(
@@ -499,13 +505,14 @@ class BackgroundServiceController extends GetxController {
       ],
     );
   }
+
   Future<void> ishaPrayerMethod() async {
     await Noti.showNotification(
       title: "Prayer Checker",
       body: "Had you offered ISHA Prayer?",
       payload: {
         'yes_action_key': 'yes', // for Yes button
-        'no_action_key': 'no',   // for No button
+        'no_action_key': 'no', // for No button
       },
       actionButtons: [
         NotificationActionButton(
@@ -522,6 +529,16 @@ class BackgroundServiceController extends GetxController {
         ),
       ],
     );
+  }
+
+  Future<void> backupMethod() async {
+
+    await UserRepository.saveDataToFirestore();
+    //Show notification here
+    Noti.showBigTextNotification(
+        title: "Backup Data",
+        body: "Your Data has been backup.",
+        fln: flutterLocalNotificationsPlugin);
   }
 
   String getCurrentDate() {
