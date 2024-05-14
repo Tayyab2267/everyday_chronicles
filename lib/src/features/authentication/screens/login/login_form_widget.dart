@@ -1,3 +1,4 @@
+import 'package:everyday_chronicles/src/features/authentication/screens/forget_password/forget_password_mail/forget_password_mail.dart';
 import 'package:everyday_chronicles/src/features/core/screens/home/bottom_navigation_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -111,7 +112,8 @@ class _LoginFormState extends State<LoginForm> {
               alignment: Alignment.centerRight,
               child: TextButton(
                 onPressed: () {
-                  ForgetPasswordScreen.buildShowModalBottomSheet(context);
+                  // ForgetPasswordScreen.buildShowModalBottomSheet(context);
+                  Get.to(() => ForgetPasswordMailScreen());
                 },
                 child: Text(
                   myForgetPassword,

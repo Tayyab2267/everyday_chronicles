@@ -97,9 +97,7 @@ class SQLHelper {
     String callLocationList,
     String prayerList
   ) async {
-
-    SQLHelper.deleteDatabase();
-    final dataBase = await SQLHelper.db();
+    // final dataBase = await SQLHelper.db();
 
     print("-----> Creating item...");
     final db = await SQLHelper.db();

@@ -81,20 +81,6 @@ class UserRepository extends GetxController {
         });
 
         print("Data has been backed up successfully.");
-        Get.snackbar(
-          "Success",
-          "Data has been backed up successfully.",
-          snackPosition: SnackPosition.BOTTOM,
-          duration: const Duration(seconds: 3),
-          backgroundColor: Colors.green,
-          barBlur: 0.4,
-          colorText: Colors.white,
-        );
-
-        Noti.showBigTextNotification(
-            title: "Backup Data",
-            body: "Your Data has been backup.",
-            fln: flutterLocalNotificationsPlugin);
       } catch (e) {
         print("Error saving data to Firestore: $e");
         Get.snackbar(
@@ -108,6 +94,20 @@ class UserRepository extends GetxController {
         );
       }
     }
+
+    Get.snackbar(
+      "Success",
+      "Data has been backed up successfully.",
+      snackPosition: SnackPosition.BOTTOM,
+      duration: const Duration(seconds: 3),
+      backgroundColor: Colors.green,
+      barBlur: 0.4,
+      colorText: Colors.white,
+    );
+    Noti.showBigTextNotification(
+        title: "Backup Data",
+        body: "Your Data has been backup.",
+        fln: flutterLocalNotificationsPlugin);
   }
 
   static Future<void> restoreDataFromFirestore() async {
@@ -120,17 +120,17 @@ class UserRepository extends GetxController {
           .get();
 
       final documents = snapshot.docs;
-
+      SQLHelper.deleteDatabase();
       for (final doc in documents) {
         final data = doc.data();
-        final date = data[
-            'date']; // Assuming 'date' is the field name for the unique date
+        final date = data['date']; // Assuming 'date' is the field name for the unique date
 
+        // Handle null values for optional fields
         final subtitle = data['subtitle'] as String?;
         final thoughts = data['thoughts'] as String?;
         final summary = data['summary'] as String?;
 
-        // Create or update item in the local database
+        // Create or update item in the local database for each day
         await SQLHelper.createItemForRestore(
           date,
           data['icon'] ?? '',
@@ -169,4 +169,5 @@ class UserRepository extends GetxController {
       );
     }
   }
+
 }

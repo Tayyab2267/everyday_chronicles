@@ -56,7 +56,7 @@ class _BackupScreenState extends State<BackupScreen> {
         "Automatic Backup has been stopped.",
         snackPosition: SnackPosition.BOTTOM,
         duration: const Duration(seconds: 3),
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.green,
         colorText: Colors.white,
         showProgressIndicator: true,
       );
