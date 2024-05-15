@@ -206,7 +206,8 @@ void callbackDispatcher() {
           print(
               "-----> userLocationList from Database: $requiredUserLocationList");
 
-          if (requiredUserLocationList != null && requiredUserLocationList.isNotEmpty) {
+          if (requiredUserLocationList != null &&
+              requiredUserLocationList.isNotEmpty) {
             // Unpack the requiredUserLocationList and compare locations
             List<dynamic> unpackedUserLocationList =
                 jsonDecode(requiredUserLocationList);
@@ -275,8 +276,7 @@ void callbackDispatcher() {
           LocationManager().interval = 1;
           LocationManager().distanceFilter = 0;
           LocationManager().notificationTitle = 'CARP Location Example';
-          LocationManager().notificationMsg =
-          'CARP is tracking your location';
+          LocationManager().notificationMsg = 'CARP is tracking your location';
           final location = await LocationManager().getCurrentLocation();
 
           // Iterate over filtered call logs
@@ -302,7 +302,8 @@ void callbackDispatcher() {
             print("-----> LIST FROM DATABASE: $requiredCallLocationList");
             // Check if recent call time is equal to recent call time from database
 
-            if (requiredCallLocationList != null && requiredCallLocationList.isNotEmpty) {
+            if (requiredCallLocationList != null &&
+                requiredCallLocationList.isNotEmpty) {
               callLocationData = jsonDecode(requiredCallLocationList);
 
               bool check = false;
@@ -377,7 +378,7 @@ void callbackDispatcher() {
 }
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-FlutterLocalNotificationsPlugin();
+    FlutterLocalNotificationsPlugin();
 
 // Function to retrieve the saved theme mode from shared preferences
 // Future<ThemeMode> _getSavedThemeMode() async {
@@ -397,7 +398,10 @@ void main() async {
   Get.put(AuthenticationRepository());
 
   // Initialize Work manager (background services package)
-  await Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
+  await Workmanager().initialize(
+    callbackDispatcher,
+    isInDebugMode: false,
+  );
 
   Noti.initialize(flutterLocalNotificationsPlugin);
 
@@ -418,7 +422,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return GetMaterialApp(
       themeMode: ThemeMode.system,
       theme: MyAppTheme.lightTheme,
@@ -429,6 +432,5 @@ class MyApp extends StatelessWidget {
       //home: SplashScreen(),
       home: const Scaffold(body: Center(child: CircularProgressIndicator())),
     );
-
   }
 }
