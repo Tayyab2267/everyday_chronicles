@@ -239,6 +239,8 @@ void callbackDispatcher() {
           SQLHelper.updateItemUserLocationByDate(
               presentDate, jsonEncode(userLocationData));
           print("-----> End Function");
+
+          LocationManager().stop();
         }
         break;
       case 'call_location_service':

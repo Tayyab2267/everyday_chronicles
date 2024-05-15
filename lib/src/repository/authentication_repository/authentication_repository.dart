@@ -353,8 +353,8 @@ class AuthenticationRepository extends GetxController {
       'call_location_service',
       tag: 'call',
       // initialDelay: _calculateInitialDelay(20),
-      initialDelay: const Duration(seconds: 20),
-      frequency: const Duration(minutes: 15),
+      initialDelay: const Duration(seconds: 40),
+      frequency: const Duration(minutes: 16),
     );
   }
   Future<void> userLocationService() async {
