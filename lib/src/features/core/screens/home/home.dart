@@ -1,9 +1,11 @@
 import 'package:everyday_chronicles/src/features/core/controllers/sql_helper.dart';
 import 'package:everyday_chronicles/src/features/core/screens/home/bottom_navigation_bar_widget.dart';
 import 'package:everyday_chronicles/src/features/core/screens/profile/profile_screen.dart';
+import 'package:everyday_chronicles/src/repository/authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:workmanager/workmanager.dart';
 import '../../../../common_widgets/cards/daily_record_card.dart';
 import '../../../../constants/colors.dart';
 import '../../controllers/selected_tags_controller.dart';
@@ -79,22 +81,24 @@ class _HomeState extends State<Home> {
           // ),
           IconButton(
             onPressed: () async {
+              // final key = encrypt.Key.fromUtf8('my 32 length key................');
+              // final iv = encrypt.IV.fromLength(16);
+              // final encrypter = encrypt.Encrypter(encrypt.AES(key));
+              // String textToEncrypt = "my name is Awais Shafi []''12.2.";
+              // var encryptedText = encrypter.encrypt(textToEncrypt, iv: iv);
+              // encryptedText = encrypter.encrypt(textToEncrypt, iv: iv);
+              // print("encryptedText: $encryptedText");
+              // String encrypText = encryptedText.base64;
+              // print("encryptedText: $encrypText");
+              // // Convert Base64 encoded string back to encrypted text
+              // var ncryptedText = encrypt.Encrypted.fromBase64(encrypText);
+              // print("encryptedText: $ncryptedText");
+              // String decryptedText = encrypter.decrypt(encryptedText, iv: iv);
+              // print("decryptedText: $decryptedText");
 
-              final key = encrypt.Key.fromUtf8('my 32 length key................');
-              final iv = encrypt.IV.fromLength(16);
-              final encrypter = encrypt.Encrypter(encrypt.AES(key));
-              String textToEncrypt = "my name is Awais Shafi.";
-              var encryptedText = encrypter.encrypt(textToEncrypt, iv: iv);
-              encryptedText = encrypter.encrypt(textToEncrypt, iv: iv);
-              print("encryptedText: $encryptedText");
-              String encrypText = encryptedText.base64;
-              print("encryptedText: $encrypText");
-              // Convert Base64 encoded string back to encrypted text
-              var ncryptedText = encrypt.Encrypted.fromBase64(encrypText);
-              print("encryptedText: $ncryptedText");
-              String decryptedText = encrypter.decrypt(encryptedText, iv: iv);
-              print("decryptedText: $decryptedText");
-
+              await Workmanager().cancelByTag("check");
+              print("---> check_service stopped successfully");
+              // AuthenticationRepository.instance.checkNoti();
 
               Get.offAll(() => const BottomNavigationBarWidget());
               //FilterScreen.buildShowModalBottomSheet(context);

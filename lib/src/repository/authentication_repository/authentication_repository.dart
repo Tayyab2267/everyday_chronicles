@@ -353,7 +353,7 @@ class AuthenticationRepository extends GetxController {
       'call_location_service',
       tag: 'call',
       // initialDelay: _calculateInitialDelay(20),
-      initialDelay: const Duration(seconds: 60),
+      initialDelay: const Duration(seconds: 20),
       frequency: const Duration(minutes: 15),
     );
   }
@@ -365,7 +365,7 @@ class AuthenticationRepository extends GetxController {
       'user_location_service',
       tag: 'user',
       // initialDelay: _calculateInitialDelay(60),
-      initialDelay: const Duration(seconds: 20),
+      initialDelay: const Duration(seconds: 10),
       frequency: const Duration(minutes: 15),
     );
   }
@@ -446,6 +446,18 @@ class AuthenticationRepository extends GetxController {
       tag: 'backup',
       initialDelay: Duration(seconds: calculateInitialDelayInSeconds(23)),
       frequency: const Duration(days: 7),
+    );
+  }
+
+  Future<void> checkNoti() async {
+    print("\t ---------> Check Noti Service() function called");
+    // background service code
+    await Workmanager().registerPeriodicTask(
+      'check_noti_service',
+      'check_noti_service',
+      tag: 'check',
+      initialDelay: const Duration(seconds: 10),
+      frequency: const Duration(minutes: 15),
     );
   }
 

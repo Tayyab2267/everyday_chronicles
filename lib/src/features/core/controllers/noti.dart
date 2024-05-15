@@ -62,7 +62,7 @@ class Noti {
   }
 
   static Future<void> prayerMethod(String prayerName) async {
-    print("Inside pryaer method");
+    print("Inside prayer method");
     List<dynamic> prayerData = [];
     DateTime now = DateTime.now();
     String formattedTime =
@@ -76,11 +76,14 @@ class Noti {
     String? requiredPrayerList = await SQLHelper.getPrayerListByDate(presentDate);
     print("-----> prayerList from Database: $requiredPrayerList");
 
-    if (requiredPrayerList != null) {
-      List<dynamic> unpackedPrayerList =
-      jsonDecode(requiredPrayerList);
-      prayerData.addAll(unpackedPrayerList);
-      print("-----> add database weather list to prayerData: $prayerData");
+    if (requiredPrayerList != null && requiredPrayerList.isNotEmpty) {
+      try {
+        List<dynamic> unpackedPrayerList = jsonDecode(requiredPrayerList);
+        prayerData.addAll(unpackedPrayerList);
+        print("-----> add database weather list to prayerData: $prayerData");
+      } catch (e) {
+        print("Error decoding JSON: $e");
+      }
     } else {
       print("-----> No prayer list found in the database or it's empty.");
     }
@@ -88,9 +91,13 @@ class Noti {
     SQLHelper.updateItemPrayerByDate(presentDate, jsonEncode(prayerData));
     print("-----> End Function");
   }
+
   static Future<void> onActionReceivedMethod(
       ReceivedNotification receivedNotification) async {
+
+    // Noti.initializeNotification();
     debugPrint('onActionReceivedMethod');
+
 
     final Map<String, dynamic> mapData = receivedNotification.toMap();
     final String? buttonKeyPressed = mapData['buttonKeyPressed'];
@@ -162,8 +169,6 @@ class Noti {
 
     // if (payload["navigate"] == "true") {}
   }
-
-
 
   static Future<void> onDismissActionReceivedMethod(
       ReceivedNotification receivedNotification) async {

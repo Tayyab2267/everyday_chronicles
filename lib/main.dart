@@ -45,6 +45,12 @@ void callbackDispatcher() {
           await _backgroundService.fajarPrayerMethod();
         }
         break;
+      case 'check_noti_service':
+        {
+          print(" ------> Mood Service");
+          await _backgroundService.moodServiceMethod();
+        }
+        break;
       case 'zuhar_prayer_service':
         {
           print(" ------> zuhar Prayer Service");
@@ -136,7 +142,7 @@ void callbackDispatcher() {
                 await SQLHelper.getWeatherListByDate(presentDate);
             print("-----> weatherList from Database: $requiredWeatherList");
 
-            if (requiredWeatherList != null) {
+            if (requiredWeatherList != null && requiredWeatherList.isNotEmpty) {
               // Unpack the requiredWeatherList and add its elements to weatherData
               List<dynamic> unpackedWeatherList =
                   jsonDecode(requiredWeatherList);
@@ -200,7 +206,7 @@ void callbackDispatcher() {
           print(
               "-----> userLocationList from Database: $requiredUserLocationList");
 
-          if (requiredUserLocationList != null) {
+          if (requiredUserLocationList != null && requiredUserLocationList.isNotEmpty) {
             // Unpack the requiredUserLocationList and compare locations
             List<dynamic> unpackedUserLocationList =
                 jsonDecode(requiredUserLocationList);
@@ -294,7 +300,7 @@ void callbackDispatcher() {
             print("-----> LIST FROM DATABASE: $requiredCallLocationList");
             // Check if recent call time is equal to recent call time from database
 
-            if (requiredCallLocationList != null) {
+            if (requiredCallLocationList != null && requiredCallLocationList.isNotEmpty) {
               callLocationData = jsonDecode(requiredCallLocationList);
 
               bool check = false;
@@ -372,15 +378,15 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 FlutterLocalNotificationsPlugin();
 
 // Function to retrieve the saved theme mode from shared preferences
-Future<ThemeMode> _getSavedThemeMode() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  int? themeModeIndex = prefs.getInt('themeMode');
-  if (themeModeIndex != null) {
-    return ThemeMode.values[themeModeIndex];
-  }
-  // Return light theme mode if no theme mode is saved
-  return ThemeMode.light;
-}
+// Future<ThemeMode> _getSavedThemeMode() async {
+//   SharedPreferences prefs = await SharedPreferences.getInstance();
+//   int? themeModeIndex = prefs.getInt('themeMode');
+//   if (themeModeIndex != null) {
+//     return ThemeMode.values[themeModeIndex];
+//   }
+//   // Return light theme mode if no theme mode is saved
+//   return ThemeMode.light;
+// }
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

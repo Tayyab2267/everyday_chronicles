@@ -407,6 +407,8 @@ class BackgroundServiceController extends GetxController {
   }
 
   Future<void> fajarPrayerMethod() async {
+    /// awesome_notification
+    // await Noti.initializeNotification();
     await Noti.showNotification(
       title: "Prayer Checker",
       body: "Had you offered FAJAR Prayer?",
