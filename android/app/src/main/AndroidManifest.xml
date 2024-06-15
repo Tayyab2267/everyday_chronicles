@@ -97,9 +97,6 @@
             android:name="flutterEmbedding"
             android:value="2" />
 
-        <!-- flutter_background_geolocation licence -->
-        <meta-data android:name="com.transistorsoft.locationmanager.license" android:value="YOUR_LICENCE_KEY_HERE" />
-
         <!-- configuration of background_locator_2 -->
         <receiver android:name="yukams.app.background_locator_2.BootBroadcastReceiver"
             android:enabled="true"
@@ -118,6 +115,12 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCkj3vO8eHVS8j4A2axlT-WifX__dOOURw"/>
+
+        <!-- flutter_background_geolocation licence -->
+<!--        <meta-data -->
+<!--            android:name="com.transistorsoft.locationmanager.license"-->
+<!--            android:value="YOUR_LICENCE_KEY_HERE" />-->
+
 
     </application>
 </manifest>

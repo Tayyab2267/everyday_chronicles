@@ -353,7 +353,7 @@ class AuthenticationRepository extends GetxController {
       'call_location_service',
       tag: 'call',
       // initialDelay: _calculateInitialDelay(20),
-      initialDelay: const Duration(seconds: 40),
+      initialDelay: const Duration(seconds: 25),
       frequency: const Duration(minutes: 16),
     );
   }

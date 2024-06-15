@@ -25,7 +25,7 @@ class _HomeState extends State<Home> {
   final SelectedTagsController _selectedTagsController =
       Get.put(SelectedTagsController());
 
-  final WeatherController _weatherController = WeatherController();
+  // final WeatherController _weatherController = WeatherController();
 
   List<Map<String, dynamic>> _journals = [];
   bool _isLoading = true;

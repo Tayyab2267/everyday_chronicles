@@ -44,7 +44,7 @@ dependencies:
   sqflite: ^2.3.2
   usage_stats: ^1.2.0
 
-  flutter_background_geolocation: ^4.10.2
+#  flutter_background_geolocation: ^4.10.2
   device_apps: ^2.2.0
 
   sensors_plus: ^3.1.0
