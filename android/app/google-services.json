@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "216499647850",
+    "project_id": "ai-test-project-b4d15",
+    "storage_bucket": "ai-test-project-b4d15.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:216499647850:android:f967f6ee43bbce9cb5e113",
+        "android_client_info": {
+          "package_name": "com.example.everyday_chronicles"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBzooI_RGpTpipGrLpfzwt-1I-dpwH5ZMU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

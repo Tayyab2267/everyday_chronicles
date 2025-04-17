@@ -1,0 +1,54 @@
+# Flutter/Dart/Pub related
+.dart_tool/
+.packages
+.pub-cache/
+build/
+flutter_*.png
+generated_plugin_registrant.dart
+
+# Android
+android/.gradle/
+android/captures/
+android/app/*.keystore
+
+# iOS
+ios/Flutter/App.framework
+ios/Flutter/Flutter.framework
+ios/.symlinks/
+ios/Pods/
+ios/.flutter-plugins
+ios/.flutter-plugins-dependencies
+
+# macOS
+macos/Flutter/ephemeral/
+macos/Flutter/FlutterMacOS.framework
+macos/Flutter/App.framework
+
+# Web
+web/.dart_tool/
+
+# Windows
+windows/Flutter/ephemeral/
+
+# Linux
+linux/Flutter/ephemeral/
+
+# VS Code
+.vscode/
+
+# IntelliJ
+*.iml
+.idea/
+
+# Others
+*.log
+*.lock
+*.tmp
+*.swp
+*.DS_Store
+
+# Firebase
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+.flutter-plugins
+.flutter-plugins-dependencies
