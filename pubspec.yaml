@@ -1,94 +1,87 @@
-name: everyday_chronicles
-description: Everyday Chronicles is an automated personal digital diary app.
-
-publish_to: 'none'
-
-version: 1.0.0+1
-
-environment:
-  sdk: '>=3.1.2 <4.0.0'
-
-dependencies:
-  flutter:
-    sdk: flutter
-  call_log: ^5.0.5
-
-  # Core Utilities
-  cupertino_icons: ^1.0.6
-  google_fonts: ^6.2.1
-  get: ^4.6.6
-  flutter_lints: ^5.0.0
-  intl: ^0.20.2
-  http: ^1.2.0
-  shared_preferences: ^2.2.2
-  encrypt: ^5.0.3
-  sqflite: ^2.3.2
-
-  # Notifications
-  flutter_local_notifications: ^19.1.0
-  awesome_notifications: ^0.10.1
-
-  # UI & Animations
-  liquid_swipe: ^3.1.0
-  smooth_page_indicator: ^1.1.0
-  persistent_bottom_nav_bar_v2: ^5.3.1
-  font_awesome_flutter: ^10.4.0
-  line_awesome_flutter: ^3.0.1
-  lottie: ^3.1.0
-  fl_chart: ^0.71.0
-  syncfusion_flutter_charts: ^29.1.38
-
-  # Media & Images
-  image_picker: ^1.0.8
-  video_player: ^2.7.1
-  photo_gallery: ^2.2.1
-  transparent_image: ^2.0.1
-
-  # Permissions & Sensors
-  permission_handler: ^12.0.0+1
-  local_auth: ^2.1.7
-  sensors_plus: ^6.1.1
-
-  # Location
-  geolocator: ^14.0.0
-  geocoding: ^3.0.0
-  carp_background_location: ^4.0.0
-  google_maps_flutter: ^2.5.0
-
-  # Firebase
-  firebase_core: ^3.13.0
-  firebase_auth: ^5.5.2
-  cloud_firestore: ^5.6.6
-
-  # Misc
-  workmanager: ^0.5.2
-  usage_stats: ^1.2.0
-  device_apps: ^2.2.0
-  telephony: ^0.2.0
-  flutter_otp_text_field: ^1.1.1
-
-dev_dependencies:
-  flutter_test:
-    sdk: flutter
-  flutter_launcher_icons: ^0.14.3
-
-flutter_launcher_icons:
-  android: "launcher_icon"
-  ios: true
-  image_path: "assets/images/app-icon.png"
-  min_sdk_android: 21
-
-flutter:
-  uses-material-design: true
-
-  assets:
-    - assets/images/app-icon.png
-    - assets/images/icon-dark.png
-    - assets/images/
-    - assets/images/profile/
-    - assets/images/on_boarding_images/
-    - assets/images/welcome_images/
-    - assets/images/login_signup_images/
-    - assets/images/logo/
-    - assets/images/forget_password_images/
-    - assets/images/card_images/
+ name: everyday_chronicles
+ description: everyday chronicles is an automated personal digital diary app
+ 
+ publish_to: 'none' 
+ 
+ version: 1.0.0+1
+ 
+ environment:
+   sdk: '>=3.1.2 <4.0.0'
+ 
+ 
+ dependencies:
+   flutter:
+     sdk: flutter
+   cupertino_icons: ^1.0.6
+   flutter_lints: ^5.0.0
+   google_fonts: ^6.2.1
+   get: ^4.6.6
+   liquid_swipe: ^3.1.0
+   smooth_page_indicator: ^1.1.0
+   flutter_otp_text_field: ^1.1.1
+   shared_preferences: ^2.2.2
+   firebase_core: ^3.13.0
+   firebase_auth: ^5.5.2
+   persistent_bottom_nav_bar_v2: ^4.2.4
+   font_awesome_flutter: ^10.7.0
+   image_picker: ^1.0.8
+   line_awesome_flutter: ^3.0.1
+   syncfusion_flutter_charts: ^29.1.38
+   fl_chart: ^0.71.0
+   permission_handler: ^12.0.0+1
+   telephony: ^0.2.0
+   intl: ^0.20.2
+   http: ^1.2.0
+   geolocator: ^14.0.0
+   geocoding: ^3.0.0
+   lottie: ^3.1.0
+   cloud_firestore: ^5.6.6
+   workmanager: ^0.5.2
+   sqflite: ^2.3.2
+   usage_stats: ^1.2.0
+   flutter_background_geolocation: ^4.10.2
+   device_apps: ^2.2.0
+ 
+   sensors_plus: ^6.1.1
+ 
+   carp_background_location: ^4.0.0
+ 
+   google_maps_flutter: ^2.5.0
+ 
+   call_log: ^5.0.5
+   photo_gallery: ^2.2.1
+   transparent_image: ^2.0.1
+   video_player: ^2.5.0
+   flutter_local_notifications: ^19.1.0
+   awesome_notifications: 0.10.1
+   local_auth: ^2.1.7
+   encrypt: ^5.0.3
+   
+ dev_dependencies:
+   flutter_test:
+     sdk: flutter
+ 
+   flutter_launcher_icons: ^0.14.3
+ 
+ flutter_launcher_icons:
+   android: "launcher_icon"
+   ios: true
+   image_path: "assets/images/app-icon.png"
+   min_sdk_android: 21
+ 
+ 
+ flutter:
+ 
+   uses-material-design: true
+ 
+   assets:
+     - assets/images/app-icon.png
+     - assets/images/icon-dark.png
+     - assets/images/
+     - assets/images/profile/
+     - assets/images/on_boarding_images/
+     - assets/images/welcome_images/
+     - assets/images/login_signup_images/
+     - assets/images/logo/
+     - assets/images/forget_password_images/
+     - assets/images/card_images/

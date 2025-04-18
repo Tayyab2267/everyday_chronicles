@@ -52,3 +52,5 @@ android/app/google-services.json
 ios/Runner/GoogleService-Info.plist
 .flutter-plugins
 .flutter-plugins-dependencies
+
+.fake

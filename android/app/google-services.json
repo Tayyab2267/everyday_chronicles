@@ -7,6 +7,25 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:216499647850:android:9aefa9a1119df4f8b5e113",
+        "android_client_info": {
+          "package_name": "com.example.everyday_chronicle"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBzooI_RGpTpipGrLpfzwt-1I-dpwH5ZMU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:216499647850:android:f967f6ee43bbce9cb5e113",
         "android_client_info": {
           "package_name": "com.example.everyday_chronicles"

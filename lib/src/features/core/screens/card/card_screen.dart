@@ -1,14 +1,11 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:device_apps/device_apps.dart';
 import 'package:everyday_chronicles/src/features/core/screens/card/card_edit_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:photo_gallery/photo_gallery.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:telephony/telephony.dart';
 import 'package:usage_stats/usage_stats.dart';

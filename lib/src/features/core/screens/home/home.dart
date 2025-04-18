@@ -90,7 +90,7 @@ class _HomeState extends State<Home> {
                   encrypt.Key.fromUtf8('my 32 length key................');
               final iv = encrypt.IV.fromLength(16);
               final encrypter = encrypt.Encrypter(encrypt.AES(key));
-              String textToEncrypt = "my name is Awais Shafi []''12.2.";
+              String textToEncrypt = "My name is Tayyab []''12.2.";
               var encryptedText = encrypter.encrypt(textToEncrypt, iv: iv);
               encryptedText = encrypter.encrypt(textToEncrypt, iv: iv);
               print("encryptedText: $encryptedText");

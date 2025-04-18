@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -28,15 +25,9 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -50,19 +41,49 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBtw8LSXbxBkpb1KO3tNDay8qTgsRPtT-k',
-    appId: '1:913530079853:android:f9ca9b01c8ffdfed87cd64',
-    messagingSenderId: '913530079853',
-    projectId: 'everyday-chronicles',
-    storageBucket: 'everyday-chronicles.appspot.com',
+    apiKey: 'AIzaSyBzooI_RGpTpipGrLpfzwt-1I-dpwH5ZMU',
+    appId: '1:216499647850:android:9aefa9a1119df4f8b5e113',
+    messagingSenderId: '216499647850',
+    projectId: 'ai-test-project-b4d15',
+    storageBucket: 'ai-test-project-b4d15.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCfdN5pntH9ZmBJuEFE9gLpLkcZRBoLjlU',
-    appId: '1:913530079853:ios:6ece7f8a24a2f12c87cd64',
-    messagingSenderId: '913530079853',
-    projectId: 'everyday-chronicles',
-    storageBucket: 'everyday-chronicles.appspot.com',
-    iosBundleId: 'com.example.everydayChronicles',
+    apiKey: 'AIzaSyCN4RcAihHtikf76Uj6Nxa6Rm3nLhotJOo',
+    appId: '1:216499647850:ios:4c3cfae3428883efb5e113',
+    messagingSenderId: '216499647850',
+    projectId: 'ai-test-project-b4d15',
+    storageBucket: 'ai-test-project-b4d15.firebasestorage.app',
+    iosBundleId: 'com.example.everydayChronicle',
   );
+
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyDHl1zvjI-PB-8UmkojCFIwkGvQso--nQI',
+    appId: '1:216499647850:web:113f916fad36ab5cb5e113',
+    messagingSenderId: '216499647850',
+    projectId: 'ai-test-project-b4d15',
+    authDomain: 'ai-test-project-b4d15.firebaseapp.com',
+    storageBucket: 'ai-test-project-b4d15.firebasestorage.app',
+    measurementId: 'G-FJZXPE8H60',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyCN4RcAihHtikf76Uj6Nxa6Rm3nLhotJOo',
+    appId: '1:216499647850:ios:4c3cfae3428883efb5e113',
+    messagingSenderId: '216499647850',
+    projectId: 'ai-test-project-b4d15',
+    storageBucket: 'ai-test-project-b4d15.firebasestorage.app',
+    iosBundleId: 'com.example.everydayChronicle',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyDHl1zvjI-PB-8UmkojCFIwkGvQso--nQI',
+    appId: '1:216499647850:web:a17e12f9ce33bd39b5e113',
+    messagingSenderId: '216499647850',
+    projectId: 'ai-test-project-b4d15',
+    authDomain: 'ai-test-project-b4d15.firebaseapp.com',
+    storageBucket: 'ai-test-project-b4d15.firebasestorage.app',
+    measurementId: 'G-7ZZG2XNF70',
+  );
+
 }

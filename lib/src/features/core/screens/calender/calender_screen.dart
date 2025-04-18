@@ -32,7 +32,7 @@ class CalenderScreen extends StatelessWidget {
             children: [
               CalendarDatePicker(
                 initialDate: DateTime.now(),
-                firstDate: DateTime(2023),
+                firstDate: DateTime(2024),
                 lastDate: DateTime(2100),
                 onDateChanged: onDateChanged,
               ),
@@ -44,7 +44,7 @@ class CalenderScreen extends StatelessWidget {
                     "Just the dummy text nothing else. Don't take this text seriously, it's just for practice.",
                 cardSummary:
                     "Just the dummy text nothing else. Don't take this text seriously, it's just for practice.",
-                cardDate: "Nov 20,\n2023",
+                cardDate: "Feb 20,\n2025",
               ),
               const SizedBox(height: 10),
               Row(
